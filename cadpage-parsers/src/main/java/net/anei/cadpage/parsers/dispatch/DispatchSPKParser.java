@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.AddressParser;
 import net.anei.cadpage.parsers.CodeTable;
 import net.anei.cadpage.parsers.HtmlProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -345,6 +346,11 @@ public class DispatchSPKParser extends HtmlProgramParser {
 
   private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*?)(?: +Apartment: *(.*?))?(?: +Building: *(.*?))?");
   private class BaseAddressCityField extends AddressCityField {
+
+    public BaseAddressCityField() {
+      super(new AddressParser(";"));
+    }
+
     @Override
     public void parse(String field, Data data) {
 
@@ -360,11 +366,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
           apt = match.group(2);
           bldg = match.group(3);
         }
-        int pt = field.indexOf(';');
-        if (pt >= 0) {
-          data.strPlace = field.substring(pt+1).trim();
-          field = field.substring(0,pt).trim();
-        }
+
         data.strAddress = "";
         super.parse(field, data);
         if (apt != null) aptField.parse(apt, data);

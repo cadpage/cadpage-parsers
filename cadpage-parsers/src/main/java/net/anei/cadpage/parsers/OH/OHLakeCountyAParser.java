@@ -58,9 +58,24 @@ public class OHLakeCountyAParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
+  }
+
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      String apt = "";
+      int pt = field.indexOf(';');
+      if (pt >= 0) {
+        apt = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+      }
+      super.parse(field, data);
+      data.strApt = append(data.strApt, "-", apt);
+    }
   }
 
   private class MyCallField extends CallField {

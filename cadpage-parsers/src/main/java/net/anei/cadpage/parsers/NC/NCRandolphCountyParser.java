@@ -3,6 +3,7 @@ package net.anei.cadpage.parsers.NC;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.AddressParser;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
@@ -10,7 +11,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class NCRandolphCountyParser extends FieldProgramParser {
 
   public NCRandolphCountyParser() {
-    super("RANDOLPH COUNTY", "NC",
+    super(CITY_CODES, "RANDOLPH COUNTY", "NC",
           "SRC ( UNIT ID! INFO/R INFO/N+ | CALL ADDRCITY UNIT SKIP! INFO/N+ )");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
@@ -37,28 +38,15 @@ public class NCRandolphCountyParser extends FieldProgramParser {
 
   private class MyAddressCityField extends AddressCityField {
 
+    public MyAddressCityField() {
+      super(new AddressParser(";"));
+    }
+
     @Override
     public void parse(String field, Data data) {
       field = stripFieldStart(field, "\"");
       field = stripFieldEnd(field, "\"");
-      Parser p = new Parser(field);
-      String city = p.getLastOptional(',');
-      data.strCity = convertCodes(city, CITY_CODES);
-      String apt = p.getLastOptional(';');
-      if (apt.length() == 0) apt = p.getLastOptional(',');
-      parseAddress(p.get(), data);
-      if (apt.length() > 0) {
-        if (apt.startsWith("MM ")) {
-          data.strAddress = append(data.strAddress, ", ", apt);
-        } else {
-          data.strApt = append(data.strApt, "-", apt);
-        }
-      }
-    }
-
-    @Override
-    public String getFieldNames() {
-      return "ADDR CITY APT";
+      super.parse(field, data);
     }
   }
 
@@ -85,7 +73,7 @@ public class NCRandolphCountyParser extends FieldProgramParser {
     return CTRY_PTN.matcher(addr).replaceAll("COUNTRY");
   }
   private static final Pattern CTRY_PTN = Pattern.compile("CTRY\\b", Pattern.CASE_INSENSITIVE);
-  
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
       "207 EAGLE LN",                         "+35.630840,-79.829030"
   });

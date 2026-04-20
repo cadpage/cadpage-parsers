@@ -31,6 +31,7 @@ public class OHTrumbullCountyAParser extends FieldProgramParser {
   public boolean parseMsg(String body, Data data) {
     if (!body.startsWith("*")) return false;
     body = body.substring(1).trim();
+    body = body.replace(", OHIO, ", ", OH ");
     return parseFields(DELIM.split(body), data);
   }
 

@@ -2499,6 +2499,8 @@ public class FieldProgramParser extends SmartAddressParser {
 
     private boolean noCity = false;
 
+    private AddressParser addressParser = null;
+
     public AddressField() {}
 
     public AddressField(String ptn) {
@@ -2507,6 +2509,10 @@ public class FieldProgramParser extends SmartAddressParser {
 
     public AddressField(String ptn, boolean hard) {
       super(ptn, hard);
+    }
+
+    public AddressField(AddressParser addressParser) {
+      this.addressParser = addressParser;
     }
 
     @Override
@@ -2677,6 +2683,9 @@ public class FieldProgramParser extends SmartAddressParser {
 
     @Override
     public void parse(String field, Data data) {
+
+      if (addressParser != null) field = addressParser.parse(field);
+
       if (startType == null) {
         if (incCity) {
           parseAddressCity(field, data);
@@ -2698,6 +2707,8 @@ public class FieldProgramParser extends SmartAddressParser {
           tailData.parse(left, data);
         }
       }
+
+      if (addressParser != null) addressParser.merge(data);
     }
 
     protected boolean isValidCity(String fld) {
@@ -2748,6 +2759,8 @@ public class FieldProgramParser extends SmartAddressParser {
         sb.append("CITY ");
         if (tailField != null) sb.append(tailField);
       }
+
+      if (addressParser != null) addressParser.getFieldNames(sb);
       return sb.toString().trim();
     }
   }
@@ -2842,12 +2855,18 @@ public class FieldProgramParser extends SmartAddressParser {
    */
   public class AddressCityField extends AddressField {
 
+    AddressParser addressParser = null;
+
     public AddressCityField() {};
     public AddressCityField(String pattern) {
       super(pattern);
     }
     public AddressCityField(String pattern, boolean hardPattern) {
       super(pattern, hardPattern);
+    }
+
+    public AddressCityField(AddressParser addressParser) {
+      this.addressParser = addressParser;
     }
 
     private Field cityField = new CityField();
@@ -2874,13 +2893,18 @@ public class FieldProgramParser extends SmartAddressParser {
       }
       else if (!force) return false;
 
+      if (addressParser != null) field = addressParser.parse(field);
       super.parse(field, data);
+      if (addressParser != null) addressParser.merge(data);
       return true;
     }
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " CITY";
+      StringBuilder sb = new StringBuilder(super.getFieldNames());
+      if (addressParser != null) addressParser.getFieldNames(sb);
+      sb.append(" CITY");
+      return sb.toString();
     }
   }
 

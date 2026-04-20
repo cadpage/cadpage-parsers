@@ -61,7 +61,7 @@ public class NCBurkeCountyParser extends DispatchOSSIParser {
     return super.getField(name);
   }
 
-  private static final Pattern SOURCE_PTN = Pattern.compile("[A-Z0-9]{1,4}");
+  private static final Pattern SOURCE_PTN = Pattern.compile("(?!UNK)[A-Z0-9]{1,4}");
   private class MySourceField extends SourceField {
     @Override
     public boolean canFail() {

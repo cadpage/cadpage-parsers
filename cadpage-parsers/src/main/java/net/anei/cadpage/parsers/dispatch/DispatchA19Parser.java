@@ -5,10 +5,11 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.AddressParser;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
-import net.anei.cadpage.parsers.StateCodes;
+
 /**
  * Base class for parsing Spillman CAD system alerts
  */
@@ -109,13 +110,25 @@ public class DispatchA19Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern ADDR_APT_PTN1 = Pattern.compile("(.*)\\b(?:APARTMENT|APT|LOT|RM|ROOM|SUITE|UNIT)[:# ]+(.*)", Pattern.CASE_INSENSITIVE);
-  private static final Pattern ADDR_APT_PTN2 = Pattern.compile("(?:APARTMENT(?!S)|APT|LOT|RM|ROOM|SUITE|UNIT)?[# ]*([A-Z]?\\d+[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("(.*)(?:, +| {3,})@?([ A-Z]*), *@?([A-Z]{2})");
   private static final Pattern ADDR_CITY_ZIP_PTN = Pattern.compile("(.*) - ([ A-Z]+) - \\d{5}");
-  private static final Pattern ADDR_SPLIT_PTN = Pattern.compile("(.*)[;,](?! *Y:)(.*?)");
-  private static final Pattern ADDR_GPS_PTN = Pattern.compile("[-+]?(?:\\d+ +\\d+ +)?\\d+\\.\\d+\\b.*");
+
   private class BaseAddressField extends AddressField {
+
+    public BaseAddressField() {
+      super(new AddressParser(";,") {
+        @Override
+        protected String postProcess(String field) {
+          int pt = field.indexOf(" - ");
+          if (pt >= 0) {
+            setPlace(field.substring(pt+3).trim());
+            field = field.substring(0,pt).trim();
+          }
+          return field;
+        }
+      });
+    }
+
     @Override
     public void parse(String field, Data data) {
 
@@ -133,46 +146,7 @@ public class DispatchA19Parser extends FieldProgramParser {
         data.strCity = match.group(2).trim();
       }
 
-      String apt = "";
-      while (true) {
-        match = ADDR_SPLIT_PTN.matcher(field);
-        if (!match.matches()) break;
-        String place = match.group(2).trim();
-        if (ADDR_GPS_PTN.matcher(place).matches()) break;
-        field = match.group(1).trim();
-        match = ADDR_APT_PTN1.matcher(place);
-        if (match.matches()) {
-          place = match.group(1).trim();
-          String tmp = match.group(2);
-          apt = append(tmp, "-", apt);
-        } else if ((match = ADDR_APT_PTN2.matcher(place)).matches()) {
-          apt = append(match.group(1), "-", apt);
-          place = "";
-        } else if (StateCodes.isStateCode(place)) {
-          data.strState = place;
-          place = "";
-        }
-        if (!data.strPlace.contains(place)) {
-          if (place.contains(data.strPlace)) {
-            data.strPlace = place;
-          } else {
-            data.strPlace = append(place, " - ", data.strPlace);
-          }
-        }
-      }
-
-      int pt = field.indexOf(" - ");
-      if (pt >= 0) {
-        data.strPlace = append(field.substring(pt+3).trim(), " - ", data.strPlace);
-        field = field.substring(0,pt).trim();
-      }
-
       super.parse(field, data);
-      if (apt.contains(data.strApt)) {
-        data.strApt = apt;
-      } else {
-        data.strApt = append(data.strApt, "-", apt);
-      }
     }
 
     @Override
