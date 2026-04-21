@@ -11,10 +11,10 @@ public class AddressParser {
 
   private String delims;
 
-  private String place, apt, addrExt, state;
+  private String place, apt, addrExt;
 
   private static final Pattern ADDR_GPS_PTN = Pattern.compile("[-+]?(?:\\d+ +\\d+ +)?\\d+\\.\\d+\\b.*|Y:.*");
-  private static final Pattern ADDR_APT_PTN1 = Pattern.compile("(.*)\\b(?:APARTMENT|APT|LOT|RM|ROOM(?! NUMBER)|SUITE|UNIT)[:# ]+(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_APT_PTN1 = Pattern.compile("(.*)\\b(?:APARTMENT|APT|LOT|RM|(?<!UPPER )ROOM(?! NUMBER)|SUITE|UNIT)[:# ]+(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_APT_PTN2 = Pattern.compile("(?:APARTMENT(?!S)|APT(?!S)|LOT|RM|ROOM|SUITE|UNIT)?[# ]*([A-Z]?-?\\d+-?[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_APT_PTN3 = Pattern.compile("APT|LOT|RM|ROOM|SUITE|UNIT", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_EXT_PTN = Pattern.compile("[NSEW]B|MM *\\d+.*");
@@ -69,7 +69,6 @@ public class AddressParser {
   public String parse(String field) {
 
     place = apt = addrExt = "";
-    state = null;
     int ept = field.length();
     for ( int pt = field.length()-1; pt >= 0; pt--) {
       char chr = field.charAt(pt);
@@ -98,8 +97,6 @@ public class AddressParser {
     } else if ((match = ADDR_APT_PTN2.matcher(fld)).matches()) {
       setApt(match.group(1).trim());
     } else if (ADDR_APT_PTN3.matcher(fld).matches()) {
-    } else if (StateCodes.isStateCode(fld)) {
-      state = fld;
     } else if (ADDR_EXT_PTN.matcher(fld).matches()) {
       addrExt = append(fld, " ", addrExt);
     } else {
@@ -132,7 +129,6 @@ public class AddressParser {
     data.strAddress = MsgParser.append(data.strAddress, " ", addrExt);
     data.strPlace = append(data.strPlace, " - ", place);
     data.strApt = append(data.strApt, "-", apt);
-    if (state != null) data.strState = state;
   }
 
   protected String append(String fld1, String connect, String fld2) {
@@ -150,6 +146,5 @@ public class AddressParser {
   public void getFieldNames(StringBuilder sb) {
     if (!place.isEmpty()) sb.append(" PLACE");
     if (!apt.isEmpty()) sb.append(" APT");
-    if (state != null) sb.append(" ST");
   }
 }
