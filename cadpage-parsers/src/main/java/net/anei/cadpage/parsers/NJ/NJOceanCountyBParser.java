@@ -10,6 +10,7 @@ public class NJOceanCountyBParser extends DispatchA19Parser {
 
   public NJOceanCountyBParser() {
     super(CITY_CODES, "OCEAN COUNTY", "NJ");
+    getAddressParser().addAptKeyword("COTTAGE");
   }
 
   @Override

@@ -110,23 +110,29 @@ public class DispatchA19Parser extends FieldProgramParser {
     }
   }
 
+  private static final AddressParser addressParser = new AddressParser(";,") {
+    @Override
+    protected String postProcess(String field) {
+      int pt = field.indexOf(" - ");
+      if (pt >= 0) {
+        setPlace(field.substring(pt+3).trim());
+        field = field.substring(0,pt).trim();
+      }
+      return field;
+    }
+  };
+
+  public AddressParser getAddressParser() {
+    return addressParser;
+  }
+
   private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("(.*)(?:, +| {3,})@?([ A-Z]*), *@?([A-Z]{2})");
   private static final Pattern ADDR_CITY_ZIP_PTN = Pattern.compile("(.*) - ([ A-Z]+) - \\d{5}");
 
   private class BaseAddressField extends AddressField {
 
     public BaseAddressField() {
-      super(new AddressParser(";,") {
-        @Override
-        protected String postProcess(String field) {
-          int pt = field.indexOf(" - ");
-          if (pt >= 0) {
-            setPlace(field.substring(pt+3).trim());
-            field = field.substring(0,pt).trim();
-          }
-          return field;
-        }
-      });
+      super(addressParser);
     }
 
     @Override

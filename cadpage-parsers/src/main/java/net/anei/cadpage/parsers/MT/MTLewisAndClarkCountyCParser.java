@@ -45,6 +45,7 @@ public class MTLewisAndClarkCountyCParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d{6}-\\d{3}");
     if (name.equals("CODE")) return new MyCodeField();
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("INFO_CODE")) return new CodeField("INFO", true);
     if (name.equals("CODE_ADDRCITYST")) return new MyCodeAddressCityStateField();
     if (name.equals("CALL")) return new MyCallField();
@@ -73,7 +74,21 @@ public class MTLewisAndClarkCountyCParser extends FieldProgramParser {
     }
   }
 
-  private class MyCodeAddressCityStateField extends AddressCityStateField {
+  private static final Pattern ADDR_TRL_PTN = Pattern.compile("(.*?)[, ]+TRL (.*)", Pattern.CASE_INSENSITIVE);
+
+  private class MyAddressCityStateField extends AddressCityStateField {
+    @Override
+    public void parse(String field, Data data) {
+      super.parse(field, data);
+      Matcher match = ADDR_TRL_PTN.matcher(data.strAddress);
+      if (match.matches()) {
+        data.strAddress = match.group(1).trim();
+        data.strApt = append(match.group(2).trim(), "-", data.strApt);
+      }
+    }
+  }
+
+  private class MyCodeAddressCityStateField extends MyAddressCityStateField {
     @Override
     public void parse(String field, Data data) {
       Matcher match = CODE_ADDR_PTN.matcher(field);

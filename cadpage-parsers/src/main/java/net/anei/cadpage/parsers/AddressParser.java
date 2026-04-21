@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,8 +14,9 @@ public class AddressParser {
   private String place, apt, addrExt, state;
 
   private static final Pattern ADDR_GPS_PTN = Pattern.compile("[-+]?(?:\\d+ +\\d+ +)?\\d+\\.\\d+\\b.*|Y:.*");
-  private static final Pattern ADDR_APT_PTN1 = Pattern.compile("(.*)\\b(?:APARTMENT|APT|LOT|RM|ROOM|SUITE|UNIT)[:# ]+([A-Z]?\\d+[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE);
-  private static final Pattern ADDR_APT_PTN2 = Pattern.compile("(?:APARTMENT(?!S)|APT|LOT|RM|ROOM|SUITE|UNIT)?[# ]*([A-Z]?\\d+[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_APT_PTN1 = Pattern.compile("(.*)\\b(?:APARTMENT|APT|LOT|RM|ROOM(?! NUMBER)|SUITE|UNIT)[:# ]+(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_APT_PTN2 = Pattern.compile("(?:APARTMENT(?!S)|APT(?!S)|LOT|RM|ROOM|SUITE|UNIT)?[# ]*([A-Z]?-?\\d+-?[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_APT_PTN3 = Pattern.compile("APT|LOT|RM|ROOM|SUITE|UNIT", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_EXT_PTN = Pattern.compile("[NSEW]B|MM *\\d+.*");
 
   public AddressParser() {
@@ -23,6 +26,45 @@ public class AddressParser {
   public AddressParser(String delims) {
     this.delims = delims;
   }
+
+  // special keyword processing flags
+  private static final int APFLG_MUST_LEAD = 1;
+  private static final int APFLG_MAY_TRAIL = 2;
+
+  private class AptKeyword {
+    private String keyword;
+    private int flags;
+
+    public AptKeyword(String keyword, int flags) {
+      this.keyword = keyword;
+      this.flags = flags;
+    }
+
+    public boolean process(char chr, String fld) {
+      int pt = fld.toUpperCase().indexOf(keyword);
+      if (pt < 0) return false;
+      if ((flags & APFLG_MUST_LEAD) != 0 && pt > 0) return false;
+      int pte = pt + keyword.length();
+      if ((flags & APFLG_MAY_TRAIL) == 0 && pt == fld.length()) return false;
+      String place = fld.substring(0,pt).trim();
+      if (!place.isEmpty()) setPlace(place);
+      String apt = fld.substring(pte).trim();
+      if (!apt.isEmpty()) setApt(apt);
+      return true;
+    }
+  }
+
+  private List<AptKeyword> aptKeywords = null;
+
+  public void addAptKeyword(String keyword) {
+    addAptKeyword(keyword, 0);
+  }
+
+  public void addAptKeyword(String keyword, int flags) {
+    if (aptKeywords == null) aptKeywords = new ArrayList<>();
+    aptKeywords.add(new AptKeyword(keyword, flags));
+  }
+
 
   public String parse(String field) {
 
@@ -49,11 +91,13 @@ public class AddressParser {
     if (chr == ':') {
       setPlace(fld);
     }
-    else if ((match = ADDR_APT_PTN1.matcher(fld)).matches()) {
+    else if (processAptKeywords(chr, fld)) {
+    } else if ((match = ADDR_APT_PTN1.matcher(fld)).matches()) {
       setPlace(match.group(1).trim());
       setApt(match.group(2).trim());
     } else if ((match = ADDR_APT_PTN2.matcher(fld)).matches()) {
       setApt(match.group(1).trim());
+    } else if (ADDR_APT_PTN3.matcher(fld).matches()) {
     } else if (StateCodes.isStateCode(fld)) {
       state = fld;
     } else if (ADDR_EXT_PTN.matcher(fld).matches()) {
@@ -62,6 +106,14 @@ public class AddressParser {
       setPlace(fld);
     }
     return true;
+  }
+
+  private boolean processAptKeywords(char chr, String fld) {
+    if (aptKeywords == null) return false;
+    for (AptKeyword aptKeyword : aptKeywords) {
+      if (aptKeyword.process(chr, fld)) return true;
+    }
+    return false;
   }
 
   protected String postProcess(String field) {
