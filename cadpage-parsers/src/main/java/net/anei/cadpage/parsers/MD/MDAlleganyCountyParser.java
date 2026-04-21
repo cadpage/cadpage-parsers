@@ -6,6 +6,7 @@ public class MDAlleganyCountyParser extends DispatchA19Parser {
 
   public MDAlleganyCountyParser() {
     super("ALLEGANY COUNTY", "MD");
+    getAddressParser().setStatePtn("DE|MD|PA|VA|WV");
   }
 
   @Override

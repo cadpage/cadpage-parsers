@@ -15,6 +15,9 @@ public class DispatchA72Parser extends FieldProgramParser {
   }
 
   static final Pattern ADDR_APT_PTN = Pattern.compile("(.*?)[/ ]+(?:APT|LOT|RM|ROOM|UNIT) +(.*)", Pattern.CASE_INSENSITIVE);
+  static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +\\d{5})?");
+  static final Pattern CITY_PTN = Pattern.compile("[ A-Za-z]+");
+
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -34,18 +37,27 @@ public class DispatchA72Parser extends FieldProgramParser {
     addr = stripFieldEnd(addr, data.strState);
     addr = stripFieldEnd(addr, data.strCity);
     int pt = addr.indexOf(',');
+    boolean needCity = false;
     if (pt >= 0) {
       String city = addr.substring(pt+1).trim();
       addr = addr.substring(0,pt).trim();
-      if (city.length() == 2) {
-        data.strState = city;
+      match = ST_ZIP_PTN.matcher(city);
+      if (match.matches()) {
+        needCity = true;
+        data.strState = match.group(1);
       } else if (data.strCity.isEmpty()) {
         data.strCity = city;
       }
     }
+    addr = stripFieldEnd(addr, data.strCity);
     parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_ANCHOR_END, addr, data);
-    data.strApt = parseTrailApt(data.strApt, data);
-    data.strApt = append(data.strApt, "-", apt);
+    if (needCity && data.strCity.isEmpty() && CITY_PTN.matcher(data.strApt).matches()) {
+      data.strCity = data.strApt;
+      data.strApt = "";
+    } else {
+      data.strApt = parseTrailApt(data.strApt, data);
+      data.strApt = append(data.strApt, "-", apt);
+    }
     return true;
   }
 
@@ -53,8 +65,8 @@ public class DispatchA72Parser extends FieldProgramParser {
   static final Pattern SECTOR_CITY_PTN = Pattern.compile("(.*\\bSECTOR) +(.*)", Pattern.CASE_INSENSITIVE);
 
   private String parseTrailApt(String apt, Data data) {
-    Matcher match;
-    match = CITY_ST_ZIP_PTN.matcher(apt);
+    apt = stripFieldStart(apt, "-");
+    Matcher match = CITY_ST_ZIP_PTN.matcher(apt);
     if (match.matches()) {
       String state = match.group(3);
       if (StateCodes.isStateCode(state)) {

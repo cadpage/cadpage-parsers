@@ -10,8 +10,9 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class AddressParser {
 
   private String delims;
+  private Pattern statePtn = null;
 
-  private String place, apt, addrExt;
+  private String place, apt, addrExt, state;
 
   private static final Pattern ADDR_GPS_PTN = Pattern.compile("[-+]?(?:\\d+ +\\d+ +)?\\d+\\.\\d+\\b.*|Y:.*");
   private static final Pattern ADDR_APT_PTN1 = Pattern.compile("(.*)\\b(?:APARTMENT|APT|LOT|RM|(?<!UPPER )ROOM(?! NUMBER)|SUITE|UNIT)[:# ]+(.*)", Pattern.CASE_INSENSITIVE);
@@ -21,6 +22,11 @@ public class AddressParser {
 
   public AddressParser() {
     this(":;,");
+  }
+
+  public AddressParser(String delims, String statePtnStr) {
+    this.delims = delims;
+    setStatePtn(statePtnStr);
   }
 
   public AddressParser(String delims) {
@@ -65,10 +71,19 @@ public class AddressParser {
     aptKeywords.add(new AptKeyword(keyword, flags));
   }
 
+  public void setStatePtn(String statePtnStr) {
+    if (statePtnStr == null || statePtnStr.isEmpty()) {
+      statePtn = null;
+    } else {
+      statePtn = Pattern.compile(statePtnStr);
+    }
+  }
+
 
   public String parse(String field) {
 
     place = apt = addrExt = "";
+    state = null;
     int ept = field.length();
     for ( int pt = field.length()-1; pt >= 0; pt--) {
       char chr = field.charAt(pt);
@@ -99,6 +114,8 @@ public class AddressParser {
     } else if (ADDR_APT_PTN3.matcher(fld).matches()) {
     } else if (ADDR_EXT_PTN.matcher(fld).matches()) {
       addrExt = append(fld, " ", addrExt);
+    } else if (statePtn != null && statePtn.matcher(fld).matches()) {
+      state = fld;
     } else {
       setPlace(fld);
     }
@@ -129,6 +146,7 @@ public class AddressParser {
     data.strAddress = MsgParser.append(data.strAddress, " ", addrExt);
     data.strPlace = append(data.strPlace, " - ", place);
     data.strApt = append(data.strApt, "-", apt);
+    if (state != null) data.strState = state;
   }
 
   protected String append(String fld1, String connect, String fld2) {
@@ -146,5 +164,6 @@ public class AddressParser {
   public void getFieldNames(StringBuilder sb) {
     if (!place.isEmpty()) sb.append(" PLACE");
     if (!apt.isEmpty()) sb.append(" APT");
+    if (state != null) sb.append(" ST");
   }
 }
