@@ -107,10 +107,23 @@ public class MOJeffersonCountyBParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("CODE_CALL")) return new MyCodeCallField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("GPS")) return new MyGPSField();
     return super.getField(name);
+  }
+
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      super.parse(field, data);
+      int pt = data.strAddress.indexOf(", Apt");
+      if (pt >= 0) {
+        data.strApt = append(data.strAddress.substring(pt+5).trim(), "-", data.strApt);
+        data.strAddress = data.strAddress.substring(0,pt).trim();
+      }
+    }
   }
 
   private class MyCodeCallField extends Field {

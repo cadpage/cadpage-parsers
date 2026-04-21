@@ -1,14 +1,16 @@
 package net.anei.cadpage.parsers.MN;
 
+import java.util.Properties;
+
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA63Parser;
 
 public class MNMilleLacsCountyParser extends DispatchA63Parser {
-  
+
   public MNMilleLacsCountyParser() {
-    super(CITY_LIST, "MILLE LACS COUNTY", "MN");
+    super(CITY_CODES, CITY_LIST, "MILLE LACS COUNTY", "MN");
   }
-  
+
   @Override
   public String getFilter() {
     return "MLCJ.Dispatch@millelacs.mn.gov";
@@ -35,10 +37,10 @@ public class MNMilleLacsCountyParser extends DispatchA63Parser {
       "PEASE",
       "PRINCETON",
       "WAHKON",
-      
+
       // Census-designated place
       "VINELAND",
-      
+
       // Unincorporated communities
       "BAYVIEW",
       "COVE",
@@ -47,7 +49,7 @@ public class MNMilleLacsCountyParser extends DispatchA63Parser {
       "OPSTEAD",
       "PAGE",
       "WOODWARD BROOK",
-      
+
       // Ghost towns
       "BRICKTON",
       "BURNHELM SIDING",
@@ -56,7 +58,7 @@ public class MNMilleLacsCountyParser extends DispatchA63Parser {
       "JOHNSDALE",
       "SOULES CROSSING",
       "STIRLING",
-      
+
       // Townships
       "BOGUS BROOK TOWNSHIP",
       "BORGHOLM TOWNSHIP",
@@ -77,4 +79,10 @@ public class MNMilleLacsCountyParser extends DispatchA63Parser {
       "ROOSEVELT TOWNSHIP",
       "SOUTH HARBOR TOWNSHIP",
   };
+
+  private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "ML", "",
+      "NA", "",
+      "PP", "Princeton"
+  });
 }

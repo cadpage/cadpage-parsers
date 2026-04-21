@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.StateCodes;
 
 public class DispatchA72Parser extends FieldProgramParser {
 
@@ -14,7 +15,6 @@ public class DispatchA72Parser extends FieldProgramParser {
   }
 
   static final Pattern ADDR_APT_PTN = Pattern.compile("(.*?)[/ ]+(?:APT|LOT|RM|ROOM|UNIT) +(.*)", Pattern.CASE_INSENSITIVE);
-  static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(?:(\\S*\\d\\S*) +)?(.*?)[, ]+([A-Z]{2})(?: +\\d{5})?");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -27,12 +27,7 @@ public class DispatchA72Parser extends FieldProgramParser {
     if (match.matches()) {
       addr =  match.group(1);
       apt =  match.group(2);
-      match = CITY_ST_ZIP_PTN.matcher(apt);
-      if (match.matches()) {
-        apt = match.group(1);
-        data.strCity = match.group(2);
-        data.strState = match.group(3);
-      }
+      apt = parseTrailApt(apt, data);
     }
     addr = stripFieldStart(addr, "@");
     addr = addr.replace('@', '&').replace("//", "&");
@@ -49,14 +44,31 @@ public class DispatchA72Parser extends FieldProgramParser {
       }
     }
     parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_ANCHOR_END, addr, data);
-    match = CITY_ST_ZIP_PTN.matcher(data.strApt);
-    if (match.matches()) {
-      data.strApt = getOptGroup(match.group(1));
-      data.strCity = match.group(2);
-      data.strState = match.group(3);
-    }
+    data.strApt = parseTrailApt(data.strApt, data);
     data.strApt = append(data.strApt, "-", apt);
     return true;
+  }
+
+  static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(?:(\\S*\\d\\S*) +)?(.*?)[, ]+([A-Z]{2})(?: +\\d{5})?");
+  static final Pattern SECTOR_CITY_PTN = Pattern.compile("(.*\\bSECTOR) +(.*)", Pattern.CASE_INSENSITIVE);
+
+  private String parseTrailApt(String apt, Data data) {
+    Matcher match;
+    match = CITY_ST_ZIP_PTN.matcher(apt);
+    if (match.matches()) {
+      String state = match.group(3);
+      if (StateCodes.isStateCode(state)) {
+        apt = getOptGroup(match.group(1));
+        String city = match.group(2);
+        match = SECTOR_CITY_PTN.matcher(city);
+        if (match.matches()) {
+          city = match.group(2);
+        }
+        data.strCity = city;
+        data.strState = state;
+      }
+    }
+    return apt;
   }
 
   @Override

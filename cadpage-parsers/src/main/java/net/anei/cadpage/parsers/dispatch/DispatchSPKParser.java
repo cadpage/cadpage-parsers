@@ -30,13 +30,15 @@ public class DispatchSPKParser extends HtmlProgramParser {
     this(null, defCity, defState);
   }
 
+  private Field addrCityField;
+
   public DispatchSPKParser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState,
          "( SELECT/1 Incident_Information%EMPTY! Event_Code:CALL! Incident_Number:ID! Location_Information%EMPTY! LOCATION! LOCATION_X? ( Remarks/Narratives%EMPTY! INFO1/N+? | ) Responding_Units%EMPTY! UNIT! SKIP+? LINE_MARK! " +
          "| CURDATETIME? Incident_Information%EMPTY! CAD_Incident:ID? ( Event_Code:CALL! THRD_PRTY_INFO+? | Event_Code_Description:CALL! | ) DATA<+? )",
          "table|tr");
 
-    Field addrCityField = getField("ADDRCITY");
+    addrCityField = getField("ADDRCITY");
     Field alertField = getField("ALERT");
     aptField = getField("APT");
     bldgField = getField("BLDG");
@@ -145,7 +147,7 @@ public class DispatchSPKParser extends HtmlProgramParser {
       addUnit(match.group(1).trim(), data);
     }
 
-    if (data.strAddress.length() == 0 && callerLocField != null) parseAddress(callerLocField, data);
+    if (data.strAddress.length() == 0 && callerLocField != null) addrCityField.parse(callerLocField, data);
     if (data.msgType == MsgType.RUN_REPORT) data.strSupp = append(times, "\n", data.strSupp);
     unitSet.clear();
     return true;
@@ -354,10 +356,12 @@ public class DispatchSPKParser extends HtmlProgramParser {
     @Override
     public void parse(String field, Data data) {
 
+      if (field.equals("Status")) return;
+
       // There can be multiple Location: keywords, but the second
       // always seems to be a cell tower location that we can ignore
       // Unless the first address is UNKNOWN in which case, accept the second one
-      if (data.strAddress.length() == 0 || data.strAddress.equals("UNKNOWN")) {
+      if (data.strAddress.isEmpty() || data.strAddress.equals("UNKNOWN")) {
         Matcher match = ADDR_APT_PTN.matcher(field);
         String apt = null;
         String bldg = null;

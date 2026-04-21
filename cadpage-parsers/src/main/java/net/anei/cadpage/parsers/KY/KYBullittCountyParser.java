@@ -33,23 +33,14 @@ public class KYBullittCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?:[, ]+(\\d{5}))?");
-  private class MyAddressCityStateField extends Field {
+  private static final Pattern BAD_ST_ZIP_PTN = Pattern.compile("\\b([A-Z]{2}), *(\\d{5})$");
+
+  private class MyAddressCityStateField extends AddressCityStateField {
 
     @Override
     public void parse(String field, Data data) {
-      Parser p = new Parser(field);
-      String zip = null;
-      String city = p.getLastOptional(',');
-      Matcher match = ST_ZIP_PTN.matcher(city);
-      if (match.matches()) {
-        data.strState = match.group(1);
-        zip = match.group(2);
-        city = p.getLastOptional(',');
-      }
-      if (city.length() == 0 && zip != null) city = zip;
-      data.strCity = city;
-      parseAddress(p.get(), data);
+      field = BAD_ST_ZIP_PTN.matcher(field).replaceAll("$1 $2");
+      super.parse(field, data);
     }
 
     @Override
