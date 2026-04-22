@@ -16,7 +16,7 @@ public class DispatchA72Parser extends FieldProgramParser {
 
   static final Pattern ADDR_APT_PTN = Pattern.compile("(.*?)[/ ]+(?:APT|LOT|RM|ROOM|UNIT) +(.*)", Pattern.CASE_INSENSITIVE);
   static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +\\d{5})?");
-  static final Pattern CITY_PTN = Pattern.compile("[ A-Za-z]+");
+  static final Pattern APP_CITY_PTN = Pattern.compile("(?:(\\S*\\d\\S*|[A-Z]) +)?([ A-Za-z]+)");
 
 
   @Override
@@ -41,27 +41,33 @@ public class DispatchA72Parser extends FieldProgramParser {
     if (pt >= 0) {
       String city = addr.substring(pt+1).trim();
       addr = addr.substring(0,pt).trim();
-      match = ST_ZIP_PTN.matcher(city);
-      if (match.matches()) {
-        needCity = true;
-        data.strState = match.group(1);
-      } else if (data.strCity.isEmpty()) {
-        data.strCity = city;
+      String apt2 = parseTrailApt(city, data);
+      if (apt2.length() < city.length()) {
+        apt = append(apt2, "-", apt);
+      } else {
+        match = ST_ZIP_PTN.matcher(city);
+        if (match.matches()) {
+          needCity = true;
+          data.strState = match.group(1);
+        } else if (data.strCity.isEmpty()) {
+          data.strCity = city;
+        }
       }
     }
     addr = stripFieldEnd(addr, data.strCity);
     parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_ANCHOR_END, addr, data);
-    if (needCity && data.strCity.isEmpty() && CITY_PTN.matcher(data.strApt).matches()) {
-      data.strCity = data.strApt;
-      data.strApt = "";
+    if (needCity && data.strCity.isEmpty() &&
+        (match = APP_CITY_PTN.matcher(data.strApt)).matches()) {
+      data.strApt = getOptGroup(match.group(1));
+      data.strCity = match.group(2).trim();
     } else {
       data.strApt = parseTrailApt(data.strApt, data);
-      data.strApt = append(data.strApt, "-", apt);
     }
+    data.strApt = append(data.strApt, "-", apt);
     return true;
   }
 
-  static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(?:(\\S*\\d\\S*) +)?(.*?)[, ]+([A-Z]{2})(?: +\\d{5})?");
+  static final Pattern CITY_ST_ZIP_PTN = Pattern.compile("(?:(\\S*\\d\\S*|[A-Z]) +)?(.*?)[, ]+([A-Z]{2})(?: +\\d{5})?");
   static final Pattern SECTOR_CITY_PTN = Pattern.compile("(.*\\bSECTOR) +(.*)", Pattern.CASE_INSENSITIVE);
 
   private String parseTrailApt(String apt, Data data) {
