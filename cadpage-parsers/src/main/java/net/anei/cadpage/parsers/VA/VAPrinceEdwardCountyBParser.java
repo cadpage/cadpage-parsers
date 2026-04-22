@@ -20,7 +20,7 @@ public class VAPrinceEdwardCountyBParser extends MsgParser {
   }
 
   private static final Pattern LEAD_ID_PTN = Pattern.compile("(FECC\\d{2}-\\d{5}) +");
-  private static final Pattern UNIT_PTN = Pattern.compile(" *\\b((?:(?:[A-Z]+\\d+|\\d{2}|MRS|PER)\\b[; ]*)+)\\b(?: +|$)");
+  private static final Pattern UNIT_PTN = Pattern.compile(" *\\b((?:(?:[A-Z]+\\d+|\\d{1,2}(?!YO)[A-Z]+|\\d{2,3}|FOR|HAM|MRS|PER)\\b[; ]*)+)\\b(?: +|$)");
   private static final Pattern UNIT_DELIM_PTN = Pattern.compile("[; ]+");
   private static final Pattern INFO_DELIM_PTN = Pattern.compile("[; ]+\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - +");
 

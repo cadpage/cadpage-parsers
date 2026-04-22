@@ -12,10 +12,10 @@ public class WASnohomishCountyCParser extends HtmlProgramParser {
     super("SNOHOMISH COUNTY", "WA",
           "UNIT PRI! RESPOND_TO:ADDR! ROOM:APT! INFO! INFO/N+ FOR:FOR_INFO! INFO/N+ NAME:NAME!");
   }
-  
+
   private static final Pattern SUBJECT_PATTERN
     = Pattern.compile("Trip Notification TRIP-(\\d{5})");
-  
+
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     Matcher m = SUBJECT_PATTERN.matcher(subject);
@@ -29,7 +29,7 @@ public class WASnohomishCountyCParser extends HtmlProgramParser {
   public String getProgram() {
     return "ID " + super.getProgram();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("UNIT")) return new UnitField("([A-Z0-9]+) YOU HAVE A CALL.*", true);
@@ -41,7 +41,7 @@ public class WASnohomishCountyCParser extends HtmlProgramParser {
     if (name.equals("NAME")) return new MyNameField();
     return super.getField(name);
   }
-  
+
   private static final Pattern STATE_ZIP_PATTERN = Pattern.compile("([A-Z]{2})?\\b *\\b(\\d{5})?");
   private class MyAddressField extends AddressField {
     @Override
@@ -51,6 +51,8 @@ public class WASnohomishCountyCParser extends HtmlProgramParser {
         data.strPlace = field.substring(0, ndx).trim();
         field = field.substring(ndx+3).trim();
       }
+      field = stripFieldEnd(field, ",");
+      field = stripFieldEnd(field, ",");
       Parser p = new Parser(field);
       String city = p.getLastOptional(',');
       Matcher m = STATE_ZIP_PATTERN.matcher(city);
@@ -62,13 +64,13 @@ public class WASnohomishCountyCParser extends HtmlProgramParser {
       if (city.length() > 0) data.strCity = city;
       super.parse(p.get(), data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "PLACE " + super.getFieldNames()+" CITY ST";
     }
   }
-  
+
   private static final Pattern UNKNOWN_PTN = Pattern.compile("(?:[ \\w]+: *)(?:Unknown|)");
   private class MyInfoField extends InfoField {
     @Override
@@ -77,7 +79,7 @@ public class WASnohomishCountyCParser extends HtmlProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private static final Pattern APT_PTN = Pattern.compile("(?:ROOM|RM|APT|SUITE|LOT)?[ #]*(.*)", Pattern.CASE_INSENSITIVE);
   private class MyAptField extends AptField {
     @Override
@@ -87,7 +89,7 @@ public class WASnohomishCountyCParser extends HtmlProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class ForInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -95,7 +97,7 @@ public class WASnohomishCountyCParser extends HtmlProgramParser {
       data.strSupp = append(field, "\n", data.strSupp);
     }
   }
-  
+
   private class MyNameField extends NameField {
     @Override
     public void parse(String field, Data data) {

@@ -20,7 +20,10 @@ public class ZCAABFoothillsCountyParser extends DispatchA71Parser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = body.replace('\n', ' ');
-    return super.parseMsg(body, data);
+    if (!super.parseMsg(body, data)) return false;
+    int pt = data.strAddress.indexOf(',');
+    if (pt >= 0) data.strAddress = data.strAddress.substring(0,pt).trim();
+    return true;
   }
 
   @Override

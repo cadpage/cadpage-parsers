@@ -25,9 +25,15 @@ public class INPorterCountyParser extends DispatchH03Parser {
   }
 
   @Override
-  public boolean parseMsg(String subject, String body, Data data) {
+  public boolean parseHtmlMsg(String subject, String body, Data data) {
 
-    if (!super.parseMsg(subject, body, data)) return false;
+    if (!super.parseHtmlMsg(subject, body, data)) return false;
+
+    int pt = data.strAddress.indexOf(',');
+    if (pt >= 0) {
+      data.strCity = data.strAddress.substring(pt+1).trim();
+      data.strAddress = data.strAddress.substring(0,pt).trim();
+    }
 
     // Winfield TWP is in Lake county
     if (data.strCity.equals("Crown Point") ||

@@ -28,6 +28,7 @@ public class NCDavieCountyBParser extends MsgParser {
   private static final Pattern DATE_TIME_ID_PTN = Pattern.compile("(.*) (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) (\\d{11}) (.*)");
   private static final Pattern INFO_BRK_PTN = Pattern.compile("[; ]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - +");
   private static final Pattern ADDR_CITY_ST_PTN = Pattern.compile("([^,]+), *([A-Z ]*)(?:, *([A-Z]{2}) +(?:(\\d{5}) +)?|\\b +)");
+  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +\\d{5})?");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -114,6 +115,17 @@ public class NCDavieCountyBParser extends MsgParser {
         body = body.substring(0,pt).trim();
       }
       body = parseTrailGPS(body, data);
+      if (data.strCity.isEmpty()) {
+        Parser p = new Parser(body);
+        String city = p.getLastOptional(',');
+        match = ST_ZIP_PTN.matcher(city);
+        if (match.matches()) {
+          data.strState = match.group(1);
+          city = p.getLastOptional(',');
+        }
+        data.strCity = city;
+        body = p.get();
+      }
       parseAddress(body, data);
     }
     return true;

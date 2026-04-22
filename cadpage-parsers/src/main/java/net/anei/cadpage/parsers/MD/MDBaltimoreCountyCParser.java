@@ -23,9 +23,26 @@ public class MDBaltimoreCountyCParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("DATE")) return new DateField("\\d\\d/\\d\\d/\\d{4}", true);
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     return super.getField(name);
   }
 
+  private class MyAddressField extends AddressField {
+    @Override
+      public void parse(String field, Data data) {
+      int pt = field.indexOf(';');
+      if (pt >= 0) {
+        data.strPlace = field.substring(0,pt).trim();
+        field = field.substring(pt+1).trim();
+      }
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "PLACE " + super.getFieldNames();
+    }
+  }
 }

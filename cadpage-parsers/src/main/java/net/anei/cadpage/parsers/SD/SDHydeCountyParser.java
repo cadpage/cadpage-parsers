@@ -22,7 +22,7 @@ public class SDHydeCountyParser extends MsgParser {
     return "Zuercher@co.hughes.sd.us";
   }
 
-  private static final Pattern MASTER = Pattern.compile("Location: (.*?)(?:, *([A-Z ]+))?(?:, *([A-Z]{2})(?: (\\d{5}))?)? /+(?:([^/]*) CFS Type: (.*) )?/+ ([^/]*)\\. \\. (.*)\\. \\. \\.(?: (.*))?");
+  private static final Pattern MASTER = Pattern.compile("Location: (.*?)(?:, *([A-Za-z ]+))?(?:, *([A-Z]{2})(?: (\\d{5}))?)? /+(?:([^/]*) CFS Type: (.*) )?/+ ([^/]*)\\. \\. (.*)\\. \\. \\.(?: (.*))?");
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     Matcher match = MASTER.matcher(body);

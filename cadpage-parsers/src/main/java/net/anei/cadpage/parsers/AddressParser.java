@@ -15,7 +15,7 @@ public class AddressParser {
   private String place, apt, addrExt, state;
 
   private static final Pattern ADDR_GPS_PTN = Pattern.compile("[-+]?(?:\\d+ +\\d+ +)?\\d+\\.\\d+\\b.*|Y:.*");
-  private static final Pattern ADDR_APT_PTN0 = Pattern.compile("#(\\S*\\d\\S*|[A-Z])\\b *(.*)");
+  private static final Pattern ADDR_APT_PTN0 = Pattern.compile("#((?:\\S*\\d\\S*|[A-Z])(?: +(?:BED|SLIP)\\b.*)?)\\b *(.*)");
   private static final Pattern ADDR_APT_PTN1 = Pattern.compile("(.*?)\\b(?:APARTMENT(?! BUILDING| NUMBER)|APT|LOT|RM|(?<!UPPER )ROOM(?! NUMBER)|SUITE|UNIT)[:#\\. ]+(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_APT_PTN2 = Pattern.compile("(.*)# *((?:\\S*\\d\\S*|[A-Z])\\b.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_APT_PTN3 = Pattern.compile("(?:APARTMENT(?!S)|APT(?!S)|LOT|RM|ROOM|SUITE|UNIT)?[# ]*([A-Z]?-?\\d+-?[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE);

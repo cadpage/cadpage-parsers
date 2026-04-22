@@ -162,8 +162,18 @@ public class MDBaltimoreCountyBParser extends FieldProgramParser {
         if (type.equals("BLDG")) apt = append(type, " ", apt);
       }
 
+      int pt = field.indexOf(';');
+      if (pt >= 0) {
+        data.strPlace = field.substring(0,pt).trim();
+        field = field.substring(pt+1).trim();
+      }
       super.parse(field, data);
       data.strApt = append(data.strApt, " ", apt);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "PLACE " + super.getFieldNames();
     }
   }
 

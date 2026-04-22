@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.AddressParser;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
@@ -31,6 +32,7 @@ public class ILWabashCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField(DATE_TIME_FMT, true);
+    if (name.equals("ADDR")) return new AddressField(new AddressParser(";"));
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }

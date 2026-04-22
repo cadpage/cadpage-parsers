@@ -69,6 +69,11 @@ public class SDEdmundsCountyParser extends FieldProgramParser {
         }
       }
       super.parse(field, data);
+      int pt = data.strAddress.indexOf(',');
+      if (pt >= 0) {
+        data.strPlace = data.strAddress.substring(pt+1).trim();
+        data.strAddress = data.strAddress.substring(0,pt).trim();
+      }
     }
   }
 
@@ -79,7 +84,7 @@ public class SDEdmundsCountyParser extends FieldProgramParser {
       if (GPS_PTN.matcher(field).matches()) {
         setGPSLoc(field, data);
       } else {
-        data.strPlace = field;
+        data.strPlace = append(data.strPlace, " - ", field);
       }
     }
 

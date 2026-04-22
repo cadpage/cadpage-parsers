@@ -3,6 +3,7 @@ package net.anei.cadpage.parsers.PA;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.AddressParser;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
@@ -24,11 +25,10 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
 
   private static final Pattern LEAD_ID_PTN = Pattern.compile("(\\d{7}) +");
   private static final Pattern LEAD_EVENT_PTN = Pattern.compile("EVENT: *([EF]\\d{7})(?: +/([A-Z]{4})| HYDRANT OOS -| [A-Z ]+:)? +");
-  private static final Pattern LEAD_APT_PTN = Pattern.compile("#(\\S+) +");
+  private static final Pattern LEAD_SRC_PTN = Pattern.compile("(?:[A-Z]+:)?#(\\S+) +");
   private static final Pattern SPECIAL_ALERT1_PTN = Pattern.compile("^#([A-Z]\\d+) at (.*?), Note: (.*)");
   private static final Pattern SPECIAL_CITY_PTN = Pattern.compile("(.*?) +([A-Z]{4})");
   private static final Pattern COMMA_DELIM = Pattern.compile(",(?=BOX:|TIME:|NOTES:)");
-  private static final Pattern CITY_COLON_PTN = Pattern.compile(" ([A-Z]{4}):");
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
@@ -84,9 +84,9 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
 
     // Process regular alerts
 
-    match = LEAD_APT_PTN.matcher(body);
+    match = LEAD_SRC_PTN.matcher(body);
     if (match.lookingAt()) {
-      data.strApt = match.group(1);
+      data.strSource = match.group(1);
       body = body.substring(match.end());
     }
 
@@ -110,42 +110,31 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
 
   @Override
   public String getProgram() {
-    return "ID? APT? ADDR? " + super.getProgram();
+    return "ID? SRC? ADDR? " + super.getProgram();
   }
+
+  private static final AddressParser ADDRESS_PARSER = new AddressParser(",:") {
+    @Override
+    public boolean process(char chr, String fld) {
+      if (chr == ',') {
+        setApt(fld);
+        return true;
+      } else {
+        return super.process(chr,  fld);
+      }
+    }
+  };
+
+  private static final Pattern COMMA_APT_PTN = Pattern.compile(", *APT:");
+  private static final Pattern CITY_COLON_PTN = Pattern.compile(" ([A-Z]{4}):");
 
   private static final Pattern APT_PTN = Pattern.compile(", *(?:APT:? *)?([A-Z0-9]+)$");
   private static final Pattern APT_PLACE_PTN = Pattern.compile(": *([^@: ]*?) +@");
 
   protected void parseAddress(String addr, Data data) {
 
-    // Check for trailing apt pattern
-    String apt = "";
-    Matcher match = APT_PTN.matcher(addr);
-    if (match.find()) {
-      apt = match.group(1);
-      addr = addr.substring(0,match.start()).trim();
-    }
-
-    // Break up address by second apt/place pattern
-    match = APT_PLACE_PTN.matcher(addr);
-    if (match.find()) {
-      String newAddr = "";
-      String apt2 = "";
-      int lastPt = 0;
-      do {
-        String temp = addr.substring(lastPt, match.start()).trim();
-        if (lastPt == 0) {
-          newAddr = temp;
-        } else {
-          data.strPlace = append(data.strPlace, " - ", temp);
-        }
-        apt2 = append(apt2, "-", match.group(1));
-        lastPt = match.end();
-      } while (match.find());
-      data.strPlace = append(data.strPlace, " - ", addr.substring(lastPt).trim());
-      addr = newAddr;
-      apt = append(apt2, "-", apt);
-    }
+    addr = COMMA_APT_PTN.matcher(addr).replaceAll(",");
+    addr = ADDRESS_PARSER.parse(addr);
 
     // Strip off trailing city
     parseAddress(StartType.START_OTHER, FLAG_ONLY_CITY | FLAG_ANCHOR_END, addr, data);
@@ -153,14 +142,9 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
 
     addr = stripFieldEnd(addr, ": EST");
     super.parseAddress(addr, data);
+    ADDRESS_PARSER.merge(data);
 
-    data.strApt = append(data.strApt, "-", apt);
-    match = APT_PTN.matcher(data.strPlace);
-    if (match.find()) {
-      data.strApt = append(data.strApt, "-", apt);
-      data.strPlace = data.strPlace.substring(0,match.start()).trim();
-    }
-    match = CITY_COLON_PTN.matcher(data.strAddress);
+    Matcher match = CITY_COLON_PTN.matcher(data.strAddress);
     if (match.find()) {
       String city = PAMontgomeryCountyParser.CITY_CODES.getProperty(match.group(1));
       if (city != null) {

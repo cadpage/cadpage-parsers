@@ -30,13 +30,15 @@ public class MOClayCountyAParser extends FieldProgramParser {
   public boolean parseMsg(String subject, String body, Data data) {
     if (subject.startsWith("CFS - Unit Assigned - ")) {
       setSelectValue("2");
-      return parseFields(body.split("/-/"), data);
+      if (!parseFields(body.split("/-/"), data)) return false;
     } else {
       setSelectValue("1");
       data.strCall = subject;
       body = stripFieldEnd(body, " Please respond immediately.");
-      return super.parseMsg(body, data);
+      if (!super.parseMsg(body, data)) return false;
     }
+    data.strAddress = stripFieldEnd(data.strAddress, ",");
+    return true;
   }
 
   @Override

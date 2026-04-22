@@ -16,7 +16,7 @@ public class NCUnionCountyParser extends DispatchOSSIParser {
   public NCUnionCountyParser() {
     super(CITY_LIST, "UNION COUNTY", "NC",
            "( CANCEL ADDR CITY2 PLACE2 " +
-           "| FYI? ID? ADDR ( CITY ID? | CITY/Z ID | ID? ) CALL! SRC? CH? INFO1/N+? DATETIME ID? UNIT Radio_Channel:CH INFO/N+? GPS1 GPS2 " +
+           "| FYI? ID? ADDRCITYST ( CITY ID? | CITY/Z ID | ID? ) CALL! SRC? CH? INFO1/N+? DATETIME ID? UNIT Radio_Channel:CH INFO/N+? GPS1 GPS2 " +
            ") INFO/N+");
     setupSaintNames("JOHNS", "SIMONS");
     setupProtectedNames("BURGESS AND HELMS", "SUGAR AND WINE");
