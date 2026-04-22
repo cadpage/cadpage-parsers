@@ -14,8 +14,8 @@ public class AddressParser {
 
   private String place, apt, addrExt, state;
 
-  private static final Pattern ADDR_GPS_PTN = Pattern.compile("[-+]?(?:\\d+ +\\d+ +)?\\d+\\.\\d+\\b.*|Y:.*");
-  private static final Pattern ADDR_APT_PTN1 = Pattern.compile("(.*)\\b(?:APARTMENT|APT|LOT|RM|(?<!UPPER )ROOM(?! NUMBER)|SUITE|UNIT)[:# ]+(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_GPS_PTN = Pattern.compile("[-+]?(?:\\d+ +\\d+ +)?\\d+\\.\\d{3,}+\\b.*|Y:.*");
+  private static final Pattern ADDR_APT_PTN1 = Pattern.compile("(.*)\\b(?:APARTMENT(?! NUMBER)|APT|LOT|RM|(?<!UPPER )ROOM(?! NUMBER)|SUITE|UNIT)[:#\\. ]+(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_APT_PTN2 = Pattern.compile("(?:APARTMENT(?!S)|APT(?!S)|LOT|RM|ROOM|SUITE|UNIT)?[# ]*([A-Z]?-?\\d+-?[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_APT_PTN3 = Pattern.compile("APT|LOT|RM|ROOM|SUITE|UNIT", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_EXT_PTN = Pattern.compile("[NSEW]B|MM *\\d+.*");
@@ -99,7 +99,7 @@ public class AddressParser {
 
   protected boolean process(char chr, String fld) {
 
-    if (ADDR_GPS_PTN.matcher(fld).matches()) return false;
+    if (chr == ',' && ADDR_GPS_PTN.matcher(fld).matches()) return false;
 
     Matcher match;
     if (chr == ':') {

@@ -81,6 +81,7 @@ public class DispatchA72Parser extends FieldProgramParser {
         match = SECTOR_CITY_PTN.matcher(city);
         if (match.matches()) {
           city = match.group(2);
+          apt = "";
         }
         data.strCity = city;
         data.strState = state;
