@@ -14,10 +14,11 @@ public class AddressParser {
 
   private String place, apt, addrExt, state;
 
-  private static final Pattern ADDR_GPS_PTN = Pattern.compile("[-+]?(?:\\d+ +\\d+ +)?\\d+\\.\\d{3,}+\\b.*|Y:.*");
-  private static final Pattern ADDR_APT_PTN1 = Pattern.compile("(.*)\\b(?:APARTMENT(?! NUMBER)|APT|LOT|RM|(?<!UPPER )ROOM(?! NUMBER)|SUITE|UNIT)[:#\\. ]+(.*)", Pattern.CASE_INSENSITIVE);
-  private static final Pattern ADDR_APT_PTN2 = Pattern.compile("(?:APARTMENT(?!S)|APT(?!S)|LOT|RM|ROOM|SUITE|UNIT)?[# ]*([A-Z]?-?\\d+-?[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE);
-  private static final Pattern ADDR_APT_PTN3 = Pattern.compile("APT|LOT|RM|ROOM|SUITE|UNIT", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_GPS_PTN = Pattern.compile("[-+]?(?:\\d+ +\\d+ +)?\\d+\\.\\d+\\b.*|Y:.*");
+  private static final Pattern ADDR_APT_PTN1 = Pattern.compile("(.*?)\\b(?:APARTMENT(?! BUILDING| NUMBER)|APT|LOT|RM|(?<!UPPER )ROOM(?! NUMBER)|SUITE|UNIT)[:#\\. ]+(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_APT_PTN2 = Pattern.compile("(.*)# *((?:\\S*\\d\\S*|[A-Z])\\b.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_APT_PTN3 = Pattern.compile("(?:APARTMENT(?!S)|APT(?!S)|LOT|RM|ROOM|SUITE|UNIT)?[# ]*([A-Z]?-?\\d+-?[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_APT_PTN4 = Pattern.compile("APT|LOT|RM|ROOM|SUITE|UNIT", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_EXT_PTN = Pattern.compile("[NSEW]B|MM *\\d+.*");
 
   public AddressParser() {
@@ -110,8 +111,11 @@ public class AddressParser {
       setPlace(match.group(1).trim());
       setApt(match.group(2).trim());
     } else if ((match = ADDR_APT_PTN2.matcher(fld)).matches()) {
+      setPlace(match.group(1).trim());
+      setApt(match.group(2).trim());
+    } else if ((match = ADDR_APT_PTN3.matcher(fld)).matches()) {
       setApt(match.group(1).trim());
-    } else if (ADDR_APT_PTN3.matcher(fld).matches()) {
+    } else if (ADDR_APT_PTN4.matcher(fld).matches()) {
     } else if (ADDR_EXT_PTN.matcher(fld).matches()) {
       addrExt = append(fld, " ", addrExt);
     } else if (statePtn != null && statePtn.matcher(fld).matches()) {
@@ -135,6 +139,7 @@ public class AddressParser {
   }
 
   protected void setPlace(String fld) {
+    place = MsgParser.stripFieldEnd(place, "#");
     place = append(fld, " - ", place);
   }
 

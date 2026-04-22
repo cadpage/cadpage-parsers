@@ -19,7 +19,7 @@ public class WAClallamCountyAParser extends SmartAddressParser {
     return "Dispatch@co.clallam.wa.us";
   }
 
-  private static final Pattern MASTER = Pattern.compile("(?:(.*?) )?(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) (\\*New Call|911Hangup|[-A-Za-z]+) (?:([- A-Za-z0-9]+?) )? (?:(.*?) )?(\\d{4}-\\d{8})(?:  (.*))?");
+  private static final Pattern MASTER = Pattern.compile("(?:(.*?),? )?(\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d) (\\*New Call|911Hangup|[-A-Za-z]+) (?:([- A-Za-z0-9]+?) )? (?:(.*?) )?(\\d{4}-\\d{8})(?:  (.*))?");
   private static final Pattern MSPACE_PTN = Pattern.compile(" {2,}");
   private static final Pattern APT_PLACE_PTN = Pattern.compile("(?:#|APT|SUIT) *(\\S+) *(.*)");
   private static final Pattern INFO_JUNK_PTN = Pattern.compile("\\bDispatch received by unit \\S+\\b|\\bCall Number \\d+ was created from Call Number \\d+(?:\\([A-za-z0-9 :]*\\))?|(?:  |^)E911 Info.*");
