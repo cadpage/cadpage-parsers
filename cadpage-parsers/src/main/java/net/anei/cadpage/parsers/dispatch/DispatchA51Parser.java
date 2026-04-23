@@ -64,7 +64,7 @@ public class DispatchA51Parser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new BaseDateTimeField();
     if (name.equals("ADDRCITY")) return new BaseAddressCityField();
     if (name.equals("PLACE_MAP")) return new BasePlaceMapField();
-    if (name.equals("GPS0")) return new GPSField("\\(([-+]?\\d+\\.\\d+, *[-+]?\\d+\\.\\d+)\\)", true);
+    if (name.equals("GPS0")) return new GPSField("\\(([-+]?\\d+\\.\\d+, *[-+]?\\d+\\.\\d+|0, *0)\\)", true);
     if (name.equals("ID")) return new BaseIdField();
     if (name.equals("UNIT")) return new BaseUnitField();
     if (name.equals("INFO")) return new BaseInfoField();
@@ -194,7 +194,7 @@ public class DispatchA51Parser extends FieldProgramParser {
     }
 
   }
-  
+
   private class BaseIdField extends IdField {
     @Override
     public void parse(String field, Data data) {
