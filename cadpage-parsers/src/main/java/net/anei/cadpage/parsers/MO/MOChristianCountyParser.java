@@ -9,21 +9,21 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class MOChristianCountyParser extends FieldProgramParser {
 
   public MOChristianCountyParser() {
-    super("CHRISTIAN COUNTY", "MO", 
+    super("CHRISTIAN COUNTY", "MO",
           "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! ID:ID! XST:X! DATE:DATETIME! UNIT:UNIT! INFO:INFO! INFO/N+");
   }
 
   @Override
   public String getFilter() {
-    return "ccespage@cces911.org";
+    return "ccespage@cces911.org,ccespaging@christiancounty911.onmicrosoft.com";
   }
-  
+
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("!")) return false;
     return parseFields(body.split("\n"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
