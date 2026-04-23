@@ -4,23 +4,43 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
+import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchA24Parser;
 
 /**
  * Madison County, KY
  */
-public class KYMadisonCountyParser extends DispatchA27Parser {
-  
+public class KYMadisonCountyParser extends DispatchA24Parser {
+
   public KYMadisonCountyParser() {
-    super("MADISON COUNTY", "KY", "[A-Z]{1,4}\\d*");
+    super("MADISON COUNTY", "KY");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
-  
+
   @Override
   public String getFilter() {
-    return "noreply@cisusa.org,noreply@cisusa.org";
+    return "paging@10-8systems.com";
   }
-  
+
+  private static final Pattern ADDRESS_ALERT_PTN = Pattern.compile("ADDRESS ALERT #\\d+: *(.*)");
+  @Override
+  public boolean parseMsg(String subject, String body, Data data) {
+
+    if (subject.equals("ADDRESS ALERT")) {
+      setFieldList("CALL INFO");
+      data.strCall = subject;
+      for (String line : body.split("\n")) {
+        line = line.trim();
+        Matcher match = ADDRESS_ALERT_PTN.matcher(line);
+        if (match.matches()) line = match.group(1);
+        data.strSupp = append(data.strSupp, "\n", line);
+      }
+      return true;
+    } else {
+      return super.parseMsg(body, data);
+    }
+  }
+
   @Override
   protected String adjustGpsLookupAddress(String address) {
     address = address.toUpperCase();
@@ -72,8 +92,8 @@ public class KYMadisonCountyParser extends DispatchA27Parser {
       "I75 102", "37.93628,-84.37782",
       "I75 103", "37.94960,-84.38571",
       "I75 104", "37.96370,-84.38873",
-      
+
       "WELLS RD", "37.878589,-84.335884"
   });
- 
+
 }
