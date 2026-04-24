@@ -1,86 +1,58 @@
 package net.anei.cadpage.parsers.MI;
 
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 
 /**
  * Lake County, MI
  */
-public class MILakeCountyParser extends DispatchOSSIParser {
+public class MILakeCountyParser extends FieldProgramParser {
 
   public MILakeCountyParser() {
-    super(CITY_CODES, "LAKE COUNTY", "MI",
-          "( CANCEL ADDR CITY! INFO/N+ " +
-          "| FYI? CALL ADDR! ( X/Z X/Z CITY | X/Z CITY | CITY | X+? ) INFO/N+ )");
+    super("LAKE COUNTY", "MI",
+          "GPS1 GPS2 CALL PLACE ADDRCITYST ID INFO/N+? PHONE/Z EMPTY! END");
   }
 
   @Override
   public String getFilter() {
-    return "CAD@co.lake.mi.us";
+    return "csproreports@gmail.com";
   }
 
-  private static final Pattern YATES_FD_PFX = Pattern.compile("yatesfd\\d?\n(\\d\\d?/\\d\\d?/\\d{4}) @ (\\d\\d)(\\d\\d)\\n *");
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
   @Override
   protected boolean parseMsg(String body, Data data) {
-    Matcher match = YATES_FD_PFX.matcher(body);
-    if (match.lookingAt()) {
-      data.strDate = match.group(1);
-      data.strTime = match.group(2)+':'+match.group(3);
-      body = "CAD:" + body.substring(match.end());
-    } else if (!body.startsWith("CAD:")) {
-      body = "CAD:" + body;
-    }
-    return super.parseMsg(body, data);
+    return parseFields(body.split(";", -1), data);
   }
 
-  private static final Properties CITY_CODES = buildCodeTable(new String[]{
-      "B",    "BALDWIN",
-      "BA",   "BALDWIN",
-      "BAL",  "BALDWIN",
-      "BALD", "BALDWIN",
-      "C",    "",
-      "CH",   "CHASE TWP",
-      "CHA",  "CHASE TWP",
-      "CHAS", "CHASE TWP",
-      "CH",   "CHERRY VALLEY TWP",
-      "CHE",  "CHERRY VALLEY TWP",
-      "CHER", "CHERRY VALLEY TWP",
-      "EDEN", "EDEN TWP",
-      "ELK",  "ELK TWP",
-      "I",    "IRONS",
-      "IR",   "IRONS",
-      "IRO",  "IRONS",
-      "IRON", "IRONS",
-      "P",    "",
-      "PE",   "PEACOCK TWP",
-      "PEA",  "PEACOCK TWP",
-      "PEAC", "PEACOCK TWP",
-      "PI",   "PINORA",
-      "PIN",  "PINORA TWP",
-      "PINO", "PINORA TWP",
-      "PL",   "PLEASANT PLAINS TWP",
-      "PLE",  "PLEASANT PLAINS TWP",
-      "PLEA", "PLEASANT PLAINS TWP",
-      "S",    "",
-      "SA",   "SAUBLE TWP",
-      "SAU",  "SAUBLE TWP",
-      "SAUB", "SAUBLE TWP",
-      "SW",   "SWEETWATER TWP",
-      "SWE",  "SWEETWATER TWP",
-      "SWEE", "SWEETWATER TWP",
-      "W",    "WEBBER TWP",
-      "WE",   "WEBBER TWP",
-      "WEB",  "WEBBER TWP",
-      "WEBB", "WEBBER TWP",
-      "Y",    "YATES TWP",
-      "YA",   "YATES TWP",
-      "YAT",  "YATES TWP",
-      "YATE", "YATES TWP"
-  });
+  private static final Pattern GPS_PTN = Pattern.compile("[-}]?\\d{2}\\.\\d{6,}|None");
 
+  @Override
+  public Field getField(String name) {
+    if (name.equals("GPS1")) return new GPSField(1, GPS_PTN);
+    if (name.equals("GPS2")) return new GPSField(2, GPS_PTN);
+    if (name.equals("ID")) return new IdField("[A-Z]+\\d{2}-\\d{5}", true);
+    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("PHONE")) return new PhoneField("(\\d{3}-\\d{3}-\\d{4})|None()", true);
+    return super.getField(name);
+  }
+
+  private static final Pattern INFO_HDR_PTN = Pattern.compile("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - *");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      Matcher match = INFO_HDR_PTN.matcher(field);
+      if (match.lookingAt()) field = field.substring(match.end());
+      super.parse(field, data);
+
+    }
+  }
 }
