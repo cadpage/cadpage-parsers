@@ -9,10 +9,19 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class NCStanlyCountyCParser extends FieldProgramParser {
 
   public NCStanlyCountyCParser() {
-    super("STANLY COUNTY", "NC",
+    this("STANLY COUNTY", "NC");
+  }
+
+  public NCStanlyCountyCParser(String defCity, String defState) {
+    super(defCity, defState,
           "( SELECT/1 DISP ID CALL ADDRCITYST1 X! ( END | GPS EMPTY UNIT! ) " +
           "| CALL CALL/SDS ADDRCITYST2! " +
           ") END");
+  }
+
+  @Override
+  public String getAliasCode() {
+    return "NCStanlyCounty";
   }
 
   @Override
@@ -30,7 +39,7 @@ public class NCStanlyCountyCParser extends FieldProgramParser {
     } else {
       setSelectValue("1");
       if (!body.endsWith("~")) return false;
-      body = body.substring(0, body.length()-1).trim();
+      body = body.substring(0, body.length()-1);
     }
     return parseFields(DELIM.split(body, -1), data);
   }
