@@ -8,17 +8,18 @@ public class TXHelotesParser extends DispatchA53Parser {
 
   public TXHelotesParser() {
     super(CITY_LIST, "HELOTES", "TX");
+    setupProtectedNames("BAR X");
   }
-  
+
   @Override
   public String getFilter() {
     return "@Helotes-TX.gov";
   }
-  
+
   private static final String[] CITY_LIST = new String[]{
     "GREY FOREST",
     "HELOTES",
     "SAN ANTONIO"
   };
-  
+
 }

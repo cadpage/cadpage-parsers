@@ -66,7 +66,7 @@ public class TXTravisCountyAParser extends MsgParser {
   }
 
   private static final Pattern MASTER2 =
-      Pattern.compile("From - ?(NON - ADVI|[A-Z0-9]+) ?- ?\\d? ?Alarm / ?(.*?) (?:Pri (\\d+) +)?(?:Box|BOX|\\| RAP) - ?([-A-Z0-9]*) ?@ ?(.*?) (?:\\| )?XStreets: *(.*?)[ \\|]+?On - ?([ A-Z0-9]*)\\|? Time:[ \\|]*(?:(\\d\\d:\\d\\d:\\d\\d)|(\\d\\d:\\d\\d [AP]M))[ \\|]+Inc# ?(\\d+)(?: Case Num:([-A-Z0-9]*))?[ \\|]+For - ?([A-Z0-9,]*)(?: Lat: ?(\\d+) Lon: ?(\\d+))?");
+      Pattern.compile("From - ?(NON - ADVI|[A-Z0-9]+) *- ?\\d? ?Alarm / ?(.*?) (?:Pri (\\d+) +)?(?:Box|BOX|\\| RAP) - ?([-A-Z0-9]*) ?@ ?(.*?) (?:\\| )?XStreets: *(.*?)[ \\|]+?On - ?([ A-Z0-9]*)\\|? Time:[ \\|]*(?:(\\d\\d:\\d\\d:\\d\\d)|(\\d\\d:\\d\\d [AP]M))[ \\|]+Inc# ?(\\d+)(?: Case Num:([-A-Z0-9]*))?[ \\|]+For - ?([A-Z0-9,]*)(?: +Lat: ?(\\d+) +Lon: ?(\\d+))?");
   private static final Pattern CROSS_PTN = Pattern.compile("(?:(?:N?o )?CrossStreet Found)?/?(.*?)/?(?:No CrossStreet Found)?");
 
   private boolean parseFmt2(String body, Data data) {
@@ -116,7 +116,7 @@ public class TXTravisCountyAParser extends MsgParser {
   }
 
   private static final Pattern MASTER4 =
-      Pattern.compile("DISPATCH ALERT!! Inc #:(\\S*) Map:(\\S*) Location:(.*?) Prem:(.*?) Bldg:(\\S*) Apt:(\\S*) City:(.*?) Zip:\\S* Problem:(.*?) (?:Pri (\\S*) )?Unit:(\\S*)");
+      Pattern.compile("DISPATCH ALERT!! Inc #:(\\S*) Map:(\\S*) Location:(.*?) Prem:(.*?) Bldg:(.*?) Apt:(.*?) City:(.*?) Zip:\\S* Problem:(.*?) (?:Pri (\\S*) )?Unit:(\\S*)");
 
   private boolean parseFmt4(String body, Data data) {
     setFieldList("INFO ID MAP ADDR PLACE APT CITY CALL PRI UNIT");
@@ -126,9 +126,9 @@ public class TXTravisCountyAParser extends MsgParser {
     data.strMap = match.group(2);
     parseAddress(match.group(3).trim(), data);
     data.strPlace = getOptGroup(match.group(4));
-    data.strApt = append(data.strApt, "-", match.group(5));
-    data.strApt = append(data.strApt, "-", match.group(6));
-    data.strCity = match.group(7).trim();
+    data.strApt = append(data.strApt, "-", match.group(5).trim());
+    data.strApt = append(data.strApt, "-", match.group(6).trim());
+    data.strCity = convertCodes(match.group(7).trim(), CITY_CODES);
     data.strCall =  match.group(8).trim();
     data.strPriority = getOptGroup(match.group(9));
     data.strUnit =  match.group(10);
@@ -150,15 +150,15 @@ public class TXTravisCountyAParser extends MsgParser {
   }
 
   private static final Pattern MASTER6 =
-      Pattern.compile("Closest \\*+TRAUMA FACILITY\\*+ to (.*?): +(.*)");
+      Pattern.compile("Closest \\*+([A-Z ]+)\\*+ to (.*?): +(.*)");
 
   private boolean parseFmt6(String body, Data data) {
     setFieldList("CALL ADDR CITY APT INFO");
     Matcher match = MASTER6.matcher(body);
     if (!match.matches()) return false;
-    data.strCall = "Closest Trauma Facility";
-    parseAddress(match.group(1).trim(), data);
-    data.strSupp = stripFieldEnd(match.group(2).trim(), "[Shared]").replace(" | ", "\n");
+    data.strCall = "Closest " + match.group(1).trim();
+    parseAddress(match.group(2).trim(), data);
+    data.strSupp = stripFieldEnd(match.group(3).trim(), "[Shared]").replace(" | ", "\n");
     return true;
   }
 
@@ -169,7 +169,20 @@ public class TXTravisCountyAParser extends MsgParser {
       data.strCity = convertCodes(addr.substring(pt+1).trim(), CITY_CODES);
       addr = addr.substring(0,pt).trim();
     }
+
+    pt = addr.indexOf('[');
+    if (pt >= 0) addr = addr.substring(0,pt).trim();
+
+    String apt = "";
+    pt = addr.indexOf(',');
+    if (pt >= 0) {
+      apt = addr.substring(pt+1).trim();
+      addr = addr.substring(0,pt).trim();
+    }
+
     super.parseAddress(addr, data);
+
+    data.strApt = append(data.strApt, "-", apt);
   }
 
   private static String fixGPS(String gps) {

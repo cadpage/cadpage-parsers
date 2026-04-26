@@ -106,7 +106,7 @@ public class DispatchA53Parser extends SmartAddressParser {
       String field2 = fields[2].trim();
       if (field2.equals("NONE")) {
         addr = field1;
-      } else if (checkAddress(field1) >= checkAddress(field2)) {
+      } else if (checkAddress(field1, 1) >= checkAddress(field2)) {
         addr = field1;
         data.strCross = field2;
         if (data.strCross.equals("NONE")) data.strCross = "";
@@ -128,7 +128,7 @@ public class DispatchA53Parser extends SmartAddressParser {
       return false;
     }
 
-    parseAddress(addr.replace('@', '&'), data);
+    parseAddress(StartType.START_ADDR, FLAG_RECHECK_APT | FLAG_ANCHOR_END, addr.replace('@', '&'), data);
     return true;
   }
 
