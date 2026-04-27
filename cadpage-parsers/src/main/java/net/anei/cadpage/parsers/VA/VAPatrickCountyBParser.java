@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.VA;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
@@ -30,6 +31,8 @@ public class VAPatrickCountyBParser extends DispatchA76Parser {
   }
 
   private static final Pattern BAD_PIPE_PTN = Pattern.compile("\\b(?:APT|APARTMENT|UNIT)\\|");
+  private static final Pattern ZIP_APT_PTN = Pattern.compile("(\\d{5})\\b[, ]*(.*)");
+  private static final Pattern BAD_CITY_PTN = Pattern.compile("(?!\\d{5}$).*\\d.*");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -42,6 +45,15 @@ public class VAPatrickCountyBParser extends DispatchA76Parser {
       if (body.length() >= 128 && body.length() <= 131) data.expectMore = true;
     }
     body = body.replace("| ", " | ");
-    return super.parseMsg(body, data);
+    if (!super.parseMsg(body, data)) return false;
+    Matcher match = ZIP_APT_PTN.matcher(data.strCity);
+    if (match.matches()) {
+      data.strCity = match.group(1);
+      data.strApt = append(data.strApt, ", ", match.group(2));
+    } else if (BAD_CITY_PTN.matcher(data.strCity).matches()) {
+      data.strApt = append(data.strApt, ", ", data.strCity);
+      data.strCity = "";
+    }
+    return true;
   }
 }
