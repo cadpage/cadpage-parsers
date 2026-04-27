@@ -103,6 +103,7 @@ public class OHMeigsCountyParser extends SmartAddressParser {
           parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, body, data);
           body = getLeft();
         }
+        if (data.strCity.equalsIgnoreCase("RAVENSWOOD")) data.strState = "WV";
       }
 
       // Hope this never happens
@@ -158,6 +159,9 @@ public class OHMeigsCountyParser extends SmartAddressParser {
       // Athens County
       "ALBANY",
       "SHADE",
-      "COOLVILLE"
+      "COOLVILLE",
+
+      // Jackson COunty, WV
+      "RAVENSWOOD"
   };
 }
