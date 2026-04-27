@@ -22,6 +22,13 @@ public class PANorthamptonCountyBParser extends FieldProgramParser {
   }
 
   @Override
+  protected boolean parseMsg(String body, Data data) {
+    int pt = body.indexOf("\n<em>");
+    if (pt >=  0) body = body.substring(0,pt).trim();
+    return super.parseMsg(body, data);
+  }
+
+  @Override
   public Field getField(String name) {
     if (name.equals("UNIT_CALL_ADDR_CITY"))  return new MyUnitCallAddressCityField();
     if (name.equals("X")) return new MyCrossField();
@@ -34,6 +41,8 @@ public class PANorthamptonCountyBParser extends FieldProgramParser {
   private class MyUnitCallAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      int pt = field.indexOf('\n');
+      if (pt >= 0) field = field.substring(pt+1).trim();
       Matcher match = UNIT_CALL_ADDR_PTN.matcher(field);
       if (!match.matches()) abort();
       data.strUnit = match.group(1);
