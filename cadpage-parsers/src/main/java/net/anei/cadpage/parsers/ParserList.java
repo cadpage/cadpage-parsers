@@ -266,6 +266,7 @@ public class ParserList {
               ,"CASuisunCity"                   ,"Suisun City, CA"
               ,"CASutterCounty"                 ,"Sutter County, CA"
               ,"CATehamaCounty"                 ,"Tehama County, CA"
+              ,"CATrinityCounty"                ,"Trinity County, CA"
               ,"CATulareCounty"                 ,"Tulare County, CA"
               ,"CATuolumneCounty"               ,"Tuolumne County, CA"
               ,"CAVenturaCounty"                ,"Ventura County, CA"

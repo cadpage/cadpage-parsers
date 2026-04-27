@@ -344,6 +344,7 @@ public class Active911ParserTable {
       "US/CA/StutsmanCounty",             "CATuolumneCounty",
       "US/CA/Suisun",                     "CASuisunCityA",
       "US/CA/TravisAFB",                  "CASolanoCountyE",
+      "US/CA/TrinityCounty",              "CATrinityCounty",
       "US/CA/TulareCounty",               "CATulareCountyA",
       "US/CA/TulareCountySpillman",       "CATulareCountyC",
       "US/CA/TuolumneCounty",             "CATuolumneCounty",
