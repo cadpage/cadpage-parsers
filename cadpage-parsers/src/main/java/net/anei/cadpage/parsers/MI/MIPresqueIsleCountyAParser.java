@@ -14,6 +14,11 @@ public class MIPresqueIsleCountyAParser extends DispatchOSSIParser {
   }
 
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  @Override
   protected boolean parseMsg(String body, Data data) {
     if (!body.startsWith("CAD:")) body = "CAD: " + body;
     body = body.replace('\n', ';');
