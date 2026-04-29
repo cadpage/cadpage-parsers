@@ -15,7 +15,7 @@ public class PALuzerneCountyParser extends DispatchA41Parser {
 
   @Override
   public String getFilter() {
-    return "CADDispatch@LuzerneCounty.org,@zapiermail.com";
+    return "CADDispatch@LuzerneCounty.org,@zapiermail.com,lackawannafirepager@gmail.com,@cad.nepafirephotos.com";
   }
 
   @Override
