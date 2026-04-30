@@ -10,7 +10,7 @@ public class MIVanBurenCountyParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "Dispatchers@vbco.org";
+    return "FlexRapidNotification@dccnotify.com,FRN-vanburencountymi@email.getrave.com";
   }
 
   @Override
