@@ -1953,6 +1953,7 @@ public class Active911ParserTable {
       "US/NJ/SussexCountySheriff",        "NJSussexCountyB,NJSussexCountyF",
       "US/NJ/TomsRiverPolice",            "NJOceanCountyB",
       "US/NJ/UnionBeach",                 "NJMonmouthCountyC",
+      "US/NJ/UnionCounty",                "NJUnionCounty",
       "US/NJ/VernonPolice",               "NJSussexCountyC",
       "US/NJ/VinelandCity",               "NJCumberlandCountyB",
       "US/NJ/VirtuaEMS",                  "NJBurlingtonCountyH",
