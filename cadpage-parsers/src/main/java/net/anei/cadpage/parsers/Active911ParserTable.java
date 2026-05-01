@@ -2860,6 +2860,7 @@ public class Active911ParserTable {
       "US/TX/MaverickCounty",             "TXMaverickCounty",
       "US/TX/McAllen",                    "TXHidalgoCountyC,TXHidalgoCountyE",
       "US/TX/Mcspage",                    "TXVanZandtCountyA,TXVanZandtCountyB",
+      "US/TX/McLennanCFPA",               "TXMcLennanCountyB,TXMcLennanCountyE",
       "US/TX/McLennanCounty",             "TXMcLennanCountyF",
       "US/TX/Medapoint",                  "TXTravisCountyB",
       "US/TX/MedinaCounty",               "TXMedinaCounty",

@@ -11,6 +11,7 @@ public class TXMcLennanCountyParser extends GroupBestParser {
     super(new TXMcLennanCountyAParser(),
           new TXMcLennanCountyBParser(),
           new TXMcLennanCountyDParser(),
+          new TXMcLennanCountyEParser(),
           new TXMcLennanCountyFParser());
   }
 }

@@ -14,12 +14,19 @@ public class TXHuntCountyAParser extends FieldProgramParser {
                ") Notes:INFO/N! INFO/N+");
   }
 
+  public TXHuntCountyAParser(String defCity, String defState) {
+    super(defCity, defState,
+          "PRI! ( INC_#:ID! Run_#:ID/L! Chief_Complaint:CALL! Address:ADDRCITYST! Resources:UNIT! INFO/R! INFO/N+ " +
+               "| Chief_Complaint:CALL! Criteria_Code:CODE! Address:ADDRCITYST! Resources:UNIT! INC_#:ID! Run_#:ID/L! " +
+               ") Notes:INFO/N! INFO/N+");
+  }
+
   @Override
   public String getFilter() {
     return "logissmtp@emsc.net";
   }
 
-  private static final Pattern MISSING_BRK_MARK_PTN = Pattern.compile("[A-Z0-9]+\\*?(?:Chief Complaint:|INC #:)");
+  private static final Pattern MISSING_BRK_MARK_PTN = Pattern.compile("[A-Z0-9+]+\\*?(?:Chief Complaint:|INC #:)");
   private static final Pattern MISSING_BRK_PTN = Pattern.compile("(?<!\n)(?=(?:Chief Complaint|Criteria Code|Address|Resources|INC #|Run #|Notes|Created|Dispatched|Enroute|At Scene|Available):)");
 
   @Override
