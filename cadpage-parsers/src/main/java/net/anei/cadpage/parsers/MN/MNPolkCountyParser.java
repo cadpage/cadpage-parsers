@@ -9,8 +9,17 @@ import net.anei.cadpage.parsers.MsgParser;
 public class MNPolkCountyParser extends MsgParser {
 
   public MNPolkCountyParser() {
-    super("POLK COUNTY", "MN");
+    this("POLK COUNTY", "MN");
+  }
+
+  MNPolkCountyParser(String defCity, String defState) {
+    super(defCity, defState);
     setFieldList("CALL PHONE GPS ADDR APT CITY ST UNIT INFO CODE");
+  }
+
+  @Override
+  public String getAliasCode() {
+    return "MNPolkCounty";
   }
 
   @Override

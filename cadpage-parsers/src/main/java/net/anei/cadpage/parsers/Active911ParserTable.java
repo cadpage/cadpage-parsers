@@ -1410,6 +1410,7 @@ public class Active911ParserTable {
       "US/MN/LyonCounty",                 "MNLyonCounty",
       "US/MN/MankatoPublicSafety",        "MNBlueEarthCounty",
       "US/MN/MaplePlainFD",               "MNHennepinCounty",
+      "US/MN/MarshallCounty",             "MNMarshallCounty",
       "US/MN/MartinCounty",               "MNMartinCounty",
       "US/MN/McLeodCounty",               "MNMcLeodCounty",
       "US/MN/MeekerCounty",               "MNMeekerCounty",
