@@ -1424,6 +1424,7 @@ public class Active911ParserTable {
       "US/MN/OtterTailCounty",            "MNOtterTailCounty",
       "US/MN/PenningtonCounty",           "MNPenningtonCounty",
       "US/MN/PickwickFireRescue",         "MNWinonaCounty",
+      "US/MN/PolkCounty",                 "MNPolkCounty",
       "US/MN/PopeCounty",                 "MNPopeCounty",
       "US/MN/RamseyCounty",               "MNRamseyCounty",
       "US/WI/RedWing",                    "MNGoodhueCounty",

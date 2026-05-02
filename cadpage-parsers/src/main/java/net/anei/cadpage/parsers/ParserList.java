@@ -1025,6 +1025,7 @@ public class ParserList {
               ,"MNOtterTailCounty"              ,"Otter Tail County, MN"
               ,"MNPenningtonCounty"             ,"Pennington County, MN"
               ,"MNPineCounty"                   ,"Pine County, MN"
+              ,"MNPolkCounty"                   ,"Polk County, MN"
               ,"MNPopeCounty"                   ,"Pope County, MN"
               ,"MNRamseyCounty"                 ,"Ramsey County, MN"
               ,"MNRedwoodCounty"                ,"Redwood County, MN"
