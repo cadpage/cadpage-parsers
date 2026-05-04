@@ -1486,6 +1486,7 @@ public class ParserList {
               ,"OHPickawayCounty"               ,"Pickaway County, OH"
               ,"OHPortageCounty"                ,"Portage County, OH"
               ,"OHPrebleCounty"                 ,"Preble County, OH"
+              ,"OHPutnamCounty"                 ,"Putnam County, OH"
               ,"OHRichlandCounty"               ,"Richland County, OH"
               ,"OHSanduskyCounty"               ,"Sandusky County, OH"
               ,"OHShelbyCounty"                 ,"Shelby County, OH"

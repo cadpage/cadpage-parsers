@@ -2218,6 +2218,7 @@ public class Active911ParserTable {
       "US/OH/PlainTWP",                   "OHStarkCountyD",
       "US/OH/PortageCounty",              "OHPortageCountyA,OHPortageCountyB,OHPortageCountyD",
       "US/OH/PrebleCounty",               "OHPrebleCounty",
+      "US/OH/PutnamCounty",               "OHPutnamCounty",
       "US/OH/RichfieldPD",                "OHSummitCountyG,OHSummitCountyH",
       "US/OH/RichlandCounty",             "OHRichlandCounty",
       "US/OH/Sebring",                    "OHMahoningCountyC",
