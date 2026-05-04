@@ -1315,6 +1315,7 @@ public class Active911ParserTable {
       "US/MI/LenaweeCounty",              "MILenaweeCounty",
       "US/MI/LeroyTWPFD",                 "MICalhounCounty",
       "US/MI/LifeEMS",                    "MIAlleganCounty",
+      "US/MI/LivingstonCounty",           "MILivingstonCountyB",
       "US/MI/LSWEmergencySA",             "MIShiawasseeCounty",
       "US/MI/LuceCounty",                 "MILuceCounty",
       "US/MI/MackinacCounty",             "MIMackinacCounty",
