@@ -8,21 +8,21 @@ import net.anei.cadpage.parsers.dispatch.DispatchA20Parser;
  * Hanford, CA
  */
 public class CAHanfordParser extends DispatchA20Parser {
-  
+
   public CAHanfordParser() {
     super(CALL_CODES, "HANFORD", "CA");
   }
-  
+
   @Override
   public String getFilter() {
-    return "@cityofhanfordca.com";
+    return "@cityofhanfordca.com,@lemoorepd.com";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_SUPPR_LA;
   }
-  
+
   private static final Properties CALL_CODES = buildCodeTable(new String[]{
       "ZAMB",            "Medical Aid",
       "ZFALARM",         "Fire Alarm",
