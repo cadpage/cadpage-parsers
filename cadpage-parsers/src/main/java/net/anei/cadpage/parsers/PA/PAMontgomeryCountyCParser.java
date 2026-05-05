@@ -128,9 +128,6 @@ public class PAMontgomeryCountyCParser extends FieldProgramParser {
   private static final Pattern COMMA_APT_PTN = Pattern.compile(", *APT:");
   private static final Pattern CITY_COLON_PTN = Pattern.compile(" ([A-Z]{4}):");
 
-  private static final Pattern APT_PTN = Pattern.compile(", *(?:APT:? *)?([A-Z0-9]+)$");
-  private static final Pattern APT_PLACE_PTN = Pattern.compile(": *([^@: ]*?) +@");
-
   protected void parseAddress(String addr, Data data) {
 
     addr = COMMA_APT_PTN.matcher(addr).replaceAll(",");
