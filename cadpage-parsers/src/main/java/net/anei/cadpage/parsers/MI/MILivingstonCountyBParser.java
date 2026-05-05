@@ -10,7 +10,7 @@ public class MILivingstonCountyBParser extends DispatchOSSIParser {
   public MILivingstonCountyBParser() {
     super(CITY_CODES, "LIVINGSTON COUNTY", "MI",
           "FYI? ( MUTAID ADDR! " +
-               "| ADDR/Z MUTAID SRC CITY! " +
+               "| ADDR/Z MUTAID SRC! CITY2? " +
                "| ADDR/Z CITY CALL SRC! " +
                "| CALL ADDR CITY/Y PHONE? X? " +
                ") INFO/N+");
@@ -27,6 +27,7 @@ public class MILivingstonCountyBParser extends DispatchOSSIParser {
     if (!subject.equals("Text Message") &&
         !body.startsWith(subject)) return false;
     if (!body.startsWith("CAD:")) body = "CAD:" + body;
+    body = body.replace('\n', ';');
     return super.parseMsg(body,  data);
   }
 
@@ -35,6 +36,7 @@ public class MILivingstonCountyBParser extends DispatchOSSIParser {
     if (name.equals("MUTAID")) return new CallField("MUTAID", true);
     if (name.equals("CALL")) return new CallField("[A-Z0-9]{2,6}", true);
     if (name.equals("SRC")) return new SourceField("[A-Z]{4}", true);
+    if (name.equals("CITY2")) return new CityField("[A-Z ]{2,25}", true);
     if (name.equals("PHONE")) return new PhoneField("\\d{10}", true);
     return super.getField(name);
   }

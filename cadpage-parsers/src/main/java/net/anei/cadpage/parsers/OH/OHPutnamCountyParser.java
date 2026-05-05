@@ -15,6 +15,7 @@ public class OHPutnamCountyParser extends FieldProgramParser {
 
   private static final Pattern MASTER = Pattern.compile("(.*) Call For Service #(\\S+) Please respond immediately. (.*)");
   private static final Pattern MISSING_COLON_PTN = Pattern.compile("(?<=Location Address)(?!:)");
+  private static final Pattern BAD_ST_ZIP_PTN = Pattern.compile("\\bOH \\d{4}\\b");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -25,6 +26,7 @@ public class OHPutnamCountyParser extends FieldProgramParser {
     Matcher match = MASTER.matcher(body);
     if (!match.matches()) return false;
     body = match.group(1) + " Call For Service:" + match.group(2)+ ' ' + match.group(3);
+    body = BAD_ST_ZIP_PTN.matcher(body).replaceFirst("OH");
     return super.parseMsg(body, data);
   }
 

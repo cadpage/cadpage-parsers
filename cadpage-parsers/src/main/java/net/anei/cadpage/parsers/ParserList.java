@@ -1239,6 +1239,7 @@ public class ParserList {
               ,"NJSalemCounty"                  ,"Salem County, NJ"
               ,"NJSomersetCounty"               ,"Somerset County, NJ"
               ,"NJSussexCounty"                 ,"Sussex County, NJ"
+              ,"NJUnionCounty"                  ,"Union County, NJ"
               ,"NJWarrenCounty"                 ,"Warren County, NJ"
               ,"NJWayneTownship"                ,"Wayne Township, NJ"
           ),
