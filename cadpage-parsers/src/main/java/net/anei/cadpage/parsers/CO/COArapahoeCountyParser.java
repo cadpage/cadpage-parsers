@@ -18,8 +18,8 @@ public class COArapahoeCountyParser extends FieldProgramParser {
   COArapahoeCountyParser(String defCity, String defState) {
     super(defCity, defState,
           "( Resp._Info:MAP! ADDR ( GPS/d | GPS1/d GPS2/d ) APT APT PLACE CALL ID! " +
-          "| Address_Changed:MAP! ( GPS/d | GPS1/d GPS2/d ) ADDR2 PLACE CALL ID! " +
-          "| Incident_Location_Changed_to:ID3 MAP ADDR GPS1/d GPS2/d EMPTY EMPTY PLACE CALL UNIT! " +
+          "| Address_Changed:MAP! ( GPS/d | GPS1/d GPS2/d ) ADDR2 PLACE CALL ( ID! | SKIP! ) " +
+          "| Incident_Location_Changed_to:ID3 MAP ADDR GPS1/d GPS2/d APT APT PLACE CALL UNIT! " +
           "| Inc_Address_Update:ADDR! ID3 MAP GPS1/d GPS2/d EMPTY EMPTY PLACE " +
           "| ADDRESS_CHANGE:MAP! ADDR! CALL! " +
           ") EMPTY? END");
@@ -29,7 +29,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "smtprelay@smfra.onmicrosoft.com,@southmetro.org";
+    return "smtprelay@smfra.onmicrosoft.com,CADAlerts@southmetro.org";
   }
 
   @Override
@@ -149,8 +149,17 @@ public class COArapahoeCountyParser extends FieldProgramParser {
     if (name.equals("GPS")) return new GPSField("\\d{8,9} \\d{8,9}", true);
     if (name.equals("ID")) return new IdField("(?:Case ?# *)?(\\d\\d-[A-Z]{2,4}-\\d*|\\d\\d-\\d{7}|\\d\\d-[A-Z]{2})", true);
     if (name.equals("ID3")) return new IdField("\\d{4}-\\d{7}", true);
+    if (name.equals("APT")) return new MyAptField();
     if (name.equals("ADDR2")) return new AddressField(".*TO: *(.*)");
     return super.getField(name);
+  }
+
+  private class MyAptField extends AptField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals(data.strApt)) return;
+      super.parse(field, data);
+    }
   }
 
   @Override
@@ -166,8 +175,10 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       "Air Alert 2 Inflight Emergency",
       "Alarm-CO No Sick Parties",
       "Alarm-Fire Alarm Commercial",
+      "Alarm-Fire Alarm High Occ",
       "Alarm-Fire Alarm Residential",
       "Alarm-Medical Alarm",
+      "Alarm-Water Flow Alarm",
       "Alcohol Evaluation",
       "Allergies/Envenomation",
       "Animal Bites/Attacks",
@@ -191,6 +202,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       "Convulsions/Seizures",
       "Diabetic Problems",
       "Driveway Eye Problems/ Injuries",
+      "Drowning (Near)/Diving",
       "Electrical Hazard",
       "Falls",
       "Fire-Appliance Fire",
@@ -205,11 +217,13 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       "Fuel Spill Small",
       "Fire-Unknown Fire",
       "Gas-Commercial Leak",
+      "Gas-Gas Line Cut",
       "Gas-Residential Leak",
       "HazMat",
       "Headache",
       "Heart Problems/ A.I.C.D",
       "Heart Problems/A.I.C.D",
+      "Heat/Cold Exposure",
       "Hemorrhage/Lacerations",
       "Invest-Lighting Strike",
       "Invest-Odor Commercial",
@@ -250,6 +264,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       "Standby In The Area",
       "Stroke(CVA)",
       "Stroke (CVA)",
+      "Suicide Attempt",
       "TECH RESCUE LEVEL 1",
       "TEST (Do not Dispatch)",
       "Test Call (Do Not Dispatch)",
