@@ -15,7 +15,7 @@ public class MISaginawCountyBParser extends DispatchC01Parser {
     return "SaginawAlerts@saginawcounty.com";
   }
 
-  private static final Properties CITY_CODES = buildCodeTable(new String[]{
+  static final Properties CITY_CODES = buildCodeTable(new String[]{
       "01", "BURT",
       "06", "BRIDGEPORT TWP",
       "20", "TITTABAWASSEE TWP",

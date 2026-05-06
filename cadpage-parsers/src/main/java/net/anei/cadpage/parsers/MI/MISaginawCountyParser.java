@@ -5,7 +5,9 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class MISaginawCountyParser extends GroupBestParser {
 
   public MISaginawCountyParser() {
-    super(new MISaginawCountyAParser(), new MISaginawCountyBParser(),
-          new MISaginawCountyCParser());
+    super(new MISaginawCountyAParser(),
+          new MISaginawCountyBParser(),
+          new MISaginawCountyCParser(),
+          new MISaginawCountyDParser());
   }
 }
