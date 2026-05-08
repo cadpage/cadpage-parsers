@@ -43,6 +43,7 @@ public class TXTravisCountyAParser extends MsgParser {
     if (parseFmt4(body, data)) return true;
     if (parseFmt5(body, data)) return true;
     if (parseFmt6(body, data)) return true;
+    if (parseFmt7(body, data)) return true;
     return false;
   }
 
@@ -116,12 +117,12 @@ public class TXTravisCountyAParser extends MsgParser {
   }
 
   private static final Pattern MASTER4 =
-      Pattern.compile("DISPATCH ALERT!! Inc #:(\\S*) Map:(\\S*) Location:(.*?) Prem:(.*?) Bldg:(.*?) Apt:(.*?) City:(.*?) Zip:\\S* Problem:(.*?) (?:Pri (\\S*) )?Unit:(\\S*)");
+      Pattern.compile("DISPATCH ALERT!! Inc #:(\\S*) Map:(\\S*) Location:(.*?) Prem:(.*?) Bldg:(.*?) Apt:(.*?) ?City:(.*?) Zip:\\S* Problem:(.*?) (?:Pri (\\S*) )?Unit:(\\S*)");
 
   private boolean parseFmt4(String body, Data data) {
-    setFieldList("INFO ID MAP ADDR PLACE APT CITY CALL PRI UNIT");
     Matcher match = MASTER4.matcher(body);
     if (!match.matches()) return false;
+    setFieldList("INFO ID MAP ADDR PLACE APT CITY CALL PRI UNIT");
     data.strCallId = match.group(1);
     data.strMap = match.group(2);
     parseAddress(match.group(3).trim(), data);
@@ -139,9 +140,9 @@ public class TXTravisCountyAParser extends MsgParser {
       Pattern.compile("(Hospital Times): Inc# (\\S*) \\| Add:(.*?) \\| Zip:\\S* \\| (.*?) \\| Unit: (\\S*)");
 
   private boolean parseFmt5(String body, Data data) {
-    setFieldList("CALL ID ADDR APT INFO");
     Matcher match = MASTER5.matcher(body);
     if (!match.matches()) return false;
+    setFieldList("CALL ID ADDR APT INFO");
     data.strCall = match.group(1);
     data.strCallId = match.group(2);
     parseAddress(match.group(3).trim(), data);
@@ -153,12 +154,28 @@ public class TXTravisCountyAParser extends MsgParser {
       Pattern.compile("Closest \\*+([A-Z ]+)\\*+ to (.*?): +(.*)");
 
   private boolean parseFmt6(String body, Data data) {
-    setFieldList("CALL ADDR CITY APT INFO");
     Matcher match = MASTER6.matcher(body);
     if (!match.matches()) return false;
+    setFieldList("CALL ADDR CITY APT INFO");
     data.strCall = "Closest " + match.group(1).trim();
     parseAddress(match.group(2).trim(), data);
     data.strSupp = stripFieldEnd(match.group(3).trim(), "[Shared]").replace(" | ", "\n");
+    return true;
+  }
+
+  private static final Pattern MASTER7 =
+      Pattern.compile("(?:INFO ONLY )?(?:From|FROM) EMS (?:Comm|COMM):(.*?) at:?(.*?) ;Loc:(.*?) ;Apt:(.*?) ;Inc #(.*?) ;Units:(.*)");
+
+  private boolean parseFmt7(String body, Data data) {
+    Matcher match = MASTER7.matcher(body);
+    if (!match.matches()) return false;
+    setFieldList("CALL ADDR PLACE APT ID UNIT");
+    data.strCall = match.group(1).trim();
+    parseAddress(match.group(2).trim(), data);
+    data.strPlace = match.group(3).trim();
+    data.strApt = append(data.strApt, "-", match.group(5).trim());
+    data.strCallId = match.group(5).trim();
+    data.strUnit = match.group(6).trim();
     return true;
   }
 
