@@ -198,6 +198,7 @@ public class ParserList {
           new ParserCategory("Arkansas"
               ,"ARBaxterCounty"                 ,"Baxter County, AR"
               ,"ARBentonCounty"                 ,"Benton County, AR"
+              ,"ARCalhounCounty"                ,"Calhoun County, AR"
               ,"ARCleburneCounty"               ,"Cleburne County, AR"
               ,"ARConwayCounty"                 ,"Conway County, AR"
               ,"ARCrawfordCounty"               ,"Crawford County, AR"

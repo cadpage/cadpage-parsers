@@ -191,6 +191,7 @@ public class Active911ParserTable {
       "US/AR/BentonCounty",               "ARBentonCountyA",
       "US/AR/BentonCountySO",             "ARBentonCountyJ",
       "US/AR/Bentonville",                "ARBentonCountyC",
+      "US/AR/CalhounCounty",              "ARCalhounCounty",
       "US/AR/CaveSpringsFD",              "ARBentonCountyA,ARBentonCountyD",
       "US/AR/CentralEMS",                 "ARWashingtonCountyB",
       "US/AR/CityofBellaVista",           "ARBentonCountyE",
