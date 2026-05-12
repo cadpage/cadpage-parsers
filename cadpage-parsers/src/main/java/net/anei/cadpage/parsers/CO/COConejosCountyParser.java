@@ -14,7 +14,7 @@ public class COConejosCountyParser extends DispatchPremierOneParser {
 
   @Override
   public String getFilter() {
-    return "@csp.noreply";
+    return "@csp.noreply,@state.co.us";
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("(.*) Notification");
