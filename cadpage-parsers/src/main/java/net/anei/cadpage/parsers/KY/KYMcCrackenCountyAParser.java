@@ -11,7 +11,7 @@ public class KYMcCrackenCountyAParser extends DispatchH05Parser {
 
   public KYMcCrackenCountyAParser() {
     super("MCCRACKEN COUNTY", "KY",
-          "CALL_DATE/TIME:DATETIME! CALL_TYPE:CALL! LOCATION:ADDRCITY! XST:X! CMTS:EMPTY! INFO_BLK+ UNITS:UNIT! INC#:ID! CALL_TIMES:EMPTY! TIMES+? GPS! END");
+          "CALL_DATE/TIME:DATETIME! CALL_TYPE:CALL! LOCATION:ADDRCITY! CITY:CITY_ST_ZIP? XST:X! CMTS:EMPTY! INFO_BLK+ UNITS:UNIT! INC#:ID! CALL_TIMES:EMPTY! TIMES+? GPS! END");
   }
 
   @Override
@@ -23,6 +23,7 @@ public class KYMcCrackenCountyAParser extends DispatchH05Parser {
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("CITY_ST_ZIP")) return new MyCityStateZipField();
     if (name.equals("GPS")) return new MyGPSField();
     return super.getField(name);
   }
@@ -78,8 +79,27 @@ public class KYMcCrackenCountyAParser extends DispatchH05Parser {
     }
   }
 
+  private class MyCityStateZipField extends Field {
+   @Override
+   public void parse(String field, Data data) {
+     if (field.isEmpty()) return;
+     Parser p = new Parser(field);
+     String zip = p.getLastOptional(" ZIP:");
+     data.strState = p.getLastOptional(" STATE:");
+     String city = stripFieldEnd(p.get(), ",");
+     if (!city.isEmpty()) data.strCity = city;
+     else if (data.strCity.isEmpty()) data.strCity = zip;
+   }
+
+   @Override
+   public String getFieldNames() {
+    return "CITY ST";
+   }
+  }
+
   @Override
   protected boolean isCity(String city) {
+    city = city.toUpperCase();
     String tmp = CITY_SET.getCode(city);
     return tmp != null && tmp.equals(city);
   }
