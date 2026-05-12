@@ -17,7 +17,7 @@ public class OHMedinaCountyDParser extends MsgParser {
 
   @Override
   public String getFilter() {
-    return "donotreply@medinaco.org";
+    return "donotreply@medinaco.org,no-reply@csprosuite.centralsquarecloudgov.com";
   }
 
   private static final Pattern LOG_HEADER_PTN = Pattern.compile(";? +\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - log - ");
@@ -85,7 +85,7 @@ public class OHMedinaCountyDParser extends MsgParser {
 
     return true;
   }
-  
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
       "MM 202 I 71",                          "+40.990065,-82.030725",
       "MM 203 I 71",                          "+40.996317,-82.013867",
@@ -129,7 +129,7 @@ public class OHMedinaCountyDParser extends MsgParser {
       "MM 10 I 76",                           "+41.046619,-81.726380",
       "MM 11 I 76",                           "+41.047095,-81.707345",
       "MM 12 I 76",                           "+41.043050,-81.689832",
-      
+
       "MM 0 I 271",                           "+41.159596,-81.785248",
       "MM 1 I 271",                           "+41.163974,-81.768973",
       "MM 2 I 271",                           "+41.176633,-81.760549",
