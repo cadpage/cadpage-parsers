@@ -15,7 +15,7 @@ public class MOLawrenceCountyBParser extends FieldProgramParser{
 
   public MOLawrenceCountyBParser() {
     super("LAWRENCE COUNTY", "MO",
-          "Address:ADDRCITY! Category:CALL! SubCategory:CALL! Open:DATETIME! Dispatch:DATETIME! Enroute:SKIP! Arrival:SKIP! Closed:SKIP! EMPTY NAME+? INFOMAP+");
+          "Address:ADDRCITY! GPS Category:CALL! SubCategory:CALL! Open:DATETIME! Dispatch:DATETIME! Enroute:SKIP! Arrival:SKIP! Closed:SKIP! EMPTY NAME+? INFOMAP+");
   }
 
   @Override
@@ -38,10 +38,19 @@ public class MOLawrenceCountyBParser extends FieldProgramParser{
 
   @Override
   public Field getField(String name) {
+    if (name.equals("GPS")) return new MyGPSField();
     if (name.equals("NAME")) return new MyNameField();
     if (name.equals("CALL_RECEIVED")) return new SkipField("Call Received on .*");
     if (name.equals("INFOMAP")) return new MyInfoMapField();
     return super.getField(name);
+  }
+
+  private class MyGPSField extends GPSField {
+    @Override
+    public void parse(String field, Data data) {
+      if (!field.startsWith("GPS Data ")) abort();
+      setGPSLoc(field.replace("-", ",-"), data);
+    }
   }
 
   private static final Pattern ALPHA_CHECK_PTN = Pattern.compile(".*[A-Za-z].*");

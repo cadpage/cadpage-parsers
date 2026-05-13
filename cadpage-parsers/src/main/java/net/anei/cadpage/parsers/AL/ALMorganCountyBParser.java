@@ -20,7 +20,7 @@ public class ALMorganCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "cad-no-reply@morgan911.org";
+    return "cad-no-reply@morgan911.org,@csprosuite.centralsquarecloudgov.com";
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("CFS - (Unit Assigned|Changed|Completed) - #(.*)");
