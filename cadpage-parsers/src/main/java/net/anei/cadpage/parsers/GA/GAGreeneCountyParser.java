@@ -10,7 +10,7 @@ public class GAGreeneCountyParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "911admin@greene911.com";
+    return "911admin@greene911.com,noreply@public-safety-cloud.com";
   }
 
   @Override
