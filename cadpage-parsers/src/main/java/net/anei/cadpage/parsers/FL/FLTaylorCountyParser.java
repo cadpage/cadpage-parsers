@@ -9,6 +9,11 @@ public class FLTaylorCountyParser extends DispatchA98Parser {
   }
 
   @Override
+  public String getFilter() {
+    return "support@smartcop.com,authentication@taylorsheriff.org";
+  }
+
+  @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
