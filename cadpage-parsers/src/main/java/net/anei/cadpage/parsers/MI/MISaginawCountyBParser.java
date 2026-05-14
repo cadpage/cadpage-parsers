@@ -18,9 +18,12 @@ public class MISaginawCountyBParser extends DispatchC01Parser {
   static final Properties CITY_CODES = buildCodeTable(new String[]{
       "01", "BURT",
       "06", "BRIDGEPORT TWP",
+      "19", "HEMLOCK",
       "20", "TITTABAWASSEE TWP",
+      "21", "ALICIA",
       "22", "SPAULDING TWP",
       "25", "FREELAND",
-      "26", "FREELAND"
+      "26", "FREELAND",
+      "89", "SAGINAW"
   });
 }
