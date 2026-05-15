@@ -16,7 +16,7 @@ public class KYMcCrackenCountyAParser extends DispatchH05Parser {
 
   @Override
   public String getFilter() {
-    return "cad@paducahky.gov";
+    return "cad-no-reply@paducahky.gov";
   }
 
   @Override
