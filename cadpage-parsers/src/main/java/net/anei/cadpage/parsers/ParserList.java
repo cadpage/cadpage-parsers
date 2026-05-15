@@ -1504,6 +1504,7 @@ public class ParserList {
               ,"OHWashingtonCounty"             ,"Washington County, OH"
               ,"OHWayneCounty"                  ,"Wayne County, OH"
               ,"OHWilliamsCounty"               ,"Williams County, OH"
+              ,"OHWrightPattersonAFB"           ,"Wright-Patterson AFB, OH"
           ),
           new ParserCategory("Oklahoma"
               ,"OKBryanCounty"                  ,"Bryan County, OK"
