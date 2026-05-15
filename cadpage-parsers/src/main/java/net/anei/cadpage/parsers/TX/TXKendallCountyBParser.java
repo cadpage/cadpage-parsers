@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.TX;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,8 +22,7 @@ public class TXKendallCountyBParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String body, Data data) {
     if (!parseFields(body.split("\n"), data)) return false;
-    if (data.strCity.equals("FREDRICKSBURG") ||
-        data.strCity.equals("FREDERICKBURG")) data.strCity = "FREDERICKSBURG";
+    data.strCity = convertCodes(data.strCity, FIX_CITY_TABLE);
     return true;
   }
 
@@ -119,6 +119,13 @@ public class TXKendallCountyBParser extends FieldProgramParser {
     }
   }
 
+  private static final Properties FIX_CITY_TABLE = buildCodeTable(new String[] {
+      "FREDERICKBURG",  "FREDERICKSBURG",
+      "FREDERICKDBURG", "FREDERICKSBURG",
+      "FREDRICKSBURG",  "FREDERICKSBURG",
+      "KENDALA",    		"KENDALIA"
+  });
+
   private static final String[] CITY_LIST = new String[]{
 
     // Cities
@@ -131,6 +138,7 @@ public class TXKendallCountyBParser extends FieldProgramParser {
     // Other unincorporated communities
     "ALAMO SPRINGS",
     "BERGHEIM",
+    "KENDALA",     // Misspelled
     "KENDALIA",
     "KREUTZBERG",
     "LINDENDALE",
@@ -158,7 +166,13 @@ public class TXKendallCountyBParser extends FieldProgramParser {
     // Gillespie County
     "FREDERICKSBURG",
     "FREDERICKBURG",  // Misspelled
+    "FREDERICKDBURG", // Missspelled
     "FREDRICKSBURG",  // Misspelled
+    "WILLOW CITY",
+
+    // Harris County
+    "SPRING BRANCH",
+    "STONEWALL",
 
     // Kerr County
     "CENTER POINT",
