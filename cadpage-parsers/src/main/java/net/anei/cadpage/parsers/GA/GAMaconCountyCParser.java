@@ -7,9 +7,9 @@ public class GAMaconCountyCParser extends FieldProgramParser {
 
   public GAMaconCountyCParser() {
     super("MACON COUNTY", "GA",
-          "ID? ADDRCITY ( Caller:NAME! Phone#:PHONE! Incident_#:ID! Narrative:INFO! " +
-                       "| DATETIME! UNITS:UNIT! NARRATIVE:INFO! " +
-                       ") INFO/N+");
+          "Unit:UNIT? ID? ADDRCITY ( Caller:NAME! Phone#:PHONE! Incident_#:ID! Narrative:INFO! " +
+                                  "| DATETIME! UNITS:UNIT! NARRATIVE:INFO! " +
+                                  ") INFO/N+");
   }
 
   @Override
@@ -35,7 +35,7 @@ public class GAMaconCountyCParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new IdField("\\d{4}-\\d{8}\\b.*", true);
+    if (name.equals("ID")) return new MyIdField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("DATETIME")) return new DateTimeField("(\\d\\d?/\\d\\d?/\\d{4} +\\d\\d:\\d\\d:\\d\\d)\\b.*", true);
     return super.getField(name);
@@ -57,6 +57,17 @@ public class GAMaconCountyCParser extends FieldProgramParser {
     public String getFieldNames() {
       return "CALL ADDR APT CITY PLACE";
     }
+  }
 
+  private class MyIdField extends IdField {
+    public MyIdField() {
+      super("\\d{4}-\\d{8}\\b.*|", true);
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (field.isEmpty()) return;
+      super.parse(field, data);
+    }
   }
 }
