@@ -20,6 +20,7 @@ public class Active911ParserTable {
       "CA/AB/CityOfMedicineHat",          "ZCAABCypressCounty",
       "CA/AB/FrescCA",                    "ZCAABCanmoreA,ZCAABCalgary",
       "CA/AB/LacombeCounty",              "ZCAABLacombeCounty",
+      "CA/AB/LeducCounty",                "ZCAABLeducCounty",
       "CA/AB/ParklandCounty",             "ZCAABLeducCounty",
       "CA/AB/RedDeerCounty",              "ZCAABRedDeerCounty",
       "CA/AB/SCES911Centre",              "ZCAABStrathconaCounty",
