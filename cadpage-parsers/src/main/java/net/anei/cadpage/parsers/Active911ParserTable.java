@@ -1139,6 +1139,7 @@ public class Active911ParserTable {
       "US/KY/ScottCounty",                "KYScottCountyB",
       "US/KY/ShelbyCounty",               "KYShelbyCountyB",
       "US/KY/SheridanVFD",                "KYCrittendenCounty",
+      "US/KY/SimpsonvillePD",             "KYShelbyCountyB",
       "US/KY/TaylorCounty",               "KYTaylorCounty",
       "US/KY/ToddCounty",                 "KYToddCounty",
       "US/KY/TriggCounty",                "KYTriggCounty",
