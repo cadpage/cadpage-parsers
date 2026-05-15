@@ -45,6 +45,7 @@ public class PANorthamptonCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("UNIT_CALL_ADDR_CITY"))  return new MyUnitCallAddressCityField();
     if (name.equals("CODE_CALL")) return new  MyCodeCallField();
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("NAME")) return new MyNameField();
@@ -88,6 +89,14 @@ public class PANorthamptonCountyBParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "CODE CALL";
+    }
+  }
+
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace('@', '&');
+      super.parse(field, data);
     }
   }
 
