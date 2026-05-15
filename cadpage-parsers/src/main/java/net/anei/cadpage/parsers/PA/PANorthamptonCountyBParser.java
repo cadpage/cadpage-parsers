@@ -24,6 +24,11 @@ public class PANorthamptonCountyBParser extends FieldProgramParser {
     return "no-reply@onsolve.com,noReply@notify.onsolve.net,76993";
   }
 
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
   private static final Pattern DELIM = Pattern.compile(" \\|\n? ");
 
   @Override
