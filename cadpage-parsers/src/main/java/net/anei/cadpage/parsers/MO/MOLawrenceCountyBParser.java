@@ -20,7 +20,7 @@ public class MOLawrenceCountyBParser extends FieldProgramParser{
 
   @Override
   public String getFilter() {
-    return "noreply@omnigo.com";
+    return "noreply@omnigo.com,@active911.com";
   }
 
   @Override
