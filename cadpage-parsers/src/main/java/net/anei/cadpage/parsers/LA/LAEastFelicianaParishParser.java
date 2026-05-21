@@ -22,7 +22,7 @@ public class LAEastFelicianaParishParser extends SmartAddressParser {
 
   @Override
   public String getFilter() {
-    return "EASTFELICIANA911@PAGINGPTS.COM";
+    return "EASTFELICIANA911@PAGINGPTS.COM,notifications@ptssolutions.com";
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("CAD Autopage EventID:(\\d{10})");
@@ -179,7 +179,7 @@ public class LAEastFelicianaParishParser extends SmartAddressParser {
 
       // East Baton Rouge Parish
       "ZACHARY",
-      
+
       // East Feliciana Parish
       "EAST FELIC",
 
