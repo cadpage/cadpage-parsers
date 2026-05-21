@@ -10,7 +10,7 @@ public class KSOsageCountyParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com";
+    return "FlexRapidNotification@dccnotify.com,FRN-osagecountyks@email.getrave.com";
   }
 
   @Override
