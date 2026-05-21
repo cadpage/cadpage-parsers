@@ -17,7 +17,7 @@ public class ALJeffersonCountyIParser extends DispatchH05Parser {
                                                                             ") " +
                                                             "| Date/Time:DATETIME GRID2640:MAP? MAP:SKIP! UNITS:UNIT! " +
                                                             "| MAP:SKIP! UNITS:UNIT! Date/Time:DATETIME! " +
-                                                            "| DATE:DATETIME! MAP:SKIP! UNIT:UNIT! " +
+                                                            "| DATE:DATETIME! MAP:SKIP! UNIT:UNIT? LOCATION_INFO:PLACE? " +
                                                             ") INFO/N+");
   }
 
