@@ -12,7 +12,7 @@ public class ALJeffersonCountyIParser extends DispatchH05Parser {
 
   public ALJeffersonCountyIParser() {
     super("JEFFERSON COUNTY", "AL",
-          "CALL:CALL! ADDR:GPS! ADDR1:ADDRCITY! ID:ID! EMPTY+? ( GRID2640:MAP! ( Date/Time:DATETIME! MAP:SKIP! UNITS:UNIT! " +
+          "CALL:CALL! ADDR:ADDRCITY! ADDR1:ADDRCITY1! ID:ID! EMPTY+? ( GRID2640:MAP! ( Date/Time:DATETIME! MAP:SKIP! UNITS:UNIT! " +
                                                                             "| MAP:SKIP! UNITS:UNIT! Date/Time:DATETIME! " +
                                                                             ") " +
                                                             "| Date/Time:DATETIME GRID2640:MAP? MAP:SKIP! UNITS:UNIT! " +
@@ -64,6 +64,8 @@ public class ALJeffersonCountyIParser extends DispatchH05Parser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("ADDRCITY1")) return new MyAddressCity1Field();
     if (name.equals("MAP")) return new MyMapField();
     if (name.equals("CALL_PRI")) return new MyCallPriorityField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
@@ -71,6 +73,46 @@ public class ALJeffersonCountyIParser extends DispatchH05Parser {
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("INFO"))  return new MyInfoField();
     return super.getField(name);
+  }
+
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d\\d\\.\\d+,[-+]?\\d\\d\\.\\d+");
+
+  private class MyAddressCityField extends AddressCityField {
+
+    @Override
+    public void parse(String field, Data data) {
+
+      if (field.equals("-361,-361")) return;
+      Matcher match = GPS_PTN.matcher(field);
+      if (match.matches()) {
+        setGPSLoc(field, data);
+      } else {
+        super.parse(field, data);
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ADDR APT CITY GPS";
+    }
+  }
+
+  private class MyAddressCity1Field extends AddressCityField {
+
+    @Override
+    public void parse(String field, Data data) {
+
+      if (data.strAddress.isEmpty()) {
+        super.parse(field, data);
+      } else {
+        setGPSLoc(field, data);
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ADDR APT CITY GPS";
+    }
   }
 
   private static final Pattern MAP_URL_PTN = Pattern.compile("https:.*/MapPage_(.*)\\.pdf");
