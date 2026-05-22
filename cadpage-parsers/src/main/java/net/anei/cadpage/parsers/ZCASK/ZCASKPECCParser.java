@@ -23,7 +23,7 @@ public class ZCASKPECCParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "@alerts.pa911.com";
+    return "@alerts.pa911.com,@athocalerts.com";
   }
 
   @Override

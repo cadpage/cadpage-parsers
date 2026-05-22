@@ -62,7 +62,6 @@ public class Active911ParserTable {
       "CA/SK/RoseValley",                 "ZCASKPECC",
       "CA/SK/Stockholm",                  "ZCASKPECC",
       "CA/SK/SwiftCurrent",               "ZCASKPECC",
-      "CA/SK/WhiteCityFD",                "ZCASKPECC",
       "GB/WM/Medaid",                     "ZUKShropshireCounty",
       "NZ/Auckland/AucklandREOC",         "ZNZAuckland",
       "NZ/General/RegionTwo",             "ZNZNewZealand",
