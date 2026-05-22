@@ -13,9 +13,11 @@ public class MILenaweeCountyCParser extends DispatchH05Parser {
 
   MILenaweeCountyCParser(String defCity, String defState) {
     super(defCity, defState,
-          "Call_Type:CALL! Call_Date/Time:DATETIME! Common_Name:PLACE! ( Call_Address:ADDRCITY! | Address:ADDRCITY ) Additional_Location:PLACE/SDS! " +
-             "Cross_Streets:X Narrative:EMPTY! INFO_BLK+ ( Units_Assigned:UNIT! | Units:UNIT! ) Alerts:ALERT INFO/N+ " +
-              "Caller:NAME Caller's_TX:PHONE Incident_#:ID! Status_Times:EMPTY! TIMES+");
+          "( SHIELDFORCE! Common_Name:PLACE! Call_Address:ADDRCITY! Apt/Lot:APT! Additional_Location:PLACE! Cross_Streets:X! Narrative:EMPTY! INFO_BLK+ " +
+          "| Call_Type:CALL! Call_Date/Time:DATETIME! Common_Name:PLACE! ( Call_Address:ADDRCITY! | Address:ADDRCITY ) Additional_Location:PLACE/SDS! " +
+              "Cross_Streets:X Narrative:EMPTY! INFO_BLK+ ( Units_Assigned:UNIT! | Units:UNIT! | Incident_#'s:ID! Units:UNIT! ) Alerts:ALERT INFO/N+ " +
+               "( Caller:NAME | Caller's_Name:NAME ) Caller's_TX:PHONE CFS_#:SKIP? ( Incident_#:ID | Incident_#'s:ID ) Status_Times:EMPTY TIMES+ " +
+          ")");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
@@ -38,6 +40,7 @@ public class MILenaweeCountyCParser extends DispatchH05Parser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("SHIELDFORCE")) return new CallField("\\*\\*.*(\\bCheck ShieldForce for call details) \\*\\*", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("NAME")) return new MyNameField();
