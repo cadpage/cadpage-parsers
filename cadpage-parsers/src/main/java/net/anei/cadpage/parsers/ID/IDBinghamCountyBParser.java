@@ -10,6 +10,6 @@ public class IDBinghamCountyBParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com,@email.getrave.com";
+    return "FRN-binghamid@email.getrave.com";
   }
 }
