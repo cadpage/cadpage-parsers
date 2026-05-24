@@ -1257,6 +1257,7 @@ public class Active911ParserTable {
       "US/MD/Rockville",                  "MDMontgomeryCountyD",
       "US/MD/SaintMarysCounty",           "MDSaintMarysCounty",
       "US/MD/SaintMarysCountyGov",        "MDSaintMarysCountyC",
+      "US/MD/SomersetCounty",             "MDSomersetCountyB",
       "US/MD/TalbotCounty",               "MDTalbotCounty",
       "US/MD/WashingtonCounty",           "MDWashingtonCounty",
       "US/MD/WashingtonCountyFranklin",   "MDWashingtonCounty",
