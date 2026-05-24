@@ -10,7 +10,7 @@ public class MDSomersetCountyBParser extends FieldProgramParser {
 
   public MDSomersetCountyBParser() {
     super("SOMERSET COUNTY", "MD",
-          "UNIT! UNIT/CS+? ADDRCITYST APT PLACE X CALL! INFO/N+");
+          "UNIT! UNIT/CS+? ADDRCITYST APT PLACE X CALL! INFO/N+? ID GPS1 GPS2 SRC! SRC/CS+? SKIP+");
   }
 
   @Override
@@ -30,6 +30,7 @@ public class MDSomersetCountyBParser extends FieldProgramParser {
     if (name.equals("UNIT")) return new UnitField("[A-Z]{3,5}", true);
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("SRC")) return new SourceField("(?:A|ST)\\d+(?:-\\d)?", true);
     return super.getField(name);
   }
 
