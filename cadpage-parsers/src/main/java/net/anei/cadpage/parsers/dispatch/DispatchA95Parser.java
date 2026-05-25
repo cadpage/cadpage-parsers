@@ -24,6 +24,8 @@ public class DispatchA95Parser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     data.strCall = subject;
     body = stripFieldEnd(body, "Please respond immediately.");
+    body = stripFieldEnd(body, "Please Respond Immediately.");
+    body = body.replace("Longitute:", "Longitude:");
     times = "";
     if (!super.parseMsg(body, data)) return false;
     data.strCity = data.strCity.replace(".", "");
@@ -41,12 +43,21 @@ public class DispatchA95Parser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("NAME")) return new MyNameField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d", true);
     if (name.equals("INFO")) return new BaseInfoField();
     if (name.equals("TIMES")) return new BaseTimesField();
     if (name.equals("UNIT")) return new BaseUnitField();
     if (name.equals("GPS2")) return new BaseGPS2Field();
     return super.getField(name);
+  }
+
+  private class MyNameField extends NameField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      super.parse(field, data);
+    }
   }
 
   private static final Pattern INFO_BRK_PTN = Pattern.compile("[ ;]*\\b\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - *");

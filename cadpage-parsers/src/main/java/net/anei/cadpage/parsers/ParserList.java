@@ -1515,6 +1515,7 @@ public class ParserList {
               ,"OKCreekCounty"                  ,"Creek County, OK"
               ,"OKGarfieldCounty"               ,"Garfield County, OK"
               ,"OKGradyCounty"                  ,"Grady County, OK"
+              ,"OKLeFloreCounty"                ,"LeFlore County, OK"
               ,"OKLoganCounty"                  ,"Logan County, OK"
               ,"OKLoveCounty"                   ,"Love County, OK"
               ,"OKMajorCounty"                  ,"Major County, OK"
