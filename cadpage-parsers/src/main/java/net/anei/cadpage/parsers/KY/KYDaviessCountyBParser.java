@@ -11,8 +11,11 @@ public class KYDaviessCountyBParser extends FieldProgramParser {
   public KYDaviessCountyBParser() {
     super(KYDaviessCountyParser.CITY_LIST, "DAVIESS COUNTY", "KY",
           "( Call_Time:DATETIME! Call_Type:CALL! Address:ADDRCITY/S6! Common_Name:PLACE! " +
+          "| call_TIme:DATETIME! Call_Type:CALL! Location:ADDRCITY/S6! Cross_Street:X! Callers_Name:NAME! Callers_Phone_Number:PHONE! Area:MAP! " +
           "| Call_Type:CALL! EMPTY+? ( Common_Name:PLACE! Address:ADDRCITY/S6! Closest_Intersection:X! Incident:ID! " +
-                                    "| Address:ADDRCITY/S6! Common_Name:PLACE! Closest_Intersection:X! Choose_your_incident_#_by_ORI:ID! " +
+                                    "| Address:ADDRCITY/S6! ( Common_Name:PLACE! Closest_Intersection:X! Choose_your_incident_#_by_ORI:ID! " +
+                                                           "| Near:X! " +
+                                                           ") " +
                                     "| Location:ADDRCITY/S6! PLACE Near:X! " +
                                     "| Name:PLACE! Phone_Number:PHONE! Caller:NAME! Address:ADDRCITY/S6! Cross_Street:X! Incident:ID! " +
                                     ") " +
@@ -28,7 +31,7 @@ public class KYDaviessCountyBParser extends FieldProgramParser {
   private static final Pattern TRAIL_GPS_PTN = Pattern.compile(" +(\\d{2,3}\\.\\d{6,})(-\\d{2,3}\\.\\d{6,})$");
   private static final Pattern NAME_PHONE_NUMBER_PTN = Pattern.compile("Name(.*?)Phone Number::");
   private static final Pattern MISSING_COLON_PTN = Pattern.compile("(?<=Alert Type|Call Type|Common Name|(?<!Preplan )Location|Address|Closest Intersection|Incident|Xstreet|Safety Alert|Cross Street)(?!:)");
-  private static final Pattern FLD_BRK_PTN = Pattern.compile("\\s*(?=(?:Call Type|Common Name|Address|Closest Intersection|Incident|Location|Near|Xstreet|Safety Alert|Caller|Cross Street|Narrative):)|\n");
+  private static final Pattern FLD_BRK_PTN = Pattern.compile("\\s*(?=(?:Call Type|Common Name|Address|Closest Intersection|Incident|Location|Near|Xstreet|Safety Alert|Caller|Cross Street|Area|Narrative):)|\n");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -91,6 +94,7 @@ public class KYDaviessCountyBParser extends FieldProgramParser {
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ":");
       field = field.replace('@', '/');
       super.parse(field,  data);
     }
