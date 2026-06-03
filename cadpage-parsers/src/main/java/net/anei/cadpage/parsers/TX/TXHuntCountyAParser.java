@@ -52,10 +52,13 @@ public class TXHuntCountyAParser extends FieldProgramParser {
   private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
+      if (field.toUpperCase().endsWith("RES")) {
+        field = field.substring(0, field.length()-3).trim();
+      }
       String apt = "";
-      int pt = field.indexOf(") Apt. # ");
+      int pt = field.indexOf(") Apt. #");
       if (pt >= 0) {
-        apt = field.substring(pt+9).trim();
+        apt = field.substring(pt+8).trim();
         field = field.substring(0, pt+1);
       }
       if (field.endsWith(")")) {
