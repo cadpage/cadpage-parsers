@@ -3084,7 +3084,7 @@ public class Active911ParserTable {
       "US/VA/VintonEMS",                  "VARoanokeCountyA",
       "US/VA/VintonFAS",                  "VARoanokeCountyA",
       "US/VA/VirgilinaFD",                "VAHalifaxCounty",
-      "US/VA/WarrenCounty",               "VAWarrenCounty",
+      "US/VA/WarrenCounty",               "VAWarrenCounty,NCWarrenCounty",
       "US/VA/WashingtonCounty",           "VAWashingtonCountyA",
       "US/VA/WestmorelandCounty",         "VAWestmorelandCounty",
       "US/VA/WytheCounty",                "VAWytheCountyA,VAWytheCountyD",
