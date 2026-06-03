@@ -19,7 +19,7 @@ public class KYBooneCountyAParser extends FieldProgramParser {
 
   public KYBooneCountyAParser(String defCity, String defState) {
     super(CITY_CODES, defCity, defState,
-          "Location:ADDR/S? EID:ID! TYPE_CODE:CALL! TIME:TIME! Comments:INFO Event_Number:SKIP% Event_Type:SKIP%");
+          "Location:ADDR/S? EID:ID! TYPE_CODE:CALL! TIME:TIME! Comments:INFO Event_Number:SKIP% Event_Type:SKIP% Disp:UNIT");
     setupCityValues(CITY_CODES);
   }
 
@@ -111,7 +111,7 @@ public class KYBooneCountyAParser extends FieldProgramParser {
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      if (field.startsWith("SPECIAL ADDRESS COMMENT:")) field = field.substring(27).trim();
+      field = stripFieldStart(field, "SPECIAL ADDRESS COMMENT:");
 
       Matcher match = INFO_GPS_PTN.matcher(field);
       if (match.lookingAt()) {
