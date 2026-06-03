@@ -102,7 +102,16 @@ public class SDEdmundsCountyParser extends FieldProgramParser {
       if (field.equals("None")) return;
       Matcher match = INFO_PFX_PTN.matcher(field);
       if (match.lookingAt()) field = field.substring(match.end());
-      super.parse(field,  data);;
+      if (field.startsWith("COORDINATES:")) {
+        setGPSLoc(field.substring(12).trim(), data);
+      } else {
+        super.parse(field,  data);;
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " GPS";
     }
   }
 }
