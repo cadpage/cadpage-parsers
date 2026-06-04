@@ -10,7 +10,7 @@ public class WVJacksonCountyParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "jacksoncowv911@gmail.com,911Center@Jacksonwv911.com";
+    return "jacksoncowv911@gmail.com,911Center@Jacksonwv911.com,noreply@public-safety-cloud.com";
   }
 
 }
