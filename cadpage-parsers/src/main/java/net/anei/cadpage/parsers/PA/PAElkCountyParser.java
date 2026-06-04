@@ -3,35 +3,36 @@ package net.anei.cadpage.parsers.PA;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 /**
- *  Elk County, PA (also dispatches Cameron County and apparently Clearfield County) 
+ *  Elk County, PA (also dispatches Cameron County and apparently Clearfield County)
  */
 
 public class PAElkCountyParser extends FieldProgramParser {
-  
+
   public PAElkCountyParser() {
     this("ELK COUNTY", "PA");
   }
-  
+
   PAElkCountyParser(String defCity, String defState) {
     super(CITY_TABLE, defCity, defState,
-          "( Inc_Code:CALL! Address:ADDRCITY! ( Common_Name:PLACE! ( Units:UNIT! Cross_Streets:X% | Cross_Streets:X! Units:UNIT% ) " + 
-                                             "| City:CITY! Cross_Streets:X? Apt:APT? Agency:SRC% INFO+? DATETIME " + 
-                                             ") " + 
-          "| CALL! Address:ADDRCITY! Common_Name:PLACE! Units:UNIT! Cross_St:X! " + 
+          "( Inc_Code:CALL! Address:ADDRCITY! ( Common_Name:PLACE! ( Units:UNIT! Cross_Streets:X% | Cross_Streets:X! Units:UNIT% ) " +
+                                             "| City:CITY! Cross_Streets:X? Apt:APT? Agency:SRC% INFO+? DATETIME " +
+                                             ") " +
+          "| CALL! Address:ADDRCITY! Common_Name:PLACE! Units:UNIT! Cross_St:X! " +
           ") END");
   }
-  
+
   @Override
   public String getFilter() {
     return "alerts@elkcounty911.ealertgov.com";
   }
-  
+
   @Override
   public String adjustMapAddress(String address) {
     return WATER_STREET_EXT.matcher(address).replaceAll("$1 EXD");
@@ -47,15 +48,34 @@ public class PAElkCountyParser extends FieldProgramParser {
       return super.parseMsg(body, data);
     }
   }
-  
+
   @Override
   public Field getField(String name) {
+    if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("X")) return new MyCrossField();
     return super.getField(name);
   }
-  
+
+  private static final Pattern CALL_PRI_PTN = Pattern.compile("(.*?) +(ALPHA|BETA|CHARLIE|DELTA|ECHO)");
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = CALL_PRI_PTN.matcher(field);
+      if (match.matches()) {
+        field =  match.group(1);
+        data.strPriority =  match.group(2);
+      }
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return"CALL PRI";
+    }
+  }
+
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
@@ -64,7 +84,7 @@ public class PAElkCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCrossField extends CrossField {
     @Override
     public void parse(String field, Data data) {
@@ -72,16 +92,16 @@ public class PAElkCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private final static DateFormat DATE_TIME_FMT = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
   private final static Pattern TRUNC_DATE_TIME_PTN = Pattern.compile("\\d\\d?/[/0-9]*(?: [:0-9]*(?: [AP])?)?");
-  
+
   private class MyDateTimeField extends DateTimeField {
-    
+
     public MyDateTimeField() {
       super(DATE_TIME_FMT, true);
     }
-    
+
     @Override
     public boolean checkParse(String field, Data data) {
       if (super.checkParse(field, data)) return true;
@@ -89,12 +109,12 @@ public class PAElkCountyParser extends FieldProgramParser {
       return false;
     }
   }
-  
+
   private static final Properties CITY_TABLE = buildCodeTable(new String[]{
       "JOHNSBURG", "JOHNSONBURG",
       "RIDGWAY_B", "RIDGWAY",
       "RIDGWAY_T", "RIDGWAY TWP",
       "SPRING_CR", "SPRING CREEK TWP",
       "ST_MARYS",  "ST MARYS"
-  }); 
+  });
 }
