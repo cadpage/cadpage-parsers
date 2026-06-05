@@ -3,6 +3,7 @@ package net.anei.cadpage.parsers.KY;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
@@ -11,7 +12,7 @@ public class KYDaviessCountyBParser extends FieldProgramParser {
   public KYDaviessCountyBParser() {
     super(KYDaviessCountyParser.CITY_LIST, "DAVIESS COUNTY", "KY",
           "( Call_Time:DATETIME! Call_Type:CALL! Address:ADDRCITY/S6! Common_Name:PLACE! " +
-          "| call_TIme:DATETIME! Call_Type:CALL! Location:ADDRCITY/S6! Cross_Street:X! Callers_Name:NAME! Callers_Phone_Number:PHONE! Area:MAP! " +
+          "| call_TIme:DATETIME! Call_Type:CALL! Location:ADDRCITYPLACE/S6! Cross_Street:X! Callers_Name:NAME! Callers_Phone_Number:PHONE! Area:MAP! " +
           "| Call_Type:CALL! EMPTY+? ( Common_Name:PLACE! Address:ADDRCITY/S6! Closest_Intersection:X! Incident:ID! " +
                                     "| Address:ADDRCITY/S6! ( Common_Name:PLACE! Closest_Intersection:X! Choose_your_incident_#_by_ORI:ID! " +
                                                            "| Near:X! " +
@@ -59,6 +60,7 @@ public class KYDaviessCountyBParser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("ADDRCITYPLACE")) return new MyAddressCityPlaceField();
     if (name.equals("X_CITY")) return new MyCrossCityField();
     if (name.equals("ALERT")) return new MyAlertField();
     return super.getField(name);
@@ -88,6 +90,37 @@ public class KYDaviessCountyBParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "CODE CALL";
+    }
+  }
+
+  private static final CodeSet CITY_CODESET = new CodeSet(KYDaviessCountyParser.CITY_LIST);
+
+  private class MyAddressCityPlaceField extends MyAddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+
+      // The base class gets's confused if there are multiple commas :(
+      String extra = "";
+      int pt = field.indexOf(',');
+      if (pt >= 0) {
+        pt = field.indexOf(',', pt+1);
+        if (pt >= 0) {
+          extra = stripFieldEnd(field.substring(pt), ":");
+          field = field.substring(0,pt).trim();
+        }
+      }
+      super.parse(field, data);
+      data.strCity += extra;
+      String city = CITY_CODESET.getCode(data.strCity);
+      if (city != null) {
+        data.strPlace = data.strCity.substring(city.length()).trim();
+        data.strCity = city;
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " PLACE";
     }
   }
 

@@ -48,6 +48,9 @@ public class KYDaviessCountyParser extends GroupBestParser {
       "HAWESVILLE",
       "LEWISPORT",
 
+      // Henderson County
+      "HENDERSON COUNTY",
+
       // Mclean County
       "MCLEAN COUNTY",
       "MCLEAN CO",

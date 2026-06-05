@@ -2481,7 +2481,7 @@ public class FieldProgramParser extends SmartAddressParser {
    * Address field processor
    */
   private static final Pattern SLOPPY_ADDR_PTN = Pattern.compile("\\d.*|.*[/&].*");
-  private static final Pattern GPS_COMPONENT_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{4,}\\)?");
+  private static final Pattern GPS_COMPONENT_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d{4,} *[NSEW]?\\)?\\.?");
   private static final Pattern ADDR_AT_PTN = Pattern.compile(" at |@", Pattern.CASE_INSENSITIVE);
   public class AddressField extends Field {
 
