@@ -10,9 +10,11 @@ public class MIJacksonCountyBParser extends FieldProgramParser {
 
   public MIJacksonCountyBParser() {
     super("JACKSON COUNTY", "MI",
-          "Address:ADDRCITY! Call_Time:DATETIME! Fire_Call_Type:CALL! Common_Name:PLACE! Narrative:INFO! INFO/N+ Closest_Intersection:X! " +
-               "Nature_of_Call:CALL/SDS! Assigned_Units:UNIT! Fire_Priority:PRI! Quadrant:MAP! Primary_Incident:ID! " +
-               "Fire_Radio_Channel:CH! Incident_Number:ID/L END");
+          "( Address:ADDRCITY! Call_Time:DATETIME! Fire_Call_Type:CALL! Common_Name:PLACE! Narrative:INFO! INFO/N+ Closest_Intersection:X! " +
+                 "Nature_of_Call:CALL/SDS! Assigned_Units:UNIT! Fire_Priority:PRI! Quadrant:MAP! Primary_Incident:ID! " +
+                 "Fire_Radio_Channel:CH! Incident_Number:ID/L " +
+          "| Call_Type:CALL! DATE:DATETIME! ADDRESS:ADDRCITY! INFO/N+? INFO2! COMMON_NAME:PLACE! X2! " +
+          ") END");
 
   }
 
@@ -21,11 +23,23 @@ public class MIJacksonCountyBParser extends FieldProgramParser {
     return "dispatcher@mijackson.org";
   }
 
+  private static final Pattern REVERSE_LABEL_PTN = Pattern.compile("(.*): *([A-Z ]+)");
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatch")) return false;
     if (body.startsWith("Address:")) {
       return parseFields(body.split("\n"), data);
+    }
+    else if (body.startsWith("Call Type:")) {
+      String[] flds = body.split("\n+");
+      for (int ndx = 1; ndx < flds.length; ndx++) {
+        String fld = flds[ndx].trim();
+        Matcher match = REVERSE_LABEL_PTN.matcher(fld);
+        if (match.matches()) {
+          flds[ndx] = match.group(2) + ':' + match.group(1).trim();
+        }
+      }
+      return parseFields(flds, data);
     }
     else {
       return parseFreeFormAlert(body, data);
@@ -65,9 +79,19 @@ public class MIJacksonCountyBParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("PRI")) return new PriorityField("(\\S*)\\s+Fire Status:.*", false);
+    if (name.equals("INFO2")) return new InfoField("(.*?) *\\bNARRATIVE", true);
+    if (name.equals("X2")) return new CrossField("(.*?) *\\bINTERSECTION");
     return super.getField(name);
   }
 
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      field = field.replace('@', '&');
+      super.parse(field, data);
+    }
+  }
 }
