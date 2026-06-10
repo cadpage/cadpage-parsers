@@ -22,14 +22,13 @@ public class OHMedinaCountyDParser extends MsgParser {
 
   private static final Pattern LOG_HEADER_PTN = Pattern.compile(";? +\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d - log - ");
   private static final Pattern ADDR_ST_ZIP_PTN = Pattern.compile("([^,]+)(?:, *([A-Z ]+))??(?:, *([A-Z]{2})(?: +(\\d{5}))?)?");
-//  private static final Pattern PLACE_CALL_PTN = Pattern.compile("(?:(.*?) )?(Assist other Agency|Deceased Person DOA Dead|Flooded Roadways|Medical Alarm|Mental|Open Burn Complaint|Suicide/Attempted Suicide/Suicide Threats/Psych/Abnormal Behavior|Traffic Stop|Trees or Branches Down|(?:Fire Alarm|MVC w|\\S+) - .*)");
   private static final Pattern UNIT_DELIM_PTN = Pattern.compile("; *");
   private static final Pattern APT_PTN = Pattern.compile("[A-Z]?\\d+[A-Z]?|[A-Z]|(?:#|APARTMENT|APT|LOT|RM|SUITE|UNIT)[# ]*(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern PLACE_UNIT_PTN = Pattern.compile("(.*?) +((?:\\b[-A-Z0-9]+\\b(?:; *)?)+)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
-    if (subject.length() == 0) return false;
     data.strCall = subject;
 
     String[] flds = LOG_HEADER_PTN.split(body);
@@ -60,26 +59,34 @@ public class OHMedinaCountyDParser extends MsgParser {
       if (data.strCity.length() == 0 && zip != null) data.strCity = zip;
     }
 
+    String unit;
+    if (!data.strCall.isEmpty()) {
+      pt = call.indexOf(data.strCall+' ');
+      if (pt < 0) return false;
+      unit = call.substring(pt+data.strCall.length()+1);
+      call = call.substring(0,pt).trim();
+    } else {
+      Matcher match = PLACE_UNIT_PTN.matcher(call);
+      if (!match.matches()) return false;
+      call = match.group(1);
+      unit = match.group(2);
+    }
+    data.strUnit = UNIT_DELIM_PTN.matcher(unit).replaceAll(",").trim();
+
     pt = call.indexOf(';');
-    if (pt < 0) pt = call.length();
-    pt = call.lastIndexOf(' ', pt-1);
-    if (pt < 0) return false;
-    data.strUnit = UNIT_DELIM_PTN.matcher(call.substring(pt+1)).replaceAll(",");
-    call = call.substring(0,pt).trim();
+    if (pt >= 0) {
+      data.strPlace = call.substring(0,pt).trim();
+      call = call.substring(pt+1).trim();
+    }
 
-    // Really hope the call in the subject matches the call in the alert text!!!
-    if (!call.endsWith(data.strCall)) return false;
-
-    String place = call.substring(0, call.length() - data.strCall.length()).trim();
-
-    if (place != null && !place.equals("None")) {
-      Matcher match = APT_PTN.matcher(place);
+    if (!call.isEmpty() && !call.equals("None")) {
+      Matcher match = APT_PTN.matcher(call);
       if (match.matches()) {
         String apt = match.group(1);
-        if (apt == null) apt = place;
+        if (apt == null) apt = call;
         if (!apt.equals(data.strApt)) data.strApt = append(data.strApt, "-", apt);
       } else {
-        data.strPlace = place;
+        data.strPlace = append(data.strPlace, " - ", call);
       }
     }
 
