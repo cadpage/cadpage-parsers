@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.MN;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,6 +12,7 @@ public class MNCottonwoodCountyParser extends FieldProgramParser {
 
   public MNCottonwoodCountyParser() {
     this("COTTONWOOD COUNTY", "MN");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   public MNCottonwoodCountyParser(String defCity, String defState) {
@@ -37,7 +39,7 @@ public class MNCottonwoodCountyParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d/\\d\\d \\d\\d:\\d\\d", true);
     if (name.equals("INFO")) return new MyInfoField();
-    if (name.equals("UNIT")) return new UnitField("[A-Z0-9]+", true);
+    if (name.equals("UNIT")) return new UnitField("[A-Z0-9]+(?:stResp)?", true);
     if (name.equals("NONE")) return new SkipField("None", true);
     return super.getField(name);
   }
@@ -63,4 +65,13 @@ public class MNCottonwoodCountyParser extends FieldProgramParser {
       return super.getFieldNames() + " CH";
     }
   }
+
+  @Override
+  protected String adjustGpsLookupAddress(String address) {
+    return address.toUpperCase();
+  }
+
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "16626 KENWOOD AVE",                    "+44.291477,-95.189718"
+  });
 }
