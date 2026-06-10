@@ -10,6 +10,6 @@ public class MSHarrisonCountyGParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "cad@cityoflongbeachms.com";
+    return "cad@cityoflongbeachms.com,dispatch@longbeachms.gov";
   }
 }
