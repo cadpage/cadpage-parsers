@@ -29,6 +29,7 @@ public class SDEdmundsCountyParser extends FieldProgramParser {
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile(" - #(\\S+)");
+  private static final Pattern DELIM = Pattern.compile("[; ]*\n *|\\s*;\\s*");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -36,7 +37,7 @@ public class SDEdmundsCountyParser extends FieldProgramParser {
     Matcher match = SUBJECT_PTN.matcher(subject);
     if (match.matches()) data.strCallId = match.group(1);
 
-    return parseFields(body.split(";\\s*"), data);
+    return parseFields(DELIM.split(body), data);
   }
 
   @Override
