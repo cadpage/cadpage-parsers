@@ -10,6 +10,6 @@ public class GANewtonCountyParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "@alert.active911.com,@covington-newton911.com,@getrave.com";
+    return "@alert.active911.com,@covington-newton911.com,@getrave.com,FRN-covington-newton911@email.getrave.com";
   }
 }
