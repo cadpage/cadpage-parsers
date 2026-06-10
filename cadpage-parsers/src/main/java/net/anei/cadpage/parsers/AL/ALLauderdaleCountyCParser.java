@@ -10,7 +10,7 @@ public class ALLauderdaleCountyCParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com,@flalema911.org";
+    return "FlexRapidNotification@dccnotify.com,FlexCAD@flalema911.org";
   }
 
   @Override

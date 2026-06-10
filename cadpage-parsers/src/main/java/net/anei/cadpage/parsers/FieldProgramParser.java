@@ -1118,7 +1118,7 @@ public class FieldProgramParser extends SmartAddressParser {
     try {
       xmlParser.parse(src, handler);
     } catch (SAXException | IOException ex) {
-      System.out.println(ex);
+//      System.out.println(ex);
       // Sloppy, but truncated messsages throw this exception and we
       // want to process as much as we can
       // ignore.printStackTrace();
