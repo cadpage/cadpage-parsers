@@ -15,7 +15,7 @@ public class NVClarkCountyCParser extends FieldProgramParser {
   }
 
   private static final Pattern POST_MOVE_PTN = Pattern.compile("(POST MOVE)AMB:(\\S+)POST NAME: *(.*)");
-  private static final Pattern RUN_REPORT_PTN = Pattern.compile("RUN# (\\d+) (DISP:.*)");
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("RUN# (\\d+(?:; *\\d+)*) (DISP:.*)");
   private static final Pattern RR_BRK_PTN = Pattern.compile(" +(?=[A-Z]+:)");
 
   @Override
