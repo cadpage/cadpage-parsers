@@ -282,7 +282,8 @@ public class ManageParsers {
         "GASchleyCountyB",    "GASchleyCountyA",
         "GATaylotCountyB",    "GATaylorCountyA",
         "GAWebsterCountyB",   "GAWebsterCountyA",
-        "VAWarrenCountyB",    "General"                 // 06/03/2026
+        "VAWarrenCountyB",    "General",                 // 06/03/2026
+        "OHMedinaCountyB",    "General"                 // 06/11/2026
 
   });
 
