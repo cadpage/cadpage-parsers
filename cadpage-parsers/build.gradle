@@ -4,8 +4,10 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+java {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+}
 
 jar {
     manifest {

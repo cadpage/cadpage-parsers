@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.2'
+        classpath 'com.android.tools.build:gradle:9.2.1'
         classpath 'com.google.gms:google-services:4.4.4'
     }
 }
@@ -24,8 +24,8 @@ allprojects {
 // into maximum integer value issues, so now the version code is simply incremented with
 // each new release
 ext {
-    versionName = "2.2.13-19"
-    versionCode = 2020212056
+    versionName = "2.2.13-20"
+    versionCode = 2020212057
 }
 
 tasks.register('gstatus', Exec) {
