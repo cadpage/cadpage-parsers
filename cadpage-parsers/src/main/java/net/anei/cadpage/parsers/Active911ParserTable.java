@@ -2597,6 +2597,7 @@ public class Active911ParserTable {
       "US/SC/MarionCounty",               "SCMarionCounty",
       "US/SC/MarlboroCounty",             "SCMarlboroCounty",
       "US/SC/McCormickCounty",            "SCMcCormickCounty",
+      "US/SC/McEntireFD",                 "SCRichlandCountyB",
       "US/SC/MidlandsAmbulance",          "SCSumterCountyB",
       "US/SC/NAugustaPS",                 "SCAikenCountyB",
       "US/SC/NewberryCounty",             "SCNewberryCounty",
