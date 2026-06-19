@@ -16,7 +16,8 @@ public class COElPasoCountyAParser extends FieldProgramParser {
 
   public COElPasoCountyAParser() {
     super("EL PASO COUNTY", "CO",
-          "( FROM_EPSO_NOTIFICATION%EMPTY CALL! At:ADDR! Apt_#:APT_PLACE! JURIS:SRC! CMD:CH! TA_Resp:CH! Inc_#:ID! EMPTY! " +
+          "( FROM_EPSO_NOTIFICATION%EMPTY CALL! At:ADDR! Apt_#:APT_PLACE! JURIS:SRC! ( CMD:CH! | CH! ) TA_Resp:CH! Inc_#:ID! Units:UNIT? Details:INFO! " +
+          "| Add:ADDR! Problem:CALL! Apt:APT! Loc:PLACE! Code:CODE! RP_Ph:PHONE! GPS:GPS/d? Inc_#:ID? Units:UNIT? Caution/Access_Info:INFO! " +
           "| ID? ( SRC UNIT | SRC_UNIT | SRC UNIT ) " +
                    "( DISTRICT CALL PLACE ADDR UNIT/C EMPTY! " +
                    "| REF_Run_Number:ID! ( At:ADDR! PROBLEM_CHANGED_TO:CALL! | CALL! THE_LOC_HAS_CHANGED_TO:ADDR! APT! ) " +
@@ -27,7 +28,7 @@ public class COElPasoCountyAParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "ept@ept911.info,ept@elpasoteller911.org,alerts@eptpaging.info";
+    return "ept@ept911.info,alerts@eptpaging.info,noreply@everbridge.net";
   }
 
   @Override
@@ -44,8 +45,10 @@ public class COElPasoCountyAParser extends FieldProgramParser {
   }
 
   private static final Pattern COMMENT_INFO_PTN1 = Pattern.compile("Comment:(.*?),\\[(INFO from EPSO:.*?)\\]");
-  private static final Pattern COMMENT_INFO_PTN2 = Pattern.compile("Comment:(.*?),(?=INFO from EPSO:)");
+  private static final Pattern COMMENT_INFO_PTN2 = Pattern.compile("Comment:(.*?),(?=INFO from EPSO:|FROM EPSO NOTIFICATION)");
+  private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=(?:GPS|Units|Caution/Access Info):)");
   private static final Pattern DELIM = Pattern.compile("~| (?=Apt #:)");
+  private static final Pattern LOC_CHANGE_PTN = Pattern.compile("REF:(.*?) THE LOC HAS CHANGED TO:(.*?) *# *(.*)");
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("(?:([A-Z]{2,4}\\d{11}|\\d{6}-\\d{5}) +)?(.*?) +(D:.*?) *(E:.*?) *(S:.*?) *(PTC:.*?) *(T:.*?) *(AD:.*?) *(C:.*?) *(Page Req Time:.*)");
 
   @Override
@@ -62,24 +65,6 @@ public class COElPasoCountyAParser extends FieldProgramParser {
       body = body.substring(match.end());
     }
 
-    // One page format requires using the original subject
-    if (subject.startsWith("INFO from EPSO:")) {
-      setFieldList("INFO CALL ADDR APT PLACE CITY CH");
-      data.strSupp = comment;
-      data.strCall = subject.substring(15).trim();
-      FParser p = new FParser(body);
-      parseAddress(p.get(30), data);
-      if (!p.check("#")) return false;
-      data.strApt = append(data.strApt, "-", p.get(5));
-      if (!p.check("~")) return false;
-      data.strPlace = p.get(30);
-      if (!p.check("JURIS:")) return false;
-      data.strCity = cvtJurisCity(p.get(30));
-      if (!p.check("CMD:")) return false;
-      data.strChannel = p.get();
-      return true;
-    }
-
     // Otherwise square bracket got turned into a subject and needs to be turned back
     if (subject.length() > 0) {
       body = '[' + subject + "] " + body;
@@ -87,36 +72,29 @@ public class COElPasoCountyAParser extends FieldProgramParser {
       body = body.substring(1).trim();
     }
 
-    // One fixed field format also has some ~ delimiters
-    FParser p = new FParser(body);
-
-    if (p.check("FROM EPSO NOTIFICATION~")) {
-      do {
-        String call =  p.get(30);
-        if (!p.check("~At:")) break;
-        String addr = p.get(40);
-        if (!p.check("Apt #:")) break;
-        String apt = p.get(7);
-        String place = p.get(40);
-        if (!p.check("~JURIS: ")) break;
-        String source = p.get(14);
-        if (!p.check("~NO RESPONSE")) break;
-
-        setFieldList("CALL ADDR APT PLACE SRC");
-        data.strCall = call;
-        parseAddress(addr, data);
-        data.strApt = append(data.strApt, "-", apt);
-        data.strPlace = place;
-        data.strSource = source;
-        return true;
-
-      } while (false);
+    // Another new page format
+    if (body.startsWith("Add:")) {
+      body = MISSING_BLANK_PTN.matcher(body).replaceAll(" ");
+      if (!super.parseMsg(body, data)) return false;
+      data.strSupp = append(comment, "\n", data.strSupp);
+      return true;
     }
 
     // Not everyone is using it, but see if this is the new standard dispatch format
     String[] flds = DELIM.split(body, -1);
     if (flds.length >= 5 || body.startsWith("REF Run Number:")) {
-      return parseFields(flds, data);
+      if (!parseFields(flds, data)) return false;
+      data.strSupp = append(comment, "\n", data.strSupp);
+      return true;
+    }
+
+    match = LOC_CHANGE_PTN.matcher(body);
+    if (match.matches()) {
+      setFieldList("CALL ADDR APT PLACE");
+      data.strCall = match.group(1).trim();
+      parseAddress(match.group(2), data);
+      data.strPlace = match.group(3).trim();
+      return true;
     }
 
     match = RUN_REPORT_PTN.matcher(body);
@@ -133,128 +111,17 @@ public class COElPasoCountyAParser extends FieldProgramParser {
       }
       return true;
     }
-
-    // One page format requires using the original subject
-    if (p.check("INFO from EPSO:")) {
-      setFieldList("INFO CALL ADDR APT PLACE CITY CH");
-      data.strSupp = comment;
-      data.strCall = p.get(30);
-      if (!p.check(" ")) return false;
-      parseAddress(p.get(30), data);
-      if (!p.check("#")) return false;
-      data.strApt = append(data.strApt, "-", p.get(5));
-      if (!p.check("~") && !p.check(" ")) return false;
-      data.strPlace = p.get(30);
-      if (!p.check("JURIS:")) return false;
-      data.strCity = cvtJurisCity(p.get(30));
-      if (!p.check("CMD:")) return false;
-      data.strChannel = p.get();
-      return true;
-    }
-
-
-    if (p.check("REF:")) {
-      int callLen = p.checkAhead("THE LOC HAS CHANGED TO:", 30, 33);
-      if (callLen >= 0) {
-        setFieldList("CALL ADDR APT PLACE");
-        data.strCall = p.get(callLen);
-        if (!p.check("THE LOC HAS CHANGED TO:")) return false;
-        parseAddress(p.get(30), data);
-        if (!p.check("#")) return false;
-        data.strApt = p.get(5);
-        data.strPlace = p.get();
-        return true;
-      }
-      setFieldList("ADDR APT CALL");
-      parseAddress(p.get(40), data);
-      if (!p.check(" PROBLEM CHANGED TO:") && !p.check(" PROBLEM HAS CHANGED TO:")) return false;
-      data.strCall = p.get();
-      return true;
-    }
-
-    if (p.check("TO:")) {
-      setFieldList("UNIT ADDR APT PLACE SRC CALL CH");
-      data.strUnit = p.get(100);
-      if (!p.check("Respond to:")) return false;
-      parseAddress(p.get(35), data);
-      if (!p.check("#")) return false;
-      data.strApt = append(data.strApt, "-", p.get(5));
-      data.strPlace = p.get(20);
-      data.strSource = p.get(15);
-      if (!p.check("- FOR A: ")) return false;
-      data.strCall = p.get(30);
-      if (p.check("- DISPATCH CHANNEL: ")) {
-        data.strChannel = p.get(8);
-      }
-      if (!p.check(" - CMD:")) return false;
-      data.strChannel = append(data.strChannel, "/", p.get());
-      return true;
-    }
-
-    if (p.check("FROM EPSO NOTIFICATION, ")) {
-      setFieldList("CALL ADDR APT PLACE SRC ID");
-      data.strCall = p.get(30);
-      parseAddress(p.get(40), data);
-      data.strApt = append(data.strApt, "-", p.get(5));
-      data.strPlace = p.get(40);
-      p.checkBlanks(5);
-      if (!p.check("JURIS:")) return false;
-      data.strSource = p.get(30);
-      data.strCallId = p.get(10);
-      if (!p.check("~NO RESPONSE")) return false;
-      return true;
-    }
-
-    if (p.check("Address:")) {
-      setFieldList("ADDR APT PLACE CITY CALL ID GPS");
-      boolean chkSpace = p.check(" ");
-      parseAddress(p.get(35), data);
-      if (!p.check("Location:")) return false;
-      if (chkSpace && !p.check(" ")) return false;
-      data.strPlace = p.get(35);
-      if (!p.check("City:")) return false;
-      if (chkSpace && !p.check(" ")) return false;
-      data.strCity = p.get(35);
-      if (!p.check("Problem:")) return false;
-      if (chkSpace && !p.check(" ")) return false;
-      data.strCall = p.get(30);
-      data.strCallId = p.get(20);
-      if (!p.check("Lat/Long:")) return false;
-      String gps1 = p.get(10);
-      if (!p.check("~")) return false;
-      String gps2 = p.get(10);
-      setGPSLoc(fixGPS(gps1)+','+fixGPS(gps2), data);
-      return true;
-    }
-
-    if (p.checkAhead(77, "RP Ph:") || p.checkAhead(77,  "RP PH:")) {
-      setFieldList("ADDR APT CALL CODE PHONE INFO");
-      parseAddress(p.get(40), data);
-      data.strCall = p.get(30);
-      data.strCode = p.get(7);
-      if (!p.check("RP Ph:") && !p.check("RP PH:")) return false;
-      data.strPhone = p.get(13);
-      data.strSupp = p.get();
-      return true;
-    }
-
     return false;
-  }
-
-  private String fixGPS(String gps) {
-    int pt = gps.length()-6;
-    if (pt >= 0) gps = gps.substring(0,pt)+'.'+gps.substring(pt);
-    return gps;
   }
 
   @Override
   public Field getField(String name) {
     if (name.equals("APT_PLACE")) return new MyAptPlaceField();
     if (name.equals("CH")) return new MyChannelField();
-    if (name.equals("ID")) return new IdField("[A-Z0-9]{2,5}(?:\\d{2}-\\d{4,5}|\\d{8})", true);
+    if (name.equals("ID")) return new IdField("[A-Z0-9]{2,5}(?:\\d{2}-\\d{4,5}|\\d{8})|\\d{4,}-\\d+|", true);
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("SRC_UNIT")) return new MySourceUnitField();
-    if (name.equals("UNIT")) return new UnitField("[,pA-Z0-9]+", true);
+    if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("DISTRICT")) return new MapField("District \\d+|Colorado S|El Paso Co|HWY 115 -", true);
     if (name.equals("GPS")) return new GPSField("\\d{8,9} +\\d{8,9}");
     if (name.equals("GPS_TRUNC")) return new MyGPSTruncField();
@@ -329,6 +196,18 @@ public class COElPasoCountyAParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "SRC UNIT";
+    }
+  }
+
+  private class MyUnitField extends UnitField {
+    public MyUnitField() {
+      super("[,pA-Z0-9 ]+", true);
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ",");
+      super.parse(field, data);
     }
   }
 
