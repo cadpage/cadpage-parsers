@@ -1,122 +1,179 @@
 package net.anei.cadpage.parsers.PA;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class PAWayneCountyAParser extends FieldProgramParser {
 
-  private static Pattern CALL_FIELD_PATTERN = Pattern.compile("([A-Z0-9 ]+?)[^A-Z0-9]*([A-Z0-9]+) \\(\\)");
-  private static Pattern UNIT_FIELD_PATTERN = Pattern.compile("(.*?) +(WC\\d+)");
-  private static Pattern INFO_FIELD_PATTERN = Pattern.compile("\\d{1,2}/\\d{1,2}/\\d{4} (\\d{1,2}:\\d{1,2}:\\d{1,2})\\b +(.*)");
-
   public PAWayneCountyAParser() {
-    super("WAYNE COUNTY", "PA", "CALL! Loc:ADDR! Rcvd:TIME! Units:UNIT! Comments:INFO");
+    super(CITY_LIST, "WAYNE COUNTY", "PA",
+          "CALL INFO ADDRCITY/S X UNIT GPS DATETIME! END");
   }
-  
+
+  @Override
+  public String getFilter() {
+    return "Dispatch@wcpa911.com";
+  }
+
   @Override
   public int getMapFlags() {
-    return MAP_FLG_ADD_DEFAULT_CNTY;
+    return MAP_FLG_PREFER_GPS;
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
-    if (subject.contains("Times -")) {
-      setFieldList("INFO");
-      data.msgType = MsgType.RUN_REPORT;
-      data.strSupp = body;
-      return true;
-    } else {
-      String subjects[] = subject.split("\\|");
-      subject = subjects[subjects.length-1];
-      if (subject.length() == 1) data.strPriority = subject;
-      
-      return super.parseMsg(body, data);
-    }
+    if (!subject.equals("!")) return false;
+    return parseFields(body.split("\n"), data);
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("CALL")) return new MyCallField();
-    if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("UNIT")) return new MyUnitField();
-    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
+    if (name.equals("GPS")) return new MyGPSField();
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
     return super.getField(name);
   }
 
-  private class MyCallField extends CallField {
-
+  private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
-      Matcher mat = CALL_FIELD_PATTERN.matcher(field);
-      if (mat.matches()) {
-        data.strCall = mat.group(1).trim();
-        data.strSource = mat.group(2);
-      } else abort();
-    }
-
-    @Override
-    public String getFieldNames() {
-      return "PRI CALL SRC";
-    }
-  }
-
-  private class MyAddressField extends AddressField {
-    @Override
-    public void parse(String field, Data data) {
-      int ai = field.indexOf("[@");
-      if (ai >= 0) {
-        data.strPlace = field.substring(ai + 2).trim();
-        super.parse(field.substring(0, ai).trim(), data);
-      } else {
-        super.parse(field, data);
+      int pt = field.lastIndexOf(';');
+      if (pt >= 0) {
+        data.strPlace = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
       }
-
-    }
-
-    @Override
-    public String getFieldNames() {
-      return "ADDR PLACE";
-    }
-
-  }
-
-  private class MyUnitField extends UnitField {
-    @Override
-    public void parse(String field, Data data) {
-      Matcher mat = UNIT_FIELD_PATTERN.matcher(field);
-      if (mat.matches()) {
-        data.strCallId = mat.group(2);
-        super.parse(mat.group(1).trim(), data);
-      } else {
-        super.parse(field, data);
+      boolean forceCity = false;
+      if (field.endsWith(" BOROUGH")) {
+        forceCity = true;
+        field = field.substring(0,field.length()-8).trim();
+      } else if (field.endsWith(" BORO")) {
+        forceCity = true;
+        field = field.substring(0,field.length()-5).trim();
+      } else if (field.endsWith(" TOWNSHIP")) {
+        forceCity = true;
+        field = field.substring(0, field.length()-9).trim() + " TWP";
+      } else if (field.endsWith(" TWP")) {
+        forceCity = true;
+      }
+      super.parse(field, data);
+      if (forceCity && data.strCity.isEmpty()) {
+        String addr = data.strAddress;
+        data.strAddress = "";
+        parseAddress(StartType.START_ADDR, addr, data);
+        data.strCity = getLeft();
       }
     }
 
     @Override
     public String getFieldNames() {
-      return "UNIT ID";
+      return super.getFieldNames() + " PLACE";
     }
-
   }
 
-  private class MyInfoField extends InfoField {
+  private class MyGPSField extends GPSField {
     @Override
     public void parse(String field, Data data) {
-      for (String line : field.split("\n")) {
-        line = line.trim();
-        Matcher mat = INFO_FIELD_PATTERN.matcher(line);
-        if(mat.matches()) {
-          //set time if it is currently empty
-          if (data.strTime.length() == 0) data.strTime = mat.group(1);
-          line = mat.group(2);
-        }
-        data.strSupp = append(data.strSupp, "\n", line);
-      }
+      field = field.replace("-", ",-");
+      super.parse(field, data);
     }
   }
+
+  private static final String[] CITY_LIST = new String[] {
+
+      // Boroughs
+      "BETHANY",
+      "HAWLEY",
+      "HONESDALE",
+      "PROMPTON",
+      "STARRUCCA",
+      "WAYMART",
+
+      // Townships
+      "BERLIN TWP",
+      "BUCKINGHAM TWP",
+      "CANAAN TWP",
+      "CHERRY RIDGE TWP",
+      "CLINTON TWP",
+      "DAMASCUS TWP",
+      "DREHER TWP",
+      "DYBERRY TWP",
+      "GREEN TWP",
+      "GREENE TWP",
+      "LAKE TWP",
+      "LEBANON TWP",
+      "LEHIGH TWP",
+      "MANCHESTER TWP",
+      "MOUNT PLEASANT TWP",
+      "OREGON TWP",
+      "PALMYRA TWP",
+      "PAUPACK TWP",
+      "PRESTON TWP",
+      "SALEM TWP",
+      "SCOTT TWP",
+      "SOUTH CANAAN TWP",
+      "STERLING TWP",
+      "TEXAS TWP",
+
+      // Census-designated places
+      "BIG BASS LAKE",
+      "GOULDSBORO",
+      "POCONO SPRINGS",
+      "THE HIDEOUT",
+      "WALLENPAUPACK LAKE ESTATES",
+      "WHITE MILLS",
+
+      // Unincorporated communities
+      "DAMASCUS",
+      "EQUINUNK",
+      "GALILEE",
+      "REFLECTION LAKE",
+      "HAMLIN",
+      "HOLLISTERVILLE",
+      "JERICHO",
+      "LAKE ARIEL",
+      "LAKE COMO",
+      "LAKEVILLE",
+      "LAKEWOOD",
+      "MILANVILLE",
+      "NEWFOUNDLAND",
+      "ORSON",
+      "PLEASANT MOUNT",
+      "POYNTELLE",
+      "RILEYVILLE",
+      "SOUTH STERLING",
+      "STARLIGHT",
+      "TANNERS FALLS",
+
+      // Other places
+      "BREEZEWOOD ACRES",
+      "ELK LAKE",
+      "HIDDEN LAKE ESTATES",
+      "INDIAN COUNTRY",
+      "POCONO RANCHETTES",
+      "ROCKY ACRES",
+      "SIMPSON GENTEX",
+
+      // Lackawanna County
+      "CARBONDALE",
+      "CITY OF CARBONDALE",
+      "CLIFFORD",
+      "CLIFFORD TWP",
+      "FELL TWP",
+      "SIMPSON",
+      "THOMPSON TWP",
+      "VANDLING",
+
+      // Pike County
+      "GREENTOWN",
+      "HEMLOCK GROVE",
+      "PROMISED LAND",
+      "THE ESCAPE",
+
+      // Susquehanna County
+      "BROWNDALE",
+      "FOREST CITY",
+      "HERRICK TWP",
+      "UNIONDALE"
+  };
 }
