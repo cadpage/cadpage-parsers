@@ -3170,6 +3170,7 @@ public class Active911ParserTable {
       "US/WA/USAMobility",                "WAPierceCountyA",
       "US/WA/ValleyCom",                  "WAKingCountyC",
       "US/WA/WallaWallaCounty",           "WAWallaWallaCounty",
+      "US/WA/WallaWallaInfo",             "WAWallaWallaCounty",
       "US/WA/WestPierceCounty",           "WAPierceCountyE",
       "US/WA/WhatcomCounty",              "WAWhatcomCounty",
       "US/WA/WhitmanCounty",              "WAWhitmanCounty",
