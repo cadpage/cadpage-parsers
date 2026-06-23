@@ -7,7 +7,7 @@ public class MDHowardCountyBParser extends FieldProgramParser {
 
   public MDHowardCountyBParser() {
     super("HOWARD COUNTY", "MD",
-          "ID CALL PLACE ADDR CITY APT UNIT TIME! BOX END");
+          "ID CALL PLACE ADDR CITY APT UNIT TIME! MAP END");
   }
 
   @Override
@@ -35,7 +35,7 @@ public class MDHowardCountyBParser extends FieldProgramParser {
     if (name.equals("ID")) return new IdField("[EF]\\d{8}|OOC\\d{7}", true);
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
-    if (name.equals("BOX")) return new MyBoxField();
+    if (name.equals("MAP")) return new MyMapField();
     return super.getField(name);
   }
 
@@ -50,7 +50,7 @@ public class MDHowardCountyBParser extends FieldProgramParser {
     }
   }
 
-  private class MyBoxField extends BoxField {
+  private class MyMapField extends MapField {
     @Override
     public void parse(String field, Data data) {
       int pt = field.indexOf('(');
