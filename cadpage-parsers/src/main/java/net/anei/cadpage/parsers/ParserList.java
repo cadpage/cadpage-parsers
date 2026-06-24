@@ -1492,6 +1492,7 @@ public class ParserList {
               ,"OHPutnamCounty"                 ,"Putnam County, OH"
               ,"OHRichlandCounty"               ,"Richland County, OH"
               ,"OHSanduskyCounty"               ,"Sandusky County, OH"
+              ,"OHSenecaCounty"                 ,"Seneca County, OH"
               ,"OHShelbyCounty"                 ,"Shelby County, OH"
               ,"OHStarkCounty"                  ,"Stark County, OH"
               ,"OHSugarCreek"                   ,"Sugar Creek Twns, OH"
