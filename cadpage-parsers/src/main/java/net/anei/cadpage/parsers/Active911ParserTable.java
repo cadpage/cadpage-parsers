@@ -831,6 +831,7 @@ public class Active911ParserTable {
       "US/IN/JeffersonvilleFD",           "INClarkCounty",
       "US/IN/JohnsonCounty",              "INJohnsonCounty",
       "US/IN/KendallvillePD",             "INNobleCounty",
+      "US/IN/KingmanCounty",              "INFountainCountyC",
       "US/IN/KingsfordHeights",           "INLaporteCounty",
       "US/IN/KnoxCounty",                 "INKnoxCounty",
       "US/IN/KokomoFD",                   "INHowardCountyB",
