@@ -10,19 +10,19 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
  * Fairbanks, AK
  */
 public class AKFairbanksParser extends DispatchOSSIParser {
-  
-  
+
+
   public AKFairbanksParser() {
     super("FAIRBANKS", "AK",
           "( CANCEL ADDR CITYN! INFO/N " +
           "| FYI? MUTAID? ADDR CALL/SDS! CH? BOX? UNIT END )");
   }
-  
+
   @Override
   public String getFilter() {
     return "CAD@ci.fairbanks.ak.us,CAD@fairbanksalaska.us";
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     int pt = body.indexOf("\nCAUTION:");
@@ -39,7 +39,7 @@ public class AKFairbanksParser extends DispatchOSSIParser {
     if (name.equals("BOX")) return new BoxField("\\d{2,3}", true);
     return super.getField(name);
   }
-  
+
   private static final Pattern CALL_CODE_PTN = Pattern.compile("(.*)- ?(ALPHA|BRAVO|CHARLIE|DELTA?|ECHO)");
   private class MyCallField extends CallField {
     @Override
@@ -51,10 +51,22 @@ public class AKFairbanksParser extends DispatchOSSIParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CALL PRI";
     }
+  }
+
+  private static final Pattern AK_PTN = Pattern.compile("\\bAK\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern RICH_PTN = Pattern.compile("\\bRICH\\b", Pattern.CASE_INSENSITIVE);
+  private static final Pattern PROVERT_PTN = Pattern.compile("\\bPROVERT\\b", Pattern.CASE_INSENSITIVE);
+
+  @Override
+  public String adjustMapAddress(String addr)  {
+    addr = AK_PTN.matcher(addr).replaceAll("ALASKA");
+    addr = RICH_PTN.matcher(addr).replaceAll("RICHARDSON");
+    addr = PROVERT_PTN.matcher(addr).replaceAll("PROBERT");
+    return addr;
   }
 }
