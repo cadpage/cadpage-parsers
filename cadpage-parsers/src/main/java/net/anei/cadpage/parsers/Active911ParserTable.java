@@ -1070,6 +1070,7 @@ public class Active911ParserTable {
       "US/KY/KentonCountyHHPD",           "KYKentonCountyA,KYKentonCountyB",
       "US/KY/KentonCountyIndependence",   "KYKentonCountyA,KYKentonCountyB",
       "US/KY/KentonCountyLudlow",         "KYKentonCountyA,KYKentonCountyB",
+      "US/KY/KentonCountyNoDiscard",      "KYKentonCountyB",
       "US/KY/KentonCountyParkHills",      "KYKentonCountyA,KYKentonCountyB",
       "US/KY/KentonCountyPiner",          "KYKentonCountyA,KYKentonCountyB",
       "US/KY/KentonCountyPointPleasant",  "KYKentonCountyA,KYKentonCountyB",
