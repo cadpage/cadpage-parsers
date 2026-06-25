@@ -10,7 +10,7 @@ public class KYPerryCountyParser extends DispatchA27Parser {
 
   @Override
   public String getFilter() {
-    return "cadnotifications@perrycountyky.org";
+    return "cadnotifications@perrycountyky.org,perrycoky@cissystem.com";
   }
 
   @Override
