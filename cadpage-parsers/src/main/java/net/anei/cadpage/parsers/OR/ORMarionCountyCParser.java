@@ -6,7 +6,11 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class ORMarionCountyCParser extends FieldProgramParser {
 
   public ORMarionCountyCParser() {
-    super("MARION COUNTY", "OR",
+    this("MARION COUNTY", "OR");
+  }
+
+  public ORMarionCountyCParser(String defCity, String defState) {
+    super(defCity, defState,
           "Call_Type:CALL! Date/Time:DATETIME! Location:ADDRCITY! Name:NAME! Intersection:X! Lat:GPS1! Long:GPS2! Incident:ID! Units:UNIT! Narrative:INFO! INFO/N+");
   }
 
