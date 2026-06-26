@@ -6,12 +6,12 @@ import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 public class PAWayneCountyBParser extends DispatchH05Parser {
 
   public PAWayneCountyBParser() {
-    super("WAYNE COUNTY", "PA",
-          "( Call_Date/Time:DATETIME! INFO/N+ Call_Address:ADDRCITY! Common_Name:PLACE! Cross_Streets:X! EMS_Call_Type/Area:CALL! Fire_Call_Type:CALL! Narrative:EMPTY! INFO_BLK+ " +
+    super(CITY_LIST, "WAYNE COUNTY", "PA",
+          "( Call_Date/Time:DATETIME! INFO/N+ Call_Address:ADDRCITY/S6! Common_Name:PLACE! Cross_Streets:X! EMS_Call_Type/Area:CALL! Fire_Call_Type:CALL! Narrative:EMPTY! INFO_BLK+ " +
               "( Unit_Times:EMPTY! TIMES+ Call/Incident_#:ID! https:SKIP! Lat/Lon:GPS! " +
               "| Call/Incident_#:ID! Map_link:EMPTY! https:SKIP! Lat/Lon:GPS! Unit_Times:EMPTY! TIMES+ " +
               ") " +
-          "| ADDRCITY! CALL! X! INFO_BLK+? TIMES+? DATETIME SKIP ID ID2 https:GPS2 " +
+          "| ADDRCITY/S6! CALL! X! INFO_BLK+? TIMES+? DATETIME SKIP ID ID2 https:GPS2 " +
           ") END");
     setAccumulateUnits(true);
   }
@@ -34,7 +34,10 @@ public class PAWayneCountyBParser extends DispatchH05Parser {
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      field = field.replace('@', '&');
+      field = stripFieldEnd(field, " CTY");
       super.parse(field, data);
+      data.strCity = stripFieldEnd(data.strCity, data.strApt);
       data.strCity = stripFieldEnd(data.strCity, " BOROUGH");
       data.strCity = stripFieldEnd(data.strCity, " BORO");
     }
@@ -54,4 +57,8 @@ public class PAWayneCountyBParser extends DispatchH05Parser {
       data.strCallId = append(field, "/", data.strCallId);
     }
   }
+
+  private static final String[] CITY_LIST = new String[] {
+      "CARBONDALE"
+  };
 }
