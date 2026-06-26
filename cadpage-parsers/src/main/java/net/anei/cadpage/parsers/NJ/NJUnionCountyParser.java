@@ -10,6 +10,8 @@ Union County, NJ
 public class NJUnionCountyParser extends GroupBestParser {
 
   public NJUnionCountyParser() {
-    super(new NJUnionCountyAParser(), new NJUnionCountyBParser());
+    super(new NJUnionCountyAParser(),
+          new NJUnionCountyBParser(),
+          new NJUnionCountyCParser());
   }
 }
