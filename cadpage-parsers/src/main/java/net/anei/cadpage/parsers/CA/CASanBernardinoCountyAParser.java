@@ -1634,6 +1634,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "PSY-D2v",    "Psychiatric - dangerous hemorr. - violent",
       "PSY-D2w",    "Psychiatric - dangerous hemorr. - weapon",
       "PSY-D3",     "Psychiatric prob, not alert",
+      "PT",         "Penetrating Trauma",
       "PT-A1",      "Penetrating Trauma",
       "PT-B1",      "Penetrating Trauma",
       "PT-B2",      "Penetrating Trauma",
