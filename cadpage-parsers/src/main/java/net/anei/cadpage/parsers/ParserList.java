@@ -1902,6 +1902,7 @@ public class ParserList {
               ,"TXStafford"                     ,"Stafford, TX"
               ,"TXTarrantCounty"                ,"Tarrant County, TX"
               ,"TXTexasCity"                    ,"Texas City, TX"
+              ,"TXTomGreenCounty"               ,"Tom Green County, TX"
               ,"TXTravisCounty"                 ,"Travis County, TX"
               ,"TXUTHealthEastTexas"            ,"UTHealth East Texas, TX"
               ,"TXUpshurCounty"                 ,"Upshur County, TX"
