@@ -1,15 +1,11 @@
 package net.anei.cadpage.parsers.IN;
 
-import net.anei.cadpage.parsers.dispatch.DispatchSPKParser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class INWashingtonCountyParser extends DispatchSPKParser {
+public class INWashingtonCountyParser extends GroupBestParser {
 
   public INWashingtonCountyParser() {
-    super("WASHINGTON COUNTY", "IN");
+    super(new INWashingtonCountyAParser(), new INWashingtonCountyBParser());
   }
 
-  @Override
-  public String getFilter() {
-    return "WashingtonCo@ipsc.in.gov,noreply@public-safety-cloud.com";
-  }
 }
