@@ -3,7 +3,7 @@ package net.anei.cadpage.parsers.CA;
 import net.anei.cadpage.parsers.GroupBestParser;
 
 /**
- * Los Angeles County, CA
+ * Lake County, CA
  */
 public class CALakeCountyParser extends GroupBestParser {
   public CALakeCountyParser() {
