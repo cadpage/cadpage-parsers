@@ -43,8 +43,33 @@ public class TXTomGreenCountyParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d", true);
     if (name.equals("CALL")) return new CallField("\\( *(.*?) *\\)", true);
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("CITY")) return new MyCityField();
     if (name.equals("UNIT")) return new MyUnitField();
     return super.getField(name);
+  }
+
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      String apt = "";
+      int pt = field.indexOf(';');
+      if (pt >= 0) {
+        apt = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+      }
+      super.parse(field, data);
+      data.strApt = append(data.strApt, "-", apt);
+    }
+  }
+
+  private class MyCityField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.isEmpty()) return;
+      data.strAddress = stripFieldEnd(data.strAddress, ' ' + field);
+      super.parse(field, data);
+    }
   }
 
   private class MyUnitField extends UnitField {

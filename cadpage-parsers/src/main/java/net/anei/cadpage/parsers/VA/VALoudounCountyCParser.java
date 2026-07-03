@@ -25,6 +25,12 @@ public class VALoudounCountyCParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
 
+  @Override
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    body = body.replace("<img ", "<!img ");
+    return super.parseHtmlMsg(subject, body, data);
+  }
+
   private static final Pattern MARKER2 = Pattern.compile("([A-Z]{4}-\\d{4}-\\d{8}):");
   private static final Pattern INFO_BRK_PTN = Pattern.compile("(?: +|(?<! ))(?=TEXT:|PROBLEM:|CAD RESPONSE:|DISPATCH LEVEL:)|(?<=[\\.\\)])(?=\\d{1,2}\\.)");
   private static final Pattern QUAL_PTN = Pattern.compile("^([A-Za-z ]+:) *\\[[^\\]]+\\]");
