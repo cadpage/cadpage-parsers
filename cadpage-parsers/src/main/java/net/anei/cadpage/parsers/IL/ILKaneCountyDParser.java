@@ -33,7 +33,7 @@ public class ILKaneCountyDParser extends HtmlProgramParser {
     if (name.equals("GPS1")) return new MyGPSField(1);
     if (name.equals("GPS2")) return new MyGPSField(2);
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("MAP")) return new MapField("[A-Z]{2}\\d{4}[A-Z]?|[A-Z][-A-Z]+\\d|ELGIN.*|", true);
+//    if (name.equals("MAP")) return new MapField("[A-Z]{2}\\d{4}[A-Z]?|[A-Z][-A-Z]+\\d|ELGIN.*|", true);
     if (name.equals("ID1")) return new IdField("\\d+", true);
     if (name.equals("ID2")) return new MyIdField();
     if (name.equals("INFO")) return new MyInfoField();
