@@ -1658,6 +1658,7 @@ public static void addCodeTable(Properties props, String[] table) {
    body = COMMENT_PTN.matcher(body).replaceAll("");
    body = HTML_PTN.matcher(body).replaceAll("");
    body = HEAD_PTN.matcher(body).replaceFirst("");
+   body = IMG_PTN.matcher(body).replaceAll("");
    body = BR_PTN.matcher(body).replaceAll("\n");
    body = END_BR_PTN.matcher(body).replaceAll("");
    return decodeHtmlField(body);
@@ -1665,6 +1666,7 @@ public static void addCodeTable(Properties props, String[] table) {
  private static final Pattern COMMENT_PTN = Pattern.compile("<!--.*?-->", Pattern.DOTALL);
  private static final Pattern HTML_PTN = Pattern.compile("^.*<HTML\\b[^>]*>|</?(?:B|BODY|DIV|FONT|I|META|O|P|PRE|SPAN|TABLE|TD|TR)\\b[^>]*>|</HTML>.*$", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
  private static final Pattern HEAD_PTN = Pattern.compile("<HEAD>.*</HEAD>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+ private static final Pattern IMG_PTN = Pattern.compile("<IMG\\b.*?/>", Pattern.CASE_INSENSITIVE);
  private static final Pattern BR_PTN = Pattern.compile("< *(?:br|p) */?>", Pattern.CASE_INSENSITIVE);
  private static final Pattern END_BR_PTN = Pattern.compile("< */(?:br|p) *>", Pattern.CASE_INSENSITIVE);
 

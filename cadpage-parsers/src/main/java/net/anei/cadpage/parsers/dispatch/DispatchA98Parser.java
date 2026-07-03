@@ -16,7 +16,7 @@ public class DispatchA98Parser extends FieldProgramParser {
 
   public DispatchA98Parser(Properties cityCodes, String defCity, String defState) {
     super(cityCodes, defCity, defState,
-          "Incident:ID! Station:SRC? Complaint:CALL! Address_Street:ADDR/S6! City:CITY? Caller:NAME? Cross_Street:X! Place:PLACE! Latitude:GPS1! Longitude:GPS2 Map:SKIP! Reporting_Unit:UNIT? Units:EMPTY? TIMES/N+ Notes:INFO! INFO/N+");
+          "Agency:SRC? Incident:ID! Station:SRC? Complaint:CALL! Address_Street:ADDR/S6! City:CITY? Caller:NAME? Cross_Street:X! Place:PLACE! Latitude:GPS1! Longitude:GPS2 Map:SKIP! Reporting_Unit:UNIT? Units:EMPTY? TIMES/N+ Notes:INFO! INFO/N+");
   }
 
   @Override
@@ -28,7 +28,10 @@ public class DispatchA98Parser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     if (subject.endsWith(" Closed") || subject.equals("INCIDENT CLOSED MESSAGE")) {
       data.msgType = MsgType.RUN_REPORT;
-    } else if (!subject.endsWith(" Creation") && !subject.endsWith(" Notification") && !subject.equals("UNIT ASSIGNED MESSAGE")) return false;
+    } else if (!subject.endsWith(" Creation") &&
+               !subject.endsWith(" Notification") &&
+               !subject.equals("UNIT ASSIGNED MESSAGE") &&
+               !subject.startsWith("DISPATCH NOTIFICATION FOR ")) return false;
     return parseFields(body.split("\n"), data);
   }
 
