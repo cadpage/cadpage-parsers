@@ -1653,6 +1653,7 @@ public class Active911ParserTable {
       "US/MS/MetroAmbulanceService",      "MSLauderdaleCountyB",
       "US/MS/MontgomeryCounty",           "MSMontgomeryCounty",
       "US/MS/NeshobaCounty",              "MSNeshobaCountyB",
+      "US/MS/NewtonCounty",								"MSNewtonCountyB",
       "US/MS/OktibbehaCounty",            "MSOktibbehaCounty",
       "US/MS/OliveBranch",                "MSDeSotoCountyA",
       "US/MS/PanolaCounty",               "MSPanolaCountyA",
