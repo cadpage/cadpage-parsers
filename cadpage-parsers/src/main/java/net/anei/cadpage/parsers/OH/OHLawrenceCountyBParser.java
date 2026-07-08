@@ -10,7 +10,7 @@ public class OHLawrenceCountyBParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com";
+    return "FlexRapidNotification@dccnotify.com,FRN-lawco911@email.getrave.com";
   }
 
 }
