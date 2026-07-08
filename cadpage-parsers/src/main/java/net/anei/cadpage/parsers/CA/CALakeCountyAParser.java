@@ -23,7 +23,7 @@ public class CALakeCountyAParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "lakecounty.dispatch@lakecountyca.gov,cloverdalepaging@gmail.com,@ci.cloverdale.ca.us";
+    return "lakecounty.dispatch@lakecountyca.gov,cloverdalepaging@gmail.com,@ci.cloverdale.ca.us,RIMS-Backup@paging.sunridgesystems.net";
   }
 
   @Override
