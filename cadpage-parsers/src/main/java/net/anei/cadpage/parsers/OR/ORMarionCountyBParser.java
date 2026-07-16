@@ -16,7 +16,7 @@ public class ORMarionCountyBParser extends DispatchH05Parser {
 
   protected ORMarionCountyBParser(String defCity, String defState) {
     super(defCity, defState,
-          "SRC_CODE DATETIME ADDRCITY UNIT ID INFO_BLK/Z+? GPS1 GPS2 END");
+          "SRC_CODE DATETIME ADDRCITY UNIT ID INFO_BLK/Z+? GPS1 GPS2 CH END");
   }
 
   @Override
