@@ -751,6 +751,7 @@ public class Active911ParserTable {
       "US/IL/MelroseParkFD",              "ILCookCountyF",
       "US/IL/METCAD911",                  "ILChampaignCounty",
       "US/IL/MontgomeryCounty",           "ILMontgomeryCounty",
+      "US/IL/MorganCounty",               "ILMorganCounty",
       "US/IL/NWCDS",                      "ILCookCountyD",
       "US/IL/NWCDSLongGrove",             "ILLakeCountyE",
       "US/IL/OFallon",                    "ILOFallon",
