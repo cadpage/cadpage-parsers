@@ -10,7 +10,7 @@ public class SCOconeeCountyBParser extends FieldProgramParser {
 
   public SCOconeeCountyBParser() {
     super("OCONEE COUNTY", "SC",
-          "ID CALL CALL2/SLS+? ADDR INFO! INFO+");
+          "ID CALL CALL2/SLS+? ADDR INFO! INFO/N+? ID/L END");
   }
 
   @Override
@@ -31,6 +31,7 @@ public class SCOconeeCountyBParser extends FieldProgramParser {
     if (name.equals("CALL2")) return new CallField("Behavioral|Contusion|No Transport|Stabbing|Strain|Stroke|TIA");
     if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("ID")) return new IdField("[A-Z]+\\d\\d-\\d{6}", true);
     return super.getField(name);
   }
 
