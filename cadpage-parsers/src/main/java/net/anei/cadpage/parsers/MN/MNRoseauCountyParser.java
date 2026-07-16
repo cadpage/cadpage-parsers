@@ -10,6 +10,6 @@ public class MNRoseauCountyParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "rapid.notification@co.roseau.mn.us";
+    return "rapid.notification@co.roseau.mn.us,@roseaucountymn.gov";
   }
 }
