@@ -13,7 +13,9 @@ public class INKosciuskoCountyParser extends DispatchOSSIParser {
 
   public INKosciuskoCountyParser() {
     super(CITY_CODES, "KOSCIUSKO COUNTY", "IN",
-          "( CANCEL | FYI? CALL ) ADDR CITY? PLACE? INFO/N+");
+          "( CANCEL ADDR CITY? INFO/N+ " +
+          "| FYI? CALL COUNTY? ADDR ( CITY PLACE? INFO/N+ | PLACE? INFO/N+? CITY END ) " +
+          ")");
   }
 
   @Override
@@ -38,12 +40,31 @@ public class INKosciuskoCountyParser extends DispatchOSSIParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("COUNTY")) return new CityField("1 .* CO +(.*)", true);
+    if (name.equals("ADDR")) return new MyAddressField();
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("PLACE")) return new PlaceField("\\(S\\) *\\(N\\) *(.*)", true);
     return super.getField(name);
   }
 
   private static final Pattern CITY_CODE_PTN = Pattern.compile("[A-Z]{1,4}|952");
+
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      int pt = field.indexOf(',');
+      if (pt >= 0) {
+        data.strSupp = field.substring(pt+1).trim();
+        field = field.substring(0,pt).trim();
+      }
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " INFO?";
+    }
+  }
 
   private class MyCityField extends CityField {
     @Override
@@ -53,9 +74,9 @@ public class INKosciuskoCountyParser extends DispatchOSSIParser {
 
     @Override
     public boolean checkParse(String field, Data data) {
-      if (!CITY_CODE_PTN.matcher(field).matches()) return false;
-      parse(field, data);
-      return true;
+      if (!data.strCity.isEmpty() && field.equals(data.strCity)) return true;
+//      if (!CITY_CODE_PTN.matcher(field).matches()) return false;
+      return super.checkParse(field, data);
     }
 
     @Override
