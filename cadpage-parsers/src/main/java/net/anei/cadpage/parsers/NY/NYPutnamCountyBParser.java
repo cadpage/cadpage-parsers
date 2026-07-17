@@ -12,12 +12,12 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
     super("PUTNAM COUNTY", "NY",
           "DASH? ( MARK DATETIME! Call_Type:CALL! Location:ADDRCITY/S6! Cross_St:X! Common_Name:PLACE! " +
                       "Additional_Location_Information:PLACE/SDS! Quadrant:MAP! Narrative:INFO! " +
-                "| ( DATETIME! | TIME ) ( Fire:CALL! EMS:CALL/SLS! | EMS:CALL! FIRE:CALL/SLS! | ) NOC:INFO? " +
-                      "( Location:ADDRCITY/S6! ( Cross_Street:X! | X! ) Common_Name:PLACE! " +
+                "| ( DATETIME! | TIME ) ( Fire:CALL! EMS:CALL/SLS? | EMS:CALL! FIRE:CALL/SLS! | Call_Type:CALL! | CALL! ) NOC:INFO? " +
+                      "( Location:ADDRCITY/S6! ( Cross_Street:X! | X ) Common_Name:PLACE! Additional_Info:INFO? " +
                       "| CALL ADDRCITY/ZS6 XS:X! PLACE " +
                       "| ADDRCITY/S6! X PLACE " +
                       ") ( Box:BOX! | BOX ) EMS:CALL/SDS? Fire:CALL/SDS? " +
-                ") INFO/N+");
+                ") Additional_Info:INFO/N? INFO/N+");
   }
 
   @Override
@@ -32,7 +32,8 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
                .replace("Cross Streets;", "Cross Street:")
                .replace("Cross Streets:", "Cross Street:")
                .replace("Box;", "Box:")
-               .replace("Quadrant::", "Quadrant:");
+               .replace("Quadrant::", "Quadrant:")
+               .replace("Additional Info::", "Additional Info:");
     if (!parseFields(body.split("\\n+"), data)) return false;
     if (data.strCity.equals("OUTSIDE PUTNAM COUNTY")) data.strCity = "OUTSIDE COUNTY";
     return !data.strCall.isEmpty();
@@ -51,7 +52,7 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("BOX")) return new BoxField("(?:[A-Z ]+ \\()?(?:\\d\\d|[A-Z]{2})-(?:\\d{2,4}|[A-Z])\\)?|", true);
+    if (name.equals("BOX")) return new BoxField("(?:Box +)?((?:[A-Z ]+ \\()?(?:\\d\\d|[A-Z]{2})-(?:\\d{2,4}|[A-Z])\\)?|)", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
