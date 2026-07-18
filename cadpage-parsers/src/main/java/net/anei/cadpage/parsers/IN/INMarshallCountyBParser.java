@@ -10,17 +10,12 @@ public class INMarshallCountyBParser extends FieldProgramParser {
 
   public INMarshallCountyBParser() {
     super("MARSHALL COUNTY", "IN",
-          "CALL ( PHONE GPS | ) ADDRCITYST PLACE? X/Z INFO! INFO/N+");
+          "CALL ( PHONE GPS ADDRCITYST | PHONE_GPS_ADDRCITYST ) PLACE? X/Z INFO! INFO/N+");
   }
 
   @Override
   public String getFilter() {
     return "noreply@co.marshall.in.us,no-reply@csprosuite.centralsquarecloudgov.com";
-  }
-  
-  @Override
-  public int getMapFlags() {
-    return MAP_FLG_PREFER_GPS;
   }
 
   private static final Pattern MASTER = Pattern.compile("(.*?) +(?:Please respond immediately\\.|Please cancel immediately.)");
@@ -35,10 +30,31 @@ public class INMarshallCountyBParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("PHONE_GPS_ADDRCITYST")) return new MyPhoneGpsAddressCityStateField();
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("PHONE")) return new PhoneField("\\(\\d{3}\\) \\d{3}-\\d{4}|", true);
     return super.getField(name);
+  }
+
+  private static final Pattern PHONE_GPS_ADDR_PTN = Pattern.compile("(.*?) +([-+]?\\d{2}\\.\\d{4,} [-+]?\\d{2}\\.\\d{4,}) +(.*)");
+
+  private class MyPhoneGpsAddressCityStateField extends AddressCityStateField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = PHONE_GPS_ADDR_PTN.matcher(field);
+      if (match.matches()) {
+        data.strPhone = match.group(1);
+        setGPSLoc(match.group(2), data);
+        field = match.group(3);
+      }
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "PHONE GPS " + super.getFieldNames();
+    }
   }
 
   private class MyPlaceField extends PlaceField {

@@ -2643,6 +2643,11 @@ public class FieldProgramParser extends SmartAddressParser {
       this.noCity = noCity;
     }
 
+    protected boolean isCleanAddress() {
+      return startType == null ||
+             startType == StartType.START_ADDR && (parseFlags & FLAG_ANCHOR_END) != 0;
+    }
+
     @Override
     public boolean checkParse(String field, Data data) {
 
@@ -2937,6 +2942,21 @@ public class FieldProgramParser extends SmartAddressParser {
     @Override
     public void parse(String field, Data data) {
       field = stripFieldEnd(field, ",");
+      String extra = "";
+      if (isCleanAddress()) {
+        int pt = field.indexOf('(');
+        if (pt >= 0) {
+          while (pt > 0 && field.charAt(pt-1) == ' ') pt--;
+          if (pt >= 0) {
+            extra = field.substring(pt);
+            if (extra.endsWith(")") || !extra.contains(")")) {
+              field = field.substring(0,pt);
+            } else {
+              extra = "";
+            }
+          }
+        }
+      }
       String zip = null;
       Parser p = new Parser(field);
       String city = p.getLastOptional(',');
@@ -2965,7 +2985,7 @@ public class FieldProgramParser extends SmartAddressParser {
           if (st != null) data.strState = st;
         }
         cityField.parse(city, data);
-        field = p.get();
+        field = p.get() + extra;
       }
       parseAddress(field, data);
       if (data.strCity.isEmpty() && zip != null) data.strCity = zip;

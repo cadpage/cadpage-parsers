@@ -49,20 +49,28 @@ public class TXHuntCountyAParser extends FieldProgramParser {
     return super.getField(name);
   }
 
+  private static final Pattern ADDR_ST_PTN = Pattern.compile(", *TX\\b");
+
   private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
       if (field.toUpperCase().endsWith("RES")) {
         field = field.substring(0, field.length()-3).trim();
       }
-      String apt = "";
-      int pt = field.indexOf(") Apt. #");
-      if (pt >= 0) {
-        apt = field.substring(pt+8).trim();
-        field = field.substring(0, pt+1);
-      }
       if (field.endsWith(")")) {
-        pt = field.lastIndexOf('(');
+        int pt = field.indexOf('(');
+        if (pt >= 0) {
+          String temp = field.substring(pt+1, field.length()-1).trim();
+          if (ADDR_ST_PTN.matcher(temp).find()) {
+            String place = field.substring(0, pt).trim();
+            if (!place.equals(temp)) data.strPlace = place;
+            field = temp;
+          }
+        }
+      }
+      String apt = "";
+      if (field.endsWith(")")) {
+        int pt = field.lastIndexOf('(');
         if (pt >= 0) {
           String temp = field.substring(pt+1, field.length()-1).trim();
           field = field.substring(0, pt).trim();
@@ -71,8 +79,18 @@ public class TXHuntCountyAParser extends FieldProgramParser {
           }
         }
       }
+      int pt = field.indexOf(" Apt. #");
+      if (pt >= 0) {
+        apt = field.substring(pt+7).trim();
+        field = field.substring(0, pt+1).trim();
+      }
       super.parse(field, data);
       data.strApt = append(data.strApt, "-", apt);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "PLACE " + super.getFieldNames();
     }
 
   }

@@ -56,14 +56,30 @@ public class AZYavapaiCountyEParser extends FieldProgramParser {
     return super.getField(name);
   }
 
+  private static final Pattern AZ_PTN = Pattern.compile(", *AZ\\b");
+
   private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
+      int pt = field.indexOf('(');
+      if (pt >= 0) {
+        String newAddr = stripFieldEnd(field.substring(pt+1), ")");
+        if (AZ_PTN.matcher(newAddr).find()) {
+          String place = field.substring(0,pt).trim();
+          if (!place.equals(newAddr)) data.strPlace = place;
+          field = newAddr;
+        }
+      }
       Parser p = new Parser(field);
       String apt = p.getLastOptional(" Apt. #");
       p.getLastOptional('(');
       super.parse(p.get(), data);
       data.strApt = append(data.strApt, "-", apt);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "PLACE " + super.getFieldNames();
     }
   }
 

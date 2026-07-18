@@ -30,7 +30,7 @@ public class DispatchH03Parser extends FieldProgramParser {
                           "| INCIDENT:EMPTY! Inc_Type:CODE! Mod_Circum:CALL/SDS! Priority:PRI! Area:MAP! County:CITY! " +
                              "LOCATION:EMPTY! Loc_Name:PLACE! Loc_Descr:INFO! Location:ADDR! Municipality:CITY! Building:APT! Floor:APT! Apt/Unit:APT! Cross_Strs:X! " +
                              "PREMISE_HAZARD:EMPTY! INFO/N+ COMMENTS:EMPTY! INFO/N+ UNITS_DISPATCHED:EMPTY! UNIT/C+ Caller:NAME! Phone:PHONE! Created:TIMEDATE! Inc_#:ID " +
-                          "| Location:ADDR! Loc_Name:PLACE! City:CITY! Cross_Strs:X! Beat:MAP! Map_Book:MAP/L! Inc_#:ID! Inc_Type:CALL! Mod_Circum:CALL/SDS! UNITS_DISPATCHED:EMPTY! UNIT! COMMENTS:EMPTY! INFO/N+ PREMISE_HAZARD:ALERT DASHES! " +
+                          "| Location:ADDRCITYST! Loc_Name:PLACE! City:CITY! Cross_Strs:X! Beat:MAP! Map_Book:MAP/L! Inc_#:ID! Inc_Type:CALL! Mod_Circum:CALL/SDS! UNITS_DISPATCHED:EMPTY! UNIT! COMMENTS:EMPTY! INFO/N+ PREMISE_HAZARD:ALERT DASHES! " +
                           ") " +
           ")");
   }
@@ -127,6 +127,8 @@ public class DispatchH03Parser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("INCIDENT_DETAILS")) return new SkipField("INCIDENT DETAILS-*", true);
     if (name.equals("ADDR")) return new BaseAddressField();
+    if (name.equals("ADDRCITYST")) return new BaseAddressCityStateField();
+    if (name.equals("CITY")) return new BaseCityField();
     if (name.equals("ZIP")) return new BaseZipField();
     if (name.equals("TIMEDATE")) return new BaseTimeDateField();
     if (name.equals("DASHES")) return new SkipField("-{10,}");
@@ -145,10 +147,26 @@ public class DispatchH03Parser extends FieldProgramParser {
     }
   }
 
+  private class BaseAddressCityStateField extends AddressCityStateField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "APPROX LOC:");
+      super.parse(field, data);
+    }
+  }
+
+  private class BaseCityField extends CityField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.isEmpty()) return;
+      super.parse(field, data);
+    }
+  }
+
   private class BaseZipField extends CityField {
     @Override
     public void parse(String field, Data data) {
-      if (data.strCity.length() > 0) return;
+      if (!data.strCity.isEmpty()) return;
       super.parse(field, data);
     }
   }
