@@ -19,7 +19,7 @@ public class OHHockingCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "no-reply@hocking.us";
+    return "no-reply@hocking.us,@csprosuite.centralsquarecloudgov.com";
   }
 
   @Override
