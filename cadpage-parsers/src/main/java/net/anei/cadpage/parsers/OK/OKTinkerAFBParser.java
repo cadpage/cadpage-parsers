@@ -7,132 +7,34 @@ import java.util.regex.Pattern;
 import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.SmartAddressParser;
+import net.anei.cadpage.parsers.dispatch.DispatchA90Parser;
 
-public class OKTinkerAFBParser extends SmartAddressParser {
+public class OKTinkerAFBParser extends DispatchA90Parser {
 
   public OKTinkerAFBParser() {
     super("", "OK");
     setupGpsLookupTable(GPS_LOOKUP);
-    setFieldList("ADDR CALL GPS INFO");
   }
 
   @Override
   public String getFilter() {
     return "@us.af.mil";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
 
-  private static final Pattern MBLANKS = Pattern.compile("  +");
-  private static final Pattern INFO_FORMATTER = Pattern.compile("[\\.,:; ]+(.*)", Pattern.DOTALL);
-  private static final Pattern BLDG = Pattern.compile("((?:Building|Bldg) +\\d+(?:-[EW])?) *(.*)", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
   @Override
-  public boolean parseMsg(String subject, String body, Data data) {
-    
-    if (subject.length() == 0) return false;
-    
-    // Clean out multiple blanks
-    subject = MBLANKS.matcher(subject).replaceAll(" ");
-    body = MBLANKS.matcher(body).replaceAll(" ");
-    
-    //check if body starts with subject, if not, adjust subject a little and check again
-    boolean ezpz = body.toUpperCase().startsWith(subject.toUpperCase());
-    String subj_suffix =""; //save the " UPDATE" suffix we might remove, so we can reattach it later
-    if (!ezpz && subject.toUpperCase().endsWith(" UPDATE")) {
-      int slm7 = subject.length() - 7;
-      subj_suffix = subject.substring(slm7);
-      String asubject = subject.substring(0, subject.length()-7).trim();
-      ezpz = body.toUpperCase().startsWith(asubject.toUpperCase());
-      if (ezpz) subject = asubject;
-    }
-    
-    //if body starts with subject, we can parse ADDR CALL and INFO correctly
-    if (ezpz) {
-      String call = parseAddr(subject, data);
-      if (call == null) return false;
-      
-      String info = body.substring(subject.length()).trim();
-      Matcher mat = INFO_FORMATTER.matcher(info);
-      if (mat.matches()) info = mat.group(1);
-      
-      if (call.length() == 0 && info.length() <= 40) {
-        call = info;
-        info = "";
-      }
-      data.strCall = call + subj_suffix;
-      data.strSupp = info;
-
-      return true;
-    }
-    
-    //try parsing addr off subject, this isolates CALL
-    String left = parseAddr(subject, data);
-    if (left != null) {
-      if (left.length() == 0 && body.length() <= 40) {
-        data.strCall = body;
-      } else {
-        data.strCall = left;
-        data.strSupp = body;
-      }
-      return true;
-    }
-    
-    //try parsing addr off body
-    left = parseAddr(body, data);
-    if (left != null) {
-      data.strCall = subject; //might be useful info, might be redundant ADDR and CALL.
-      data.strSupp = left;
-      Matcher mat = INFO_FORMATTER.matcher(data.strSupp);
-      if (mat.matches())data.strSupp = mat.group(1);
-      return true;
-    }
-    
-    return false;
-  }
-
-  /** Attempt to parse BLDG or STATUS_FULL_ADDRESS or GPS_LOOKUP address
-   * @param data - can be null if this method is just being used to remove ADDR froma string
-   * @return - remainingtext
-   */
-  public String parseAddr(String text, Data data) {
-    
-    //check text for bldg construct
-    Matcher mat = BLDG.matcher(text);
-    if (mat.matches()) {
-      data.strAddress = mat.group(1);
-      return getOptGroup(mat.group(2));
-    }
-
-    //try the SAP in preview mode
-    Result res = parseAddress(StartType.START_ADDR, text);
-    if (res.getStatus() >= STATUS_FULL_ADDRESS) {
-      res.getData(data);
-      return res.getLeft();
-    }
-    
-    // See if we can match the text with an entry in GPS_LOOKUP
-    String code = GPS_LOOKUP_SET.getCode(text.toUpperCase(), true);
-    if (code != null) {
-      data.strAddress = text.substring(0,code.length());
-      return text.substring(code.length()).trim();
-    }
-
-    //failed
-    return null;
-  }
-
-  @Override
-  public String adjustGpsLookupAddress(String in) {
-    in = in.toUpperCase().replace("BUILDING", "BLDG");
+  public String adjustGpsLookupAddress(String addr) {
+    addr = addr.toUpperCase().replace("BUILDING", "BLDG");
     //this block will only execute if the address was parsed with the SAP and isn't wholly present in GPS_LOOKUP (like if it has a street suffix)
-    if (!in.startsWith("BLDG") && !GPS_LOOKUP.containsKey(in)) {
-      String prefix = GPS_LOOKUP_SET.getCode(in, true);
+    if (!addr.startsWith("BLDG") && !GPS_LOOKUP.containsKey(addr)) {
+      String prefix = GPS_LOOKUP_SET.getCode(addr, true);
       if (prefix != null) return prefix;
     }
-    return in;
+    return addr;
   }
 
   public static final Properties GPS_LOOKUP = buildCodeTable(new String[]{
@@ -1140,7 +1042,7 @@ public class OKTinkerAFBParser extends SmartAddressParser {
       "BLDG 995",       "35.40580359,-97.38750312",
       "BLDG 997",       "35.40582287,-97.38787662",
   });
-  
+
   private static final CodeSet GPS_LOOKUP_SET = new CodeSet(GPS_LOOKUP);
 
 }
