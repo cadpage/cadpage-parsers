@@ -1184,6 +1184,7 @@ public class Active911ParserTable {
       "US/LA/LafayetteParish",            "LALafayetteParish",
       "US/LA/LafourcheParish",            "LALafourcheParish",
       "US/LA/LivingstonCounty",           "LALivingstonParish",
+      "US/LA/MonroeCounty",								"ALMonroeCounty",    // Wrong state
       "US/LA/OuachitaParish",             "LAOuachitaParish",
       "US/LA/PlaqueminesParish",          "LAPlaqueminesParish",
       "US/LA/PrairievilleFD",             "LAAscensionParish",
