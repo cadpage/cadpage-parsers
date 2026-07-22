@@ -84,6 +84,11 @@ public class ZCAABRedDeerCountyAParser extends DispatchA51Parser {
   }
   private static final Pattern HWY_NN_PTN = Pattern.compile("\\bHWY +(\\d+)\\b", Pattern.CASE_INSENSITIVE);
 
+  @Override
+  public String adjustGpsLookupAddress(String addr) {
+    return addr.toUpperCase();
+  }
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
       "4850 43 AVE",                          "+51.791691,-114.093236",
       "4902 44 AVE",                          "+51.791463,-114.092998",
@@ -98,7 +103,9 @@ public class ZCAABRedDeerCountyAParser extends DispatchA51Parser {
       "4450 53 ST",                           "+51.788396,-114.093292",
       "4501 53 ST",                           "+51.788254,-114.094224",
       "4550 53 ST",                           "+51.788715,-114.094699",
-      "50 ST",                                "+51.788461,-114.091142"
+      "50 ST",                                "+51.788461,-114.091142",
+      "156 ST ALBERT TR",                     "+53.622558,-113.612653"
+
   });
 
   private static final String[] CITY_LIST = new String[]{
