@@ -35,6 +35,7 @@ public class ALDallasCountyParser extends DispatchA48Parser {
   };
 
   private static final CodeSet CALL_LIST = new CodeSet(
+      "AMBULANCE TRANSFER",
       "CHECK OUT",
       "FALARM",
       "FCHECK",
