@@ -24,11 +24,6 @@ public class MOLawrenceCountyBParser extends FieldProgramParser{
   }
 
   @Override
-  public int getMapFlags() {
-    return MAP_FLG_PREFER_GPS;
-  }
-
-  @Override
   public String getProgram() {
     return "SRC " + super.getProgram();
   }
