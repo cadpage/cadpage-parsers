@@ -2264,6 +2264,7 @@ public class Active911ParserTable {
       "US/OH/TallmadgeFire",              "OHSummitCountyI",
       "US/OH/TheBeachWaterpark",          "OHWarrenCountyD",
       "US/OH/Tiffin",                     "OHSenecaCounty",
+      "US/OH/TriTwp",                     "OHDelawareCountyD",
       "US/OH/TrumbullCounty",             "OHTrumbullCounty",
       "US/OH/TrumbullCoWarrenTwpPD",      "OHTrumbullCountyB",
       "US/OH/UnionCounty",                "OHUnionCounty,OHMadisonCounty,OHCrawfordCounty",
