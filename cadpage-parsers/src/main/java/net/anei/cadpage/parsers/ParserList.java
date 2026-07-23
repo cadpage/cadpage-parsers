@@ -2143,6 +2143,7 @@ public class ParserList {
               ,"WYAlbanyCounty"                 ,"Albany County, WY"
               ,"WYBigHornCounty"                ,"Big Horn County, WY"
               ,"WYGoshenCounty"                 ,"Goshen County, WY"
+              ,"WYHotSpringsCounty"             ,"Hot Springs County, WY"
               ,"WYNatronaCounty"                ,"Natrona County, WY"
               ,"WYParkCounty"                   ,"Park County, WY"
               ,"WYSubletteCounty"               ,"Sublette County, WY"
