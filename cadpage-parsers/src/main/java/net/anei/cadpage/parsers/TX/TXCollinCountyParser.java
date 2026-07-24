@@ -10,6 +10,7 @@ public class TXCollinCountyParser extends GroupBestParser {
   public TXCollinCountyParser() {
     super(new TXCollinCountyAParser(),
           new TXCollinCountyBParser(),
-          new TXCollinCountyCParser());
+          new TXCollinCountyCParser(),
+          new TXCollinCountyDParser());
   }
 }
