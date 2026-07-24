@@ -29,6 +29,9 @@ public class PASnyderCountyAParser extends DispatchB3Parser {
   
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
+    
+    // Rule out PASynderCountyC alerts
+    if (body.startsWith("NEW DISPATCH CALL\n")) return false;
 
     good = body.startsWith("SNYDER911:") || body.startsWith("SYNDER911:");
     if (good) body = body.substring(10).trim();

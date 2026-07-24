@@ -2392,6 +2392,7 @@ public class Active911ParserTable {
       "US/PA/ACESCAD",                    "PAAlleghenyCountyA",
       "US/PA/AdamsCounty",                "PAAdamsCountyA,PAAdamsCountyD",
       "US/PA/AdamsCountyDepartmentofEmergencyServices", "PAAdamsCountyD,MDFrederickCountyB",
+      "US/PA/AdvancedNA",                 "PASnyderCountyC",
       "US/PA/AlleghenyCounty",            "PAAlleghenyCountyA",
       "US/PA/AlleghenyCountyCADDivision", "PAAlleghenyCountyA",
       "US/PA/AlleghenyCountyTicket",      "PAAlleghenyCountyF",
