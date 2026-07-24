@@ -2539,6 +2539,7 @@ public class Active911ParserTable {
       "US/PA/SouthChesterEMS",            "PAChesterCountyP",
       "US/PA/SouthParkTWPPending",        "PAAlleghenyCountyA",
       "US/PA/Springfield",                "PADelawareCountyG",
+      "US/PA/SusquehannaCounty",          "PASusquehannaCountyB",
       "US/PA/Swift911",                   "PANorthumberlandCounty",
       "US/PA/TiogaCounty",                "PATiogaCounty",
       "US/PA/TrappeIAR",                  "PAChesterCountyL",
