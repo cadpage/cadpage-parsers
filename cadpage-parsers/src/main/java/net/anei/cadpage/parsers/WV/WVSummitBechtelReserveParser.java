@@ -6,6 +6,7 @@ public class WVSummitBechtelReserveParser extends GroupBestParser {
 
   public WVSummitBechtelReserveParser() {
     super(new WVSummitBechtelReserveAParser(),
-          new WVSummitBechtelReserveBParser());
+          new WVSummitBechtelReserveBParser(),
+          new WVSummitBechtelReserveCParser());
   }
 }

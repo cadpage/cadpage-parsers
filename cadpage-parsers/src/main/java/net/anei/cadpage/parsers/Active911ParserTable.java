@@ -3289,6 +3289,7 @@ public class Active911ParserTable {
       "US/WY/BigHornCounty",              "WYBigHornCounty",
       "US/WY/ParkCounty",                 "WYParkCounty",
       "US/WY/SubletteCounty",             "WYSubletteCounty",
+      "US/WY/ThermopolisCounty",          "WYHotSpringsCounty",
       "US/WY/TorringtonPolice",           "WYGoshenCounty",
       "Utility/General/Default",          "General",
       "Utility/General/Defaulty",         "General",
