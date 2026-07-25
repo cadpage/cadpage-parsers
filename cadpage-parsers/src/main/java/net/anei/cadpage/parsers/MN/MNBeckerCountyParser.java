@@ -44,7 +44,14 @@ public class MNBeckerCountyParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
+  private static final Pattern MMDD_PTN = Pattern.compile("\\bMM(\\d+)\\b");
+
+  @Override
+  public String adjustGpsLookupAddress(String addr) {
+    return MMDD_PTN.matcher(addr).replaceAll("MM $1");
+  }
+
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
       "MM 0 ST HWY 113",                      "+47.180203,-96.258856",
       "MM 0 ST HWY 197",                      "+47.431274,-94.863368",
