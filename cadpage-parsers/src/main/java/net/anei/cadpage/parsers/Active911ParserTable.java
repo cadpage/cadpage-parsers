@@ -782,6 +782,7 @@ public class Active911ParserTable {
       "US/IL/TroyFD",                     "ILMadisonCountyA",
       "US/IL/WabashCounty",               "ILWabashCounty",
       "US/IL/WashingtonCounty",           "ILWashingtonCounty",
+      "US/IL/WillCounty",                 "ILWillCounty",
       "US/IL/WoodfordCounty",             "ILWoodfordCounty",
       "US/IL/WWT",                        "ILMadisonCountyA",
       "US/IN/AdamsCounty",                "INAdamsCounty",

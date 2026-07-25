@@ -568,6 +568,7 @@ public class ParserList {
               ,"ILTazewellCounty"               ,"Tazewell County, IL"
               ,"ILWabashCounty"                 ,"Wabash County, IL"
               ,"ILWashingtonCounty"             ,"Washington County, IL"
+              ,"ILWillCounty"                   ,"Will County, IL"
               ,"ILWinnebagoCounty"              ,"Winnebago County, IL"
               ,"ILWoodfordCounty"               ,"Woodford County, IL"
           ),
