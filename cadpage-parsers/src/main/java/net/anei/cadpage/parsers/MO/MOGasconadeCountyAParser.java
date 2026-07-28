@@ -12,7 +12,7 @@ public class MOGasconadeCountyAParser extends DispatchA27Parser {
 
   @Override
   public String getFilter() {
-    return "gc911text@gasconadecounty911.com";
+    return "gc911text@gasconadecounty911.com,dispatcher@gasconadecounty911.com";
   }
 
   @Override
