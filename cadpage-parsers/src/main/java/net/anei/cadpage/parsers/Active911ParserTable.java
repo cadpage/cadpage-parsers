@@ -1783,7 +1783,7 @@ public class Active911ParserTable {
       "US/NC/HydeCounty",                 "NCHydeCounty",
       "US/NC/IredellCounty",              "NCIredellCounty",
       "US/NC/JacksonCounty",              "NCJacksonCounty",
-      "US/NC/JohnstonCounty",             "NCJohnstonCounty,NCWakeCountyD,NCWakeCountyE",
+      "US/NC/JohnstonCounty",             "NCJohnstonCounty,NCWakeCountyD,NCWakeCountyE,NCCumberlandCountyB",
       "US/NC/JonesCounty",                "NCJonesCounty",
       "US/NC/LeeCounty",                  "NCLeeCounty",
       "US/NC/LenoirCounty",               "NCLenoirCountyB",
