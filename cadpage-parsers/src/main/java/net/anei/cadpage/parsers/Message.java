@@ -557,7 +557,8 @@ public class Message {
   }
   private static final Pattern SENDER_HEADER_PTN = Pattern.compile("(?:From|Sender): *(.*)");
   private static final Pattern SUBJECT_HEADER_PTN = Pattern.compile("(?:Subject): *(.*)");
-  private static final Pattern OTHER_HEADER_PTN = Pattern.compile("\\[?mailto:.*\\]|(?:Content-Type|Date|Importance|Reply-To|Return-Path|Sent|SentTo|To|X-Mailer):.*");
+  private static final Pattern OTHER_HEADER_PTN =
+      Pattern.compile("\\[?mailto:.*\\]|(?:by|for) .*|(?:Content-Transfer-Encoding|Content-Type|Date|Importance|Message-ID|Reply-To|Return-Path|Received|Sent|SentTo|To|X-Mailer):.*");
   private static final Pattern JUNK_HEADER_PTN = Pattern.compile("_{5,}|-{5,}|--+(?:Original Message)?--+|Auto forwarded by a Rule|--+ Forwarded message --+");
 
   private String trimEnds(String str, boolean keepLeadBreak, boolean keepTrailBreak) {
