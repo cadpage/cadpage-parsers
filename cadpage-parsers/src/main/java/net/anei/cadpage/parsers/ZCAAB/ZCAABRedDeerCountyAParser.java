@@ -90,6 +90,7 @@ public class ZCAABRedDeerCountyAParser extends DispatchA51Parser {
   }
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[]{
+      "33 ASH CRES",                          "+53.623312,-113.595688",
       "4850 43 AVE",                          "+51.791691,-114.093236",
       "4902 44 AVE",                          "+51.791463,-114.092998",
       "5032 44 AVE",                          "+51.790321,-114.092735",
