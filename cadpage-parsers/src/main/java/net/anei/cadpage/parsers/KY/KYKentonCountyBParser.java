@@ -21,7 +21,7 @@ public class KYKentonCountyBParser extends DispatchH05Parser {
 
   @Override
   public String getFilter() {
-    return "KCECCService@kentoncounty.org";
+    return "KCECCService@kentoncounty.org,@kentoncountyky.gov";
   }
 
   @Override

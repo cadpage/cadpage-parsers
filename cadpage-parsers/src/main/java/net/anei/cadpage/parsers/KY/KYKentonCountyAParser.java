@@ -22,7 +22,7 @@ public class KYKentonCountyAParser extends DispatchA57Parser {
 
   @Override
   public String getFilter() {
-    return "dispatch@kentoncounty.org";
+    return "dispatch@kentoncounty.org,@kentoncountyky.gov";
   }
 
   @Override
