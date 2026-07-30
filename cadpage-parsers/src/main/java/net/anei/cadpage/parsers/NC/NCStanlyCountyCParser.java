@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.NC;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,6 +18,7 @@ public class NCStanlyCountyCParser extends FieldProgramParser {
           "( SELECT/1 DISP ID CALL ADDRCITYST1 X! ( END | GPS EMPTY UNIT! ) " +
           "| CALL CALL/SDS ADDRCITYST2! " +
           ") END");
+    setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
@@ -153,4 +155,17 @@ public class NCStanlyCountyCParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
+
+  private static final Pattern GRAND_PT_PTN = Pattern.compile("\\bGRAND +PT\\b");
+
+  @Override
+  public String adjustGpsLookupAddress(String addr) {
+    addr = addr.toUpperCase();
+    addr = GRAND_PT_PTN.matcher(addr).replaceAll("GRAND POINT");
+    return addr;
+  }
+
+  private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
+      "1620 GRAND POINT LANE",                "+35.553814,-81.490755",
+  });
 }
