@@ -14,7 +14,7 @@ public class GAFloydCountyParser extends DispatchA60Parser {
 
   @Override
   public String getFilter() {
-    return "no-reply@ledsportal.com,zuercher@floydcountyga.org,notification@floydcountyga.org";
+    return "no-reply@ledsportal.com,zuercher@floydcountyga.org,notification@floydcountyga.org,@csprosuite.centralsquarecloudgov.com";
   }
 
   @Override
