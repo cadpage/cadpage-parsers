@@ -15,7 +15,7 @@ public class NVCarsonCityParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "@775ofr.com";
+    return "@775ofr.com.dispatch@snorr.org";
   }
 
   public int getMapFlags() {
