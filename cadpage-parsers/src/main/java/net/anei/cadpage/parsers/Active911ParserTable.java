@@ -3127,7 +3127,7 @@ public class Active911ParserTable {
       "US/VT/AddisonCounty",              "VTAddisonCounty",
       "US/VT/BurlingtonFD",               "VTChittendenCountyE",
       "US/VT/CaledoniaCounty",            "VTCaledoniaCounty",
-      "US/VT/CapitalFireMutualAid",       "VTWashingtonCounty",
+      "US/VT/CapitalFireMutualAid",       "VTWashingtonCountyB",
       "US/VT/ChittendenCounty",           "VTChittendenCountyA,VTChittendenCountyC,VTChittendenCountyD",
       "US/VT/CityofUnderhill",            "VTChittendenCountyA,VTChittendenCountyC",
       "US/VT/FranklinCounty",             "VTFranklinCounty",

@@ -1,8 +1,13 @@
 package net.anei.cadpage.parsers.VT;
 
-public class VTWashingtonCountyParser extends VTLamoilleCountyParser {
+import net.anei.cadpage.parsers.GroupBestParser;
+
+/**
+ * Washington County, VT
+ */
+public class VTWashingtonCountyParser extends GroupBestParser {
 
   public VTWashingtonCountyParser() {
-    super("WASHINGTON COUNTY", "VT");
+    super(new VTWashingtonCountyAParser(), new VTWashingtonCountyBParser());
   }
 }
