@@ -1,6 +1,10 @@
 package net.anei.cadpage.parsers.AL;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import net.anei.cadpage.parsers.CodeSet;
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchA48Parser;
 
 public class ALDallasCountyParser extends DispatchA48Parser {
@@ -14,6 +18,16 @@ public class ALDallasCountyParser extends DispatchA48Parser {
   @Override
   public String getFilter() {
     return "@bellsouth.net,dallasco911.donotreply@gmail.com";
+  }
+
+  private static final Pattern BAD_CITY_PTN = Pattern.compile("([A-Z ]+) \\d.*");
+
+  @Override
+  protected boolean parseMsg(String subject, String body, Data data) {
+    if (!super.parseMsg(subject, body, data)) return false;
+    Matcher match = BAD_CITY_PTN.matcher(data.strCity);
+    if (match.matches()) data.strCity = match.group(1);
+    return true;
   }
 
   private static final String[] MWORD_STREET_LIST = new String[]{
