@@ -81,7 +81,7 @@ public class MIJacksonCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
-    if (name.equals("PRI")) return new PriorityField("(\\S*)\\s+Fire Status:.*", false);
+    if (name.equals("PRI")) return new PriorityField("(\\S*)\\s*\\bFire Status:.*", false);
     if (name.equals("INFO2")) return new InfoField("(.*?) *\\bNARRATIVE", true);
     if (name.equals("X2")) return new CrossField("(.*?) *\\bINTERSECTION");
     return super.getField(name);
