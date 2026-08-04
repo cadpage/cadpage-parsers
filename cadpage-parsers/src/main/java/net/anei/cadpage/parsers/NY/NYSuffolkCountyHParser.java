@@ -11,8 +11,9 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class NYSuffolkCountyHParser extends FieldProgramParser {
 
   public NYSuffolkCountyHParser() {
-    super(CITY_LIST, "SUFFOLK COUNTY", "NY",
-          "DATETIME CALL ADDR PLACE INFO/N+");
+    super(CITY_CODES, "SUFFOLK COUNTY", "NY",
+          "DATETIME CALL ( CITY ADDR | CITYADDR ) PLACE INFO/N+");
+    setupCities(CITY_LIST);
     setupSpecialStreets(
         "BEACHWAY",
         "CAPTAINS WALK",
@@ -74,13 +75,13 @@ public class NYSuffolkCountyHParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d", true);
-    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d(?::\\d\\d)?", true);
+    if (name.equals("CITYADDR")) return new MyCityAddressField();
     return super.getField(name);
   }
 
   private static final Pattern ADDR_PTN = Pattern.compile("([A-Z]{2,3}) +(.*)");
-  private class MyAddressField extends AddressField {
+  private class MyCityAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
       Matcher match = ADDR_PTN.matcher(field);
