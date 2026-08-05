@@ -130,16 +130,19 @@ public class TXParkerCountyBParser extends DispatchOSSIParser {
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ALD", "ALEDO",
       "AZL", "AZLE",
+      "BOYD", "BOYD",
       "CRE", "CRESSON",
       "FTW", "FORT WORTH",
       "GRA", "GRANBURY",
+      "GRS", "GRANBURY",
       "LIP", "LIPAN",
       "MIL", "MILLSAP",
+      "MIN", "MINERAL WELLS",
       "PERR","PERRIN",
       "POL", "POOLVILLE",
       "SPT", "SPRINGTOWN",
       "WFD", "WEATHERFORD",
+      "WTH", "WHITT"
 
-      "BOYD", "BOYD"
   });
 }
