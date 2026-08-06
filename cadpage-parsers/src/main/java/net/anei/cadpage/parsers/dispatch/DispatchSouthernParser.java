@@ -898,7 +898,7 @@ public class DispatchSouthernParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new BaseAddressField();
-    if (name.equals("APT")) return new AptField("\\d{1,3}[A-Z]?|[A-Z]");
+    if (name.equals("APT")) return new AptField("\\d{1,4}[A-Z]?|[A-Z]\\d{0,2}");
     if (name.equals("CODE"))  return new BaseCodeField();
     if (name.equals("PARTCODE")) return new SkipField("[MFL]D?");
     if (name.equals("X")) return new BaseCrossField();

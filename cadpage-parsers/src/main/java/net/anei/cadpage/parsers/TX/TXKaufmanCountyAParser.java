@@ -42,6 +42,7 @@ public class TXKaufmanCountyAParser extends DispatchSouthernParser {
     int pt = body.indexOf("\n");
     if (pt >= 0) body = body.substring(0,pt).trim();
     body = body.replace('@', '&');
+    body = body.replace(", LLC,", " LLC,");
     if (!super.parseMsg(body, data)) return false;
     if (data.strCity.equals("VZCO") || data.strCity.equals("VAN ZANDT CO")) data.strCity = "VAN ZANDT COUNTY";
     if (data.strCity.length() == 0 && VZ_PTN.matcher(data.strAddress).find()) data.strCity = "VAN ZANDT COUNTY";
@@ -54,7 +55,7 @@ public class TXKaufmanCountyAParser extends DispatchSouthernParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
-    if (name.equals("APT")) return new AptField("\\d{1,3}[A-Z]?(?: BUILDING [A-Z])?|[A-Z]", true);
+    if (name.equals("APT")) return new AptField("\\d{1,4}[A-Z]?(?: BUILDING [A-Z])?|[A-Z]\\d{0,2}", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }

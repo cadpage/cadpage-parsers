@@ -6,8 +6,10 @@ import net.anei.cadpage.parsers.GroupBestParser;
  * Kaufman County, TX
  */
 public class TXKaufmanCountyParser extends GroupBestParser {
-  
+
   public TXKaufmanCountyParser() {
-    super(new TXKaufmanCountyAParser(), new TXKaufmanCountyBParser());
+    super(new TXKaufmanCountyAParser(),
+          new TXKaufmanCountyBParser(),
+          new TXKaufmanCountyCParser());
   }
 }
