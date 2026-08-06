@@ -1,8 +1,5 @@
 package net.anei.cadpage.parsers.AL;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.FieldProgramParser;
 
@@ -10,7 +7,7 @@ public class ALHooverAParser extends FieldProgramParser {
 
   public ALHooverAParser() {
     super("HOOVER", "AL",
-          "CALL:CALL! PLACE:PLACE? ADDR:ADDRCITY! ADDITIONAL_INFORMATION:INFO! ID:ID! PRI:PRI! DATE:DATETIME! RUN_#:ID? MAP:MAP! UNIT:UNIT! ( CROSSSTREET:X! INFO:INFO/N! INFO/N+ | INFO:INFO/N! INFO/N+ CROSSSTREET:X! )");
+          "CFS:SKIP! CALL:CALL! DATE:DATETIME! PLACE:PLACE! ADDR:ADDRCITY/S6! CROSS:X! RUN_#:ID! UNIT:UNIT! INFO:INFO! INFO/N+");
   }
 
   @Override
@@ -20,23 +17,14 @@ public class ALHooverAParser extends FieldProgramParser {
 
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("!CAD ALERT!")) return false;
+    if (!subject.equals("!CAD Alert!")) return false;
+    body = body.replace(" CALL:", "\nCALL:");
     return super.parseFields(body.split("\n"), data);
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("DATETIME")) return new MyDateTimeField();
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d:\\d\\d:\\d\\d", true);
     return super.getField(name);
-  }
-
-  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d)");
-  private class  MyDateTimeField extends DateTimeField {
-    public void parse(String field, Data data) {
-      Matcher match = DATE_TIME_PTN.matcher(field);
-      if (!match.matches()) abort();
-      data.strDate = match.group(1);
-      data.strTime = match.group(2);
-    }
   }
 }
