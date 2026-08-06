@@ -12,7 +12,7 @@ public class NYSuffolkCountyOParser extends FieldProgramParser {
 
   public NYSuffolkCountyOParser() {
     super("SUFFOLK COUNTY", "NY",
-          "DATETIME CALL ADDRCITYST END");
+          "DATETIME CALL ADDRCITYST INFO/N+ END");
   }
 
   @Override
@@ -25,19 +25,9 @@ public class NYSuffolkCountyOParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS;
   }
 
-  private static final Pattern SUBJECT_PTN = Pattern.compile("[^;]*;[^;]*(?:;(.*))?\\|CSI Active911 - CFS Notification");
-
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    Matcher match = SUBJECT_PTN.matcher(subject);
-    if (!match.matches()) return false;
-    data.strSupp = getOptGroup(match.group(1));
+  protected boolean parseMsg(String body, Data data) {
     return parseFields(body.split("\n"), data);
-  }
-
-  @Override
-  public String getProgram() {
-    return super.getProgram() + " INFO";
   }
 
   @Override
@@ -52,16 +42,8 @@ public class NYSuffolkCountyOParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       int pt = field.indexOf('\t');
-      if (pt >= 0) {
-        data.strPlace = field.substring(pt+1).trim();
-        field = field.substring(0,pt).trim();
-      }
+      if (pt >= 0) field = field.substring(0,pt).trim();
       super.parse(field, data);
-    }
-
-    @Override
-    public String getFieldNames() {
-      return "CALL PLACE";
     }
   }
 
@@ -87,6 +69,13 @@ public class NYSuffolkCountyOParser extends FieldProgramParser {
         field = match.group(1).trim();
         setGPSLoc(match.group(2), data);
       }
+      if (field.endsWith(")")) {
+        int pt = field.indexOf('(');
+        if (pt >=  0) {
+          data.strPlace = field.substring(pt+1, field.length()-1).trim();
+          field = field.substring(0,pt).trim();
+        }
+      }
       super.parse(field, data);
       int pt = data.strAddress.indexOf(',');
       if (pt >= 0) {
@@ -97,7 +86,7 @@ public class NYSuffolkCountyOParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " GPS";
+      return super.getFieldNames() + " PLACE GPS";
     }
   }
 }
