@@ -6,8 +6,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class MOBuchananCountyParser extends GroupBestParser {
 
   public MOBuchananCountyParser() {
-    super(new MOBuchananCountyAParser(),
-          new MOBuchananCountyBParser(),
+    super( new MOBuchananCountyBParser(),
           new MOBuchananCountyDParser());
   }
 }

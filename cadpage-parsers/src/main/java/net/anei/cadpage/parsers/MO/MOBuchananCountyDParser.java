@@ -1,18 +1,22 @@
 package net.anei.cadpage.parsers.MO;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 
-public class MOBuchananCountyDParser extends DispatchH05Parser {
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import net.anei.cadpage.parsers.FieldProgramParser;
+
+public class MOBuchananCountyDParser extends FieldProgramParser {
 
   public MOBuchananCountyDParser() {
-    super(MOBuchananCountyAParser.CITY_CODES, "BUCHANAN COUNTY", "MO",
-          "CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! CROSS_ST:X! LAT:GPS1 LONG:GPS2 ID:ID! DATE:DATETIME! UNIT:UNIT! INFO:EMPTY! INFO_BLK+? EXTERNAL_EMAIL:SKIP");
+    super("BUCHANAN COUNTY", "MO",
+          "Call_Type:CALL! Common_Name:PLACE? Call_Address:ADDRCITYST! Latitude:GPS1! Longitude:GPS2! Case_Number:ID! Call_Date/Time:DATETIME! Units_Assigned:UNIT! Narrative:INFO! INFO/N+");
   }
 
   @Override
   public String getFilter() {
-    return "@stjoemo.org,@stjosephmo.gov";
+    return "cad@tblsys.com";
   }
 
   public int getMapFlags() {
@@ -20,26 +24,43 @@ public class MOBuchananCountyDParser extends DispatchH05Parser {
   }
 
   @Override
-  protected boolean parseHtmlMsg(String subject, String body, Data data) {
-    int pt = body.indexOf("\nEXTERNAL EMAIL:");
-    if (pt >= 0) body = body.substring(0,pt).trim();
-    return super.parseHtmlMsg(subject, body, data);
+  protected boolean parseMsg(String body, Data data) {
+    return parseFields(body.split("\n"), data);
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ID")) return new MyIdField();
+    if (name.equals("CALL")) return new MyCallField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d?:\\d\\d:\\d\\d", true);
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
 
-  private class MyIdField extends IdField {
+  private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
-      field = field.replace("[", "").replace("]", "");
-      if (field.startsWith("Incident not yet created")) return;
+      int pt = field.indexOf(" - ");
+      if (pt >= 0) {
+        String call1 = field.substring(0,pt).trim();
+        String call2 = field.substring(pt+3);
+        if (call1.contains(call2)) {
+          field = call1;
+        } else if (call2.contains(call1)) {
+          field = call2;
+        }
+      }
       super.parse(field, data);
     }
   }
 
+  private static final Pattern INFO_HDR_PTN = Pattern.compile("\\[\\d\\d:\\d\\d\\] *");
+
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = INFO_HDR_PTN.matcher(field);
+      if (match.lookingAt()) field = field.substring(match.end());
+      super.parse(field, data);
+    }
+  }
 }
