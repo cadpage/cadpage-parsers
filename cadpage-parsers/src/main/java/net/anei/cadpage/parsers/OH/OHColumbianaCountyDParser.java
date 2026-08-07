@@ -12,7 +12,7 @@ public class OHColumbianaCountyDParser extends FieldProgramParser {
 
   public OHColumbianaCountyDParser() {
     super(CITY_LIST, "COLUMBIANA COUNTY", "OH",
-          "CODE_CALL ADDR PLACE? CITY/Y! INFO/N+");
+          "CODE_CALL ADDR PLACE/CS+? CITY/Y! INFO/N+");
   }
 
   @Override

@@ -14,7 +14,7 @@ public class DispatchA71Parser extends FieldProgramParser {
   public DispatchA71Parser(String defCity, String defState) {
     super(defCity, defState,
          "( ID:ID! FAIL INFO:INFO! " +
-         "| CALL:CALL? FAIL CALLS:CALL? FAIL PLACE:PLACE? FAIL ADDR:ADDRCITY? FAIL APT:APT FAIL CITY:CITY? FAIL ( XY:GPS | LAT:GPS1 LONG:GPS2 ) INFO/N+ ( AREA:MAP INFO/N+ | ) ( ID:ID INFO/N+ | ) ( PLACE:PLACE INFO/N+ | ) ( PRI:PRI INFO/N+ | ) ( DATE:DATE FAIL | ) TIME:TIME INFO/N+ INFO:INFO/N " +
+         "| CALL:CALL? FAIL CALLS:CALL? FAIL PLACE:PLACE? FAIL ADDR:ADDRCITY? FAIL APT:APT FAIL CITY:CITY? FAIL XSTREET:X? FAIL ( XY:GPS | LAT:GPS1 LONG:GPS2 | LATITUDE:GPS1 LONGITUDE:GPS2 | ) INFO/N+ ( AREA:MAP INFO/N+ | ) ( ID:ID INFO/N+ | ) ( PLACE:PLACE INFO/N+ | ) ( PRI:PRI INFO/N+ | ) ( DATE:DATE FAIL | ) TIME:TIME INFO/N+ INFO:INFO/N " +
          ") INFO/N+");
   }
 
@@ -53,6 +53,7 @@ public class DispatchA71Parser extends FieldProgramParser {
     if (name.equals("PLACE")) return new BasePlaceField();
     if (name.equals("ADDRCITY")) return new BaseAddressCityField();
     if (name.equals("CITY")) return new BaseCityField();
+    if (name.equals("X")) return new BaseCrossField();
     if (name.equals("DATE")) return new DateField("\\d\\d?/\\d\\d?/\\d{2}(?:\\d{2})?|", true);
     if (name.equals("TIME")) return new BaseTimeField();
     if (name.equals("MAP")) return new BaseMapField();
@@ -174,6 +175,15 @@ public class DispatchA71Parser extends FieldProgramParser {
       }  else {
         data.strTime = field;
       }
+    }
+  }
+
+  private class BaseCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, "/");
+      field = stripFieldStart(field, "/");
+      super.parse(field, data);
     }
   }
 
