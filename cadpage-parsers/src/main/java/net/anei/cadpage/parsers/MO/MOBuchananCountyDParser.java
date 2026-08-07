@@ -31,6 +31,7 @@ public class MOBuchananCountyDParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d?:\\d\\d:\\d\\d", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
@@ -50,6 +51,16 @@ public class MOBuchananCountyDParser extends FieldProgramParser {
         }
       }
       super.parse(field, data);
+    }
+  }
+
+  private class MyAddressCityStateField extends AddressCityStateField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldEnd(field, ", USA");
+      super.parse(field, data);
+      int pt = data.strAddress.indexOf(',');
+      if (pt >= 0) data.strAddress = data.strAddress.substring(0,pt).trim();
     }
   }
 

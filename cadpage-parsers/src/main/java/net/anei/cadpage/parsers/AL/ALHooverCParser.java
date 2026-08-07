@@ -35,12 +35,11 @@ public class ALHooverCParser extends FieldProgramParser {
   private class MyAddressField extends AddressField {
     @Override
     public void parse(String field, Data data) {
-      int pt = field.indexOf(": @");
-      if (pt >= 0) {
-        data.strPlace = field.substring(pt+3).trim();
-        field = field.substring(0,pt).trim();
-      }
-      super.parse(field, data);
+      Parser p = new Parser(field);
+      data.strPlace = p.getLastOptional(": @");
+      String apt = p.getLastOptional(',');
+      super.parse(p.get(), data);
+      data.strApt = append(data.strApt, "-", apt);
     }
 
     @Override
