@@ -1,17 +1,16 @@
 package net.anei.cadpage.parsers.TX;
 
-import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
+import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
 
-public class TXWiseCountyBParser extends DispatchSouthernParser {
+public class TXWiseCountyBParser extends DispatchA27Parser {
 
   public TXWiseCountyBParser() {
-    super(CITY_LIST, "WISE COUNTY", "TX",
-          DSFLG_ADDR | DSFLG_ADDR_TRAIL_PLACE | DSFLG_NAME | DSFLG_PHONE | DSFLG_CODE | DSFLG_ID | DSFLG_TIME | DSFLG_PROC_EMPTY_FLDS);
+    super(CITY_LIST, "WISE COUNTY", "TX");
   }
 
   @Override
   public String getFilter() {
-    return "sswadmin@sheriff.co.wise.tx.us";
+    return "cis@sheriff.co.wise.tx.us";
   }
 
   @Override
