@@ -16,7 +16,7 @@ public class INPorterCountyParser extends DispatchH03Parser {
 
   @Override
   public String getFilter() {
-    return "PCCC@mail.porterco.org";
+    return "PCCC@mail.porterco.org,PCCC@portercountyin.gov";
   }
 
   @Override
