@@ -10,7 +10,7 @@ public class NVElkoCountyCParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "FlexRapidNotification@dccnotify.com,dispatch@westwendovercity.com,@email.getrave.com";
+    return "FlexRapidNotification@dccnotify.com,dispatch@westwendovercity.com,FRN-nevadadps@email.getrave.com";
   }
 
   @Override
