@@ -10,7 +10,7 @@ public class TXBrazoriaCountyCParser extends DispatchA72Parser {
 
   @Override
   public String getFilter() {
-    return "rms@cityofbrazoria.org,wcpdactive911@gmail.com";
+    return "rms@cityofbrazoria.org,wcpdactive911@gmail.com,rms.bpd201@gmail.com";
   }
 
 }
