@@ -11,7 +11,7 @@ public class LACaddoParishParser extends FieldProgramParser {
 
   public LACaddoParishParser() {
     super(CITY_CODES, "CADDO PARISH", "LA",
-          "EV:ID! Location:ADDR/S? TYPE_CODE:CODE_CALL! CLNAME:NAME TIME:TIME! Comments:INFO! CALLER_ADDR:SKIP EID:ID UNITS:UNIT END");
+          "EV:ID! Location:ADDR/S? TYPE_CODE:CODE_CALL! CLNAME:NAME TIME:TIME! Comments:INFO! CALLER_ADDR:SKIP EID:ID/L UNITS:UNIT END");
   }
 
   @Override
