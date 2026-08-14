@@ -10,7 +10,7 @@ public class IACherokeeCountyParser extends DispatchA47Parser {
 
   @Override
   public String getFilter() {
-    return "swmail@cherokeecoso.us";
+    return "swmail@cherokeecoso.us,cherokeedispatch@cherokeecoso.us";
   }
 
   private static final String[] CITY_LIST = new String[] {
