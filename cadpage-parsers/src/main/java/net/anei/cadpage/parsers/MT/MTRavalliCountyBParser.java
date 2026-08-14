@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.MT;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -33,6 +34,7 @@ public class MTRavalliCountyBParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("MASH")) return new MyMashField();
+    if (name.equals("PRI")) return new MyPriorityField();
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
@@ -46,12 +48,31 @@ public class MTRavalliCountyBParser extends FieldProgramParser {
       data.strPlace = p.get(';');
       parseAddress(p.get(';'), data);
       data.strCity = p.get(';');
-      data.strSupp = p.get();
+      parseInfo(p.get(), data);
     }
 
     @Override
     public String getFieldNames() {
-      return "CALL PLACE ADDR APT CITY INFO";
+      return "CALL PLACE ADDR APT CITY INFO CH";
+    }
+  }
+
+  private static final Pattern PRIORITY_PTN = Pattern.compile("\\d");
+
+  private class MyPriorityField extends PriorityField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.isEmpty()) return;
+      if (PRIORITY_PTN.matcher(field).matches()) {
+        super.parse(field, data);
+      } else {
+        parseInfo(field, data);
+      }
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "PRI INFO CH";
     }
   }
 
@@ -68,7 +89,23 @@ public class MTRavalliCountyBParser extends FieldProgramParser {
     @Override
     public void parse(String field, Data data) {
       field = INFO_BRK_PTN.matcher(field).replaceAll("\n").trim();
-      super.parse(field, data);
+      parseInfo(field, data);
     }
+
+    @Override
+    public String getFieldNames() {
+      return "INFO CH";
+    }
+  }
+
+  private static final Pattern INFO_CH_PTN = Pattern.compile("(.*?)\\s*\\bCH *((?:F|FIRE|) *\\d+)", Pattern.DOTALL |  Pattern.CASE_INSENSITIVE);
+
+  private void parseInfo(String field, Data data) {
+    Matcher match = INFO_CH_PTN.matcher(field);
+    if (match.matches()) {
+      field = match.group(1);
+      data.strChannel = match.group(2).toUpperCase();
+    }
+    data.strSupp = append(data.strSupp, "\n", field);
   }
 }
