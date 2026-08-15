@@ -1323,7 +1323,7 @@ public class Active911ParserTable {
       "US/MI/IronCounty",                 "MIIronCounty",
       "US/MI/IsabellaCounty",             "MIIsabellaCountyA",
       "US/MI/JacksonCounty",              "MIJacksonCounty",
-      "US/MI/JacksonCountyDOT",						"MIJacksonCountyB",
+      "US/MI/JacksonCountyDOT",						"MIJacksonCounty",
       "US/MI/JacksonCountyME",            "MIJacksonCountyA",
       "US/MI/KalamazooCity",              "MIKalamazooCountyC",
       "US/MI/KentCity",                   "MIKentCounty",
