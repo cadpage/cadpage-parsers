@@ -1,11 +1,11 @@
 package net.anei.cadpage.parsers.GA;
 
-import net.anei.cadpage.parsers.dispatch.DispatchCiscoParser;
+import net.anei.cadpage.parsers.dispatch.DispatchA78Parser;
 
 /**
  * McDuffie County, GA
  */
-public class GAMcDuffieCountyParser extends DispatchCiscoParser {
+public class GAMcDuffieCountyParser extends DispatchA78Parser {
 
   public GAMcDuffieCountyParser() {
     super("MCDUFFIE COUNTY", "GA");
@@ -13,8 +13,12 @@ public class GAMcDuffieCountyParser extends DispatchCiscoParser {
 
   @Override
   public String getFilter() {
-    return "cisco@thomson-mcduffie.net";
+    return "donotreply@McDuffieSOalerts.com";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
 }
-  
