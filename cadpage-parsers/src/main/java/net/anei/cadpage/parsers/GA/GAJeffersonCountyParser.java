@@ -1,68 +1,75 @@
 package net.anei.cadpage.parsers.GA;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.CodeSet;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.SmartAddressParser;
 
 public class GAJeffersonCountyParser extends SmartAddressParser {
 
   public GAJeffersonCountyParser() {
-      super("JEFFERSON COUNTY", "GA");
-      setupCallList(CALL_LIST);
+      super(CITY_LIST, "JEFFERSON COUNTY", "GA");
       setupMultiWordStreets(MWORD_STREETS);
-      setFieldList("CODE CALL ADDR APT PHONE NAME");
+      setFieldList("ID CALL DATE TIME PLACE ADDR CITY GPS");
   }
-  
-  private static final Pattern PHONE_PTN = Pattern.compile("(.*) (\\d{10}) *(.*)");
-  private static final Pattern V_NN_PTN = Pattern.compile("\\bV(\\d+)\\b", Pattern.CASE_INSENSITIVE);
-  
-  public boolean parseMsg(String body, Data data) {
-    
-    if (!body.startsWith("JEFFERSONCOUNTYCENTRAL:")) return false;
-    body = body.substring(23).trim();
-    
-    int pt = body.indexOf(' ');
-    if (pt < 0) return false;
-    data.strCode = body.substring(0,pt);
-    body = body.substring(pt+1).trim();
+
+  private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z]{3} \\d{4}-\\d+");
+  private static final Pattern MASTER = Pattern.compile("([-/A-Z]+) (\\d\\d?/\\d\\d?/\\d{4}) (\\d\\d?:\\d\\d:\\d\\d [AP]M) +(.*?)( +https?://maps.google.com.*\\?q=(.*))?");
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
+  private static final Pattern PLACE_ADDR_PTN = Pattern.compile("(.*) (?://)? (.*)");
+
+  public boolean parseMsg(String subject, String body, Data data) {
+
+    if (!SUBJECT_PTN.matcher(subject).matches()) return false;
+    data.strCallId = subject;
+
+    Matcher match = MASTER.matcher(body);
+    if (!match.matches()) return false;
+    data.strCall = match.group(1);
+    data.strDate = match.group(2);
+    setTime(TIME_FMT, match.group(3), data);
+    body = match.group(4);
+    String gps = match.group(5);
+    if (gps != null) setGPSLoc(gps, data);
+
+    match = PLACE_ADDR_PTN.matcher(body);
+    if (match.matches()) {
+      String place =  match.group(1).trim();
+      if (!place.equals("HWY")) {
+        data.strPlace = place;
+        body = match.group(2).trim();
+      }
+    }
 
     body = body.replace('@', '&');
-    body = V_NN_PTN.matcher(body).replaceAll("$1");
-    Matcher match = PHONE_PTN.matcher(body);
-    if (match.matches()) {
-      String addr = match.group(1).trim();
-      data.strPhone = match.group(2);
-      data.strName = match.group(3);
-      
-      parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ | FLAG_ANCHOR_END, addr, data);
-    }
-    
-    else {
-      parseAddress(StartType.START_CALL, FLAG_START_FLD_REQ, body, data);
-      data.strName = getLeft();
-    }
+    parseAddress(StartType.START_ADDR, body, data);
+
+    // Ignore anything trailing the first city.
+
     return true;
   }
-  
-  public static CodeSet CALL_LIST = new CodeSet(
-      "AUTO ACCIDENT",
-      "AUTO ACCIDENT WITH INJURIES",
-      "BRUSH FIRE",
-      "DIABETIC PROBLEMS",
-      "FAINTING / UNRESPOSIVE",
-      "FIRE ALARM",
-      "HELICOPTER LANDING",
-      "MOTORCYCLE ACCIDENT",
-      "RESPIRATORY DISTRESS",
-      "STRUCTURE FIRE",
-      "TRAINING",
-      "WEATHER RELATED"
-  );
-  
-  public static String[] MWORD_STREETS = new String[]{
+
+  private static final String[] CITY_LIST = new String[] {
+
+      // Cities
+      "AVERA",
+      "LOUISVILLE",
+      "N WRENS",
+      "STAPLETON",
+      "WADLEY",
+      "WRENS",
+
+      // Towns
+      "BARTOW",
+
+      // Census-designated place
+      "MATTHEWS"
+  };
+
+  private static String[] MWORD_STREETS = new String[]{
     "CLARKS MILL",
     "EDEN CHURCH",
     "GAMBLE SCHOOL",
