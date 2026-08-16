@@ -1462,6 +1462,7 @@ public class Active911ParserTable {
       "US/MN/StevensCounty",              "MNStevensCounty",
       "US/MN/StLouisCounty",              "MNStLouisCountyB",
       "US/MN/StPaul",                     "MNMinneapolisStPaulA",
+      "US/MN/TylerFD",                    "MNLincolnCounty",
       "US/MN/WabashaCounty",              "MNWabashaCounty",
       "US/MN/WadenaCounty",               "MNWadenaCounty",
       "US/MN/WasecaCounty",               "MNWasecaCounty",

@@ -1014,6 +1014,7 @@ public class ParserList {
               ,"MNLakeCounty"                   ,"Lake County, MN"
               ,"MNLakeOfTheWoodsCounty"         ,"Lake Of The Woods County, MN"
               ,"MNLeSueurCounty"                ,"Le Sueur County, MN"
+              ,"MNLincolnCounty"                ,"Lincoln County, MN"
               ,"MNLyonCounty"                   ,"Lyon County, MN"
               ,"MNMarshallCounty"               ,"Marshall County, MN"
               ,"MNMartinCounty"                 ,"Martin County, MN"
