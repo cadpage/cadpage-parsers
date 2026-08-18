@@ -16,13 +16,12 @@ public class DCProteanhubParser extends FieldProgramParser {
     super("DC", "",
           "CAD:ID? CALL:CALL! Sending_Facility:FACILITY? LOCATION:PLACE? " +
                 "( ADDR:ADDR! CITY:CITY! ST:ST? CNTY:CITY? Call_Back_Number:PHONE? GPS:GPS? PRI:PRI! UNIT:UNIT! " +
-//                "| PRI:PRI? UNIT:UNIT? " +
                 ") INFO/N+", FLDPROG_IGNORE_CASE);
   }
 
   @Override
   public String getFilter() {
-    return "donotreply@proteanhub.com,FlightVectorSvc@childrensnational.org";
+    return "donotreply@proteanhub.com,FlightVectorSvc@childrensnational.org,fvpage@upmc.edu";
   }
 
   @Override
