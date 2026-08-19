@@ -10,7 +10,7 @@ public class SCOconeeCountyBParser extends FieldProgramParser {
 
   public SCOconeeCountyBParser() {
     super("OCONEE COUNTY", "SC",
-          "ID CALL CALL2/SLS+? ADDR INFO! INFO/N+? ID/L END");
+          "ID CALL CALL2/SLS+? ADDR INFO! INFO/N+? ID/L Unit:UNIT? Map:GPS? END");
   }
 
   @Override
@@ -72,20 +72,12 @@ public class SCOconeeCountyBParser extends FieldProgramParser {
         part = part.trim();
         if (part.length() == 0) continue;
         Matcher match = INFO_DATE_TIME_PTN.matcher(part);
-        if (match.matches()) {
-          data.strDate = match.group(1);
-          data.strTime = match.group(2);
-          part = match.group(3);
-        }
+        if (match.matches()) part = match.group(3);
+        part = stripFieldStart(part, "CFS Log note -");
 
         data.strSupp = append(data.strSupp, connect, part);
         connect = "\n";
       }
-    }
-
-    @Override
-    public String getFieldNames() {
-      return "DATE TIME INFO";
     }
   }
 }
