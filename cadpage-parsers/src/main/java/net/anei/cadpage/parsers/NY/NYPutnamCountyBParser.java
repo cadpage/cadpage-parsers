@@ -16,7 +16,7 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
                       "( Location:ADDRCITY/S6! ( Cross_Street:X! | X ) Common_Name:PLACE! Additional_Info:INFO? " +
                       "| CALL ADDRCITY/ZS6 XS:X! PLACE " +
                       "| ADDRCITY/S6! X PLACE " +
-                      ") ( Box:BOX! | BOX ) EMS:CALL/SDS? Fire:CALL/SDS? " +
+                      ") ( Box:BOX! | BOX? ) EMS:CALL/SDS? Fire:CALL/SDS? " +
                 ") Additional_Info:INFO/N? INFO/N+");
   }
 
@@ -44,15 +44,17 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
     return "SRC " + super.getProgram();
   }
 
+  private static final Pattern BOX_PTN = Pattern.compile("(?:Box[: ]+)?((?:[A-Z ]+ \\()?(?:\\d\\d|[A-Z]{2})-(?:\\d{2,4}|[A-Z])\\)?|)");
   @Override
   public Field getField(String name) {
     if (name.equals("MARK")) return new SkipField(".* CAD Page", true);
     if (name.equals("DASH")) return new SkipField("-", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("CALL")) return new MyCallField();
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("X")) return new MyCrossField();
-    if (name.equals("BOX")) return new BoxField("(?:Box +)?((?:[A-Z ]+ \\()?(?:\\d\\d|[A-Z]{2})-(?:\\d{2,4}|[A-Z])\\)?|)", true);
+    if (name.equals("BOX")) return new BoxField(BOX_PTN, true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -63,6 +65,23 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
       field = stripFieldStart(field, ";");
       field = field.replace('@', '&');
       super.parse(field, data);
+    }
+  }
+  
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = BOX_PTN.matcher(field);
+      if (match.matches()) {
+        data.strBox = match.group(1);
+      } else {
+        super.parse(field, data);
+      }
+    }
+    
+    @Override
+    public String getFieldNames() {
+      return "CALL BOX?";
     }
   }
 

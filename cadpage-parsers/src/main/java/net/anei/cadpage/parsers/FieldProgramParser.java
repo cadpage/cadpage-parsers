@@ -3209,6 +3209,10 @@ public class FieldProgramParser extends SmartAddressParser {
       super(pattern, hardPattern);
     }
 
+    public BoxField(Pattern pattern, boolean hardPattern) {
+      super(pattern, hardPattern);
+    }
+
     @Override
     public void setQual(String qual) {
       super.setQual(qual);
