@@ -39,6 +39,11 @@ public class PACrawfordCountyBParser extends DispatchH05Parser {
     public void parse(String field, Data data) {
       field = field.replace('@', '&');
       super.parse(field, data);
+      int pt = data.strAddress.indexOf(',');
+      if (pt >= 0) {
+        data.strCity = data.strAddress.substring(pt+1).trim();
+        data.strAddress = data.strAddress.substring(0,pt).trim();
+      }
       data.strCity = stripFieldEnd(data.strCity, " BORO");
     }
   }

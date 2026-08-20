@@ -13,7 +13,7 @@ public class GAJeffersonCountyParser extends SmartAddressParser {
   public GAJeffersonCountyParser() {
       super(CITY_LIST, "JEFFERSON COUNTY", "GA");
       setupMultiWordStreets(MWORD_STREETS);
-      setFieldList("ID CALL DATE TIME PLACE ADDR CITY GPS");
+      setFieldList("ID CALL DATE TIME PLACE ADDR APT CITY GPS");
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("[A-Z]{3} \\d{4}-\\d+");
@@ -47,7 +47,10 @@ public class GAJeffersonCountyParser extends SmartAddressParser {
     body = body.replace('@', '&');
     parseAddress(StartType.START_ADDR, body, data);
 
-    // Ignore anything trailing the first city.
+    // Ignore anything trailing the first city as a duplicate address
+
+    // Which may have been confused as a trailing address
+    if (data.strAddress.startsWith(data.strApt))data.strApt = "";
 
     return true;
   }
