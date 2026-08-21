@@ -67,18 +67,18 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = BOX_PTN.matcher(field);
-      if (match.matches()) {
-        data.strBox = match.group(1);
-      } else {
-        super.parse(field, data);
+      int pt = field.indexOf("Box:");
+      if (pt >= 0) {
+        data.strBox = field.substring(pt+4).trim();
+        field = field.substring(0,pt).trim();
       }
+      super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CALL BOX?";
