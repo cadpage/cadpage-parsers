@@ -1,20 +1,10 @@
 package net.anei.cadpage.parsers.MI;
 
-import net.anei.cadpage.parsers.dispatch.DispatchH03Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class MIWayneCountyParser extends DispatchH03Parser {
+public class MIWayneCountyParser extends GroupBestParser {
 
   public MIWayneCountyParser() {
-    this("WAYNE COUNTY", "MI");
+    super(new MIWayneCountyAParser(), new MIWayneCountyBParser());
   }
-
-  MIWayneCountyParser(String defCity, String defState) {
-    super(defCity, defState);
-  }
-
-  @Override
-  public String getFilter( ) {
-    return "MSP@michigan.gov";
-  }
-
 }
