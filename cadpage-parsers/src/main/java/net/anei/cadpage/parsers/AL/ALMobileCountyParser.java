@@ -33,23 +33,16 @@ public class ALMobileCountyParser extends SmartAddressParser {
     return MAP_FLG_SUPPR_LA | MAP_FLG_SUPPR_SR;
   }
 
-  private static final Pattern MASTER1 = Pattern.compile("(?:ASSIGNED UNIT: ([-_A-Z0-9]+(?: \\d\\d)?) )?(?:(Respond To: )?(.*?) )?Event#: ([A-Za-z]\\d{7,10})(.*?) (\\d\\d:\\d\\d:\\d\\d) +(\\d\\d/\\d\\d/\\d\\d) DispatchCALLER NAME:(.*)CALLER ADDR:(?:.* (-\\d{3}\\.\\d{6}) (\\d{3}\\.\\d{6}))? *(.*)");
-  private static final Pattern ADDR_BRK_PTN = Pattern.compile(" *: @? *| *:@ *|(?<=[A-Z](?:[,;][A-Z0-9]{1,3})?): *");
-  private static final Pattern TRAIL_APT_PTN = Pattern.compile("(.*?)[,;](\\S+) *(.*?)");
-  private static final Pattern APT_BRK_PTN = Pattern.compile("[,;]");
-  private static final Pattern ADDR_EXT_PTN = Pattern.compile("(?:[-@]|BET) .*");
-  private static final Pattern LEAD_APT_PTN = Pattern.compile("(\\S+) *@ *(.*)");
-  private static final Pattern LEAD_APT_PTN2 = Pattern.compile("(?:APT|RM|ROOM|LOT) +(\\S+) +(.*)");
   private static final Pattern APT_PTN = Pattern.compile("\\d{1,4}[A-Z]?|[A-Z]|(?:#|APT|RM|ROOM|LOT) *(.*)", Pattern.CASE_INSENSITIVE);
-  
-  private static final Pattern MASTER2 = Pattern.compile("Unit (\\S+) was (dispatched to|cleared from) event ([A-Z]+\\d+) at (.*?) for (\\S+) \\( (.*) \\) \\.");
+
+  private static final Pattern MASTER2 = Pattern.compile("Unit (\\S+) was (dispatched to|cleared from) event ([A-Z]+\\d+) at (?:[^,:]*.: *)?(.*?) for (\\S+) \\( (.*) \\) \\.");
   private static final Pattern PHONE_PTN = Pattern.compile("(\\d{3}-\\d{3}-\\d{4})\\b[: ]*");
-  
-  private static final Pattern EVENT_PTN = Pattern.compile("Event ([A-Z]+\\d+) \\(([A-Z0-9]+)/default\\) at (.*) was (created|closed)\\.");
-  
+
+  private static final Pattern EVENT_PTN = Pattern.compile("Event ([A-Z]+\\d+) \\(([A-Za-z0-9]+)/default\\) at (.*) was (created|closed)\\.");
+
   private static final Pattern GEN_ALERT_PTN =  Pattern.compile("(?:EVENT: ?([A-Za-z]\\d{8,10}) +|.*? |)Original message from.*? - (\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d .*)");
   private static final Pattern RUN_REPORT_BRK_PTN = Pattern.compile(" +/+ *|(?<=\\(\\d+\\)): +");
-  
+
   private boolean suppressCallCheck;
 
   @Override
@@ -58,142 +51,8 @@ public class ALMobileCountyParser extends SmartAddressParser {
     body = stripFieldEnd(body, "_x000D_");
 
     suppressCallCheck = false;
-    Matcher match = MASTER1.matcher(body);
-    if (match.matches()) {
-      setFieldList("UNIT ADDR CITY APT PLACE CALL ID X TIME DATE NAME GPS INFO");
-      data.strUnit = getOptGroup(match.group(1)).replace(' ', '_');
-      boolean hasAddress = match.group(2) !=  null;
-      String addr = getOptGroup(match.group(3));
-      data.strCallId = match.group(4);
-      data.strCross = stripFieldEnd(match.group(5).trim(), "/");
-      data.strTime = match.group(6);
-      data.strDate = match.group(7);
-      data.strName = cleanWirelessCarrier(match.group(8).trim());
-      if (match.group(9) != null) setGPSLoc(match.group(10)+','+match.group(9), data);
-      data.strSupp = match.group(11);
 
-      data.strCross = stripFieldEnd(data.strCross, "/");
-
-      // If the "Respond to: tag is missing, there is no address
-      // and everything in the address is a call description
-      if (!hasAddress) {
-        data.strCall = addr;
-      }
-
-        // Otherwise see if we can identify call description at end of addr field
-        // that will make life a lot easier
-      else {
-        String call = CALL_SET.getCode(addr);
-        if (call != null) {
-          data.strCall = call;
-          addr = addr.substring(0,addr.length()-call.length()).trim();
-        }
-
-        // Next split the address field into different address/place/call parts
-        String[] parts = ADDR_BRK_PTN.split(addr);
-        int ips = 0;
-        int ipl = parts.length-1;
-
-        // First field might be GPS coordinates
-        addr = parts[ips++];
-        if (addr.startsWith("LL(") && addr.endsWith(")")) {
-          setGPSLoc(addr.substring(3, addr.length()-1).trim(), data);
-          addr = ips <= ipl ? parts[ips++] : "";
-        }
-
-        // If we have not identified a call field, and there are still
-        // two or more parts, use the last one as the call description.  It
-        // will really be a place name combined with the call description, but
-        // we have no way to split them apart.  At least not yet.
-        boolean fixCall = false;
-        if (data.strCall.isEmpty() && ips <= ipl) {
-          fixCall = true;
-          data.strCall = parts[ipl--];
-        }
-
-        // Next field might be special city construct
-        if (addr.length() == 4 && ips <= ipl) {
-          String city = CITY_CODES.getProperty(addr);
-          if (city != null) {
-            data.strCity = city;
-            addr = parts[ips++];
-          }
-        }
-
-        // Look for a trailing apt in the address field.  If we still did not find a call
-        // this can be followed by the call information, otherwise it has to be at the end
-        // of the field
-        String apt = null;
-        match = TRAIL_APT_PTN.matcher(addr);
-        if (match.matches()) {
-          call = match.group(3);
-          if (!call.isEmpty() && data.strCall.isEmpty()) {
-            data.strCall = call;
-            call = "";
-          }
-          if (call.isEmpty()) {
-            addr = match.group(1);
-            apt = APT_BRK_PTN.matcher(match.group(2)).replaceAll("-");
-          }
-        }
-
-        // Now parse the address. Once again, if we have not found a call
-        // description, it can follow the address.
-        int flags = 0;
-        if (!data.strCity.isEmpty()) flags |= FLAG_NO_CITY;
-        parseAddress(StartType.START_ADDR, flags, addr, data);
-        String left = getLeft();
-        if (!left.isEmpty()) {
-          if (data.strCall.isEmpty()) {
-            data.strCall = left;
-          } else if (ADDR_EXT_PTN.matcher(left).matches()) {
-              data.strAddress = append(data.strAddress, " ", left.replace('/', '&'));
-          } else if ((match = APT_PTN.matcher(left)).matches()) {
-            String tmp = match.group(1);
-            if (tmp == null) tmp = left;
-            data.strApt = append(data.strApt, "-", tmp);
-          } else {
-            data.strPlace = left;
-          }
-        }
-        if (apt != null) data.strApt = append(data.strApt, "-", apt);
-
-        // Any remaining parts got into the place field, possible with a
-        // leading apt construct
-        while (ips <= ipl) {
-          String place = parts[ips++];
-          match = LEAD_APT_PTN.matcher(place);
-          if (match.matches()) {
-            data.strApt = append(data.strApt, "-", match.group(1));
-            place = match.group(2);
-          } else if ((match = LEAD_APT_PTN2.matcher(place)).matches()) {
-            data.strApt = append(data.strApt, "-", match.group(1));
-            place = match.group(2);
-          } else if ((match = APT_PTN.matcher(place)).matches()) {
-            String tmp = match.group(1);
-            if (tmp == null) tmp = place;
-            data.strApt = append(data.strApt, "-", tmp);
-            place = "";
-          }
-          place = stripFieldEnd(place, "- " + data.strAddress);
-          data.strPlace = append(data.strPlace, " - ", place);
-        }
-
-        // OK, If we are stuck with a combine place & call field, we just might be
-        // able to split them out if the place portion ends with the identified address
-        if (fixCall) {
-          int pt = data.strCall.indexOf("- " + data.strAddress);
-          if (pt >= 0) {
-            data.strPlace = append(data.strPlace, " - ", data.strCall.substring(0,pt).trim());
-            data.strCall = data.strCall.substring(pt+data.strAddress.length()+2).trim();
-
-          }
-        }
-      }
-      return true;
-    }
-    
-    match = MASTER2.matcher(body);
+    Matcher match = MASTER2.matcher(body);
     if (match.matches()) {
       setFieldList("UNIT ID ADDR CITY ST PHONE APT PLACE CODE CALL");
       data.strUnit = match.group(1);
@@ -202,39 +61,14 @@ public class ALMobileCountyParser extends SmartAddressParser {
       String addr = match.group(4);
       data.strCode = match.group(5);
       data.strCall = match.group(6).trim();
-      
-      String info = "";
-      int pt = addr.indexOf(':');
-      if (pt >= 0) {
-        info = addr.substring(pt+1).trim();
-        addr = addr.substring(0,pt).trim();
-      }
-      
+
       parseAddressCityState(addr, data);
-      
-      match = PHONE_PTN.matcher(info);
-      if (match.lookingAt()) {
-        data.strPhone = match.group(1);
-        info = info.substring(match.end());
-      }
-      
-      pt = info.indexOf('@');
-      if (pt >= 0) {
-        data.strApt = append(data.strApt, "-", info.substring(0,pt).trim());
-        data.strPlace = append(data.strPlace, " - ", info.substring(pt+1).trim());
-      } else if ((match = APT_PTN.matcher(info)).matches()) {
-        String tmp = match.group(1);
-        if (tmp == null) tmp = info;
-        data.strApt = append(data.strApt, "-", tmp);
-      } else {
-        data.strPlace = append(data.strPlace, " - ", info);
-      }
       return true;
     }
-    
+
     match = EVENT_PTN.matcher(body);
     if (match.matches()) {
-      setFieldList("ID CODE CALL ADDR APT CITY ST");
+      setFieldList("ID CODE CALL ADDR CITY ST PHONE APT PLACE");
       suppressCallCheck = true;
       data.strCallId = match.group(1);
       data.strCode = match.group(2);
@@ -268,9 +102,20 @@ public class ALMobileCountyParser extends SmartAddressParser {
   private static final Pattern APT_CITY_PTN = Pattern.compile("#(\\S+) *(.*)");
 
   private void parseAddressCityState(String addr, Data data) {
+
+    String info = "";
+    int pt = addr.indexOf(':');
+    if (pt >= 0) {
+      info = addr.substring(pt+1).trim();
+      addr = addr.substring(0,pt).trim();
+    }
+
     Parser p = new Parser(addr);
     data.strPlace = p.getLastOptional('@');
     String city = p.getLastOptional(',');
+    if (city.equals("USA") || city.equals("US")) {
+      city = p.getLastOptional(',');
+    }
     String zip = "";
     if (ZIP_PTN.matcher(city).matches()) {
       zip = city;
@@ -281,7 +126,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       city = p.getLastOptional(',');
     }
     if (city.isEmpty()) city = zip;
-    
+
     String apt = p.getLastOptional(',');
     if (apt.startsWith("Level")) {
       apt = p.getLastOptional(',');
@@ -299,7 +144,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
     } else {
       addr = p.get();
     }
-    
+
     if (apt.isEmpty()) {
       match = APT_CITY_PTN.matcher(city);
       if (match.matches()) {
@@ -307,17 +152,35 @@ public class ALMobileCountyParser extends SmartAddressParser {
         city = match.group(2);
       }
     }
-    
+
     parseAddress(addr, data);
     data.strCity = city;
     data.strApt = append(data.strApt, "-", apt);
-  }
+
+    match = PHONE_PTN.matcher(info);
+    if (match.lookingAt()) {
+      data.strPhone = match.group(1);
+      info = info.substring(match.end());
+    }
+
+    pt = info.indexOf('@');
+    if (pt >= 0) {
+      data.strApt = append(data.strApt, "-", info.substring(0,pt).trim());
+      data.strPlace = append(data.strPlace, " - ", info.substring(pt+1).trim());
+    } else if ((match = APT_PTN.matcher(info)).matches()) {
+      String tmp = match.group(1);
+      if (tmp == null) tmp = info;
+      data.strApt = append(data.strApt, "-", tmp);
+    } else {
+      data.strPlace = append(data.strPlace, " - ", info);
+    }
+}
 
   @Override
   public CodeSet getCallList() {
     return suppressCallCheck ? null : CALL_SET;
   }
-  
+
   private static StandardCodeTable CALL_CODES = new StandardCodeTable();
 
   private static final ReverseCodeSet CALL_SET = new ReverseCodeSet(
@@ -332,6 +195,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "ABDOMINAL PAIN/FEMALES W/PAIN ABOVE NAVEL >45",
       "ABDOMINAL PAIN/FEMALES W/PAIN ABOVE NAVEL AGE>45",
       "ABDOMINAL PAIN/FEMALES W/SYNCOPE OR NEAR SYNCOPE 12-50",
+      "ABDOMINAL PAIN/FEMALES WITH SHOULDER TIP PAIN 12-50",
       "ABDOMINAL PAIN/MALES W/PAIN ABOVE NAVEL >35",
       "ABDOMINAL PAIN/NOT ALERT",
       "ABDOMINAL PAIN / PROBLEMS",
@@ -355,6 +219,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "AIRCRAFT INCOMING -- ALERT II",
       "ALLERGIC REACTION",
       "ALLERGIC REACTION / NOT ALERT",
+      "ALLERGIC REACTION / SWARMING ATTACK",
       "ALLERGIC REACTION/DIFFICULTY SPEAKING BETWEEN BREATHS",
       "ALLERGIC REACTION/WITH DIFF BREATHING OR SWALLOWING",
       "ALLERGIES/SWARMING ATTACK",
@@ -365,6 +230,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "ANIMAL ATTACK or MULTIPLE ANIMALS",
       "ANIMAL BITES/ATTACKS/EXOTIC ANIMAL",
       "ANIMAL BITES/ATTACKS/CARDIAC ARREST",
+      "ANIMAL BITES/ATTACKS/NOT DANGEROUS PROXIMAL BODY AREA",
       "ANIMAL BITES/ATTACKS/PTN NOT ALERT",
       "ANIMAL BITES/ATTACKS",
       "ANIMAL BITES/ATTACKS/BRAVO OVERRIDE",
@@ -404,6 +270,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "ASSAULT/SEXUAL ASSAULT/POSS DANGEROUS BODY AREA",
       "ASSAULT/SEXUAL ASSAULT/UNKNOWN STATUS",
       "ASSIST A MOTORIST",
+      "ASSIST MPD = MEDICAL / INJURY RELATED",
       "ASSIST OUTSIDE AGENCY/ MULTIPLE UNITS",
       "ASSIST OUTSIDE AGENCY/ SINGLE UNIT",
       "ASSIST OUTSIDE AGENCY/MULTIPLE UNITS",
@@ -500,6 +367,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "CHEST PAIN/BREATHING DIFF (SEVERE)",
       "CHEST PAIN/BREATHING NORMALLY <35",
       "CHEST PAIN/BREATHING NORMALLY >35",
+      "CHEST PAIN/BREATHING NORMALLY AGE>35",
       "CHEST PAIN / CARDIAC HISTORY",
       "CHEST PAIN/CLAMMY",
       "CHEST PAIN/COCAINE INGESTION",
@@ -584,7 +452,10 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "ELECTRICAL HAZARD/APPLIANCE PROBLEM WITH ODOR",
       "ELECTRICAL HAZARD/ELECTRICAL ODOR",
       "ELECTRICAL HAZARD/INVESTIGATION",
+      "ELECTRICAL HAZARD/TREES/OBJECTS INTO POWER LINES/WIRES WITH FIRE/SMOKE/ARCING",
       "ELECTRICAL HAZARD/WIRES/LINES DOWN/NO SMOKE OR ARCING",
+      "ELECTRICAL HAZARD/LINES/WIRES DOWN WITH FIRE/SMOKE/ARCING",
+      "ELECTRICAL HAZARD/TRANSFORMER FIRE/SMOKING/ARCING",
       "ELECTROCUTION /LIGHTNING/ABNORMAL BREATHING",
       "ELECTROCUTION /LIGHTNING/ALERT & BREATHING NORMALLY",
       "ELECTROCUTION /LIGHTNING/EXTREME FALL >30FT",
@@ -609,11 +480,12 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "ELECTRONIC ALARM -- RESIDENTIAL (SINGLE)",
       "ELECTRONIC ALARM -- RESIDENTIAL STRUCTURE (MULTIPLE)",
       "ELECTRONIC ALARM -- UNKNOWN SITUATION",
-      "ELECTRONIC ALARM/UNKNOWN SITUATION",
+      "ELECTRONIC ALARM/APARTMENT/CONDO/TOWNHOME",
       "ELECTRONIC ALARM/COMMERCIAL STRUCTURE",
       "ELECTRONIC ALARM/HIGH LIFE HAZARD",
       "ELECTRONIC ALARM/HIGH RISE STRUCTURE",
       "ELECTRONIC ALARM/RESIDENTIAL (SINGLE)",
+      "ELECTRONIC ALARM/UNKNOWN SITUATION",
       "ELEVATOR/ESCALATOR RESCUE -- CAUGHT/NO INJURIES",
       "ELEVATOR/ESCALATOR RESCUE -- ENTRAPMENT/INJURIES",
       "ELEVATOR/ESCALATOR RESCUE -- UNK SITUATION",
@@ -742,6 +614,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "HEART PROBLEMS/A.I.C.D./CHEST PAIN >35",
       "HEART PROBLEMS/A.I.C.D./DIFFICULTY BREATHING",
       "HEART PROBLEMS/A.I.C.D./NOT ALERT",
+      "HEART PROBLEMS/A.I.C.D./UNKNOWN STATUS",
       "HEART PROBLEMS/A.I.C.D. CHEST PAIN <35",
       "HEART PROBLEMS/A.I.C.D. FIRING",
       "HEART PROBLEMS/A.I.C.D. HR >50bpm & <130bpm",
@@ -755,6 +628,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "HEART PROBLEMS/A.I.C.D./CLAMMY",
       "HEART PROBLEMS/ABNORMAL BREATHING",
       "HEART PROBLEMS WITH CHEST PAIN",
+      "HEAT / COLD EXPOSURE / ALERT",
       "HEAT/COLD EXPOSURE/CHANGE IN SKIN COLOR",
       "HEAT/COLD EXPOSURE/MULTIPLE VICTIMS",
       "HEAT/COLD EXPOSURE/NOT ALERT",
@@ -762,10 +636,13 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "HEAT/COLD EXPOSURE",
       "HEAT/COLD EXPOSURE/ CARDIAC HISTORY",
       "HEAT/COLD EXPOSURE: ALERT",
+      "HEAT EXPOSURE / ALERT",
       "HEAT EXPOSURE/ALERT",
       "HEMORRHAGE / LACERATIONS",
       "HEMORRHAGE/ABNORMAL BREATHING",
       "HEMORRHAGE/LACERATION/ABNORMAL BREATHING",
+      "HEMORRHAGE/LACERATIONS/ABNORMAL BREATHING",
+      "HEMORRHAGE/LACERATIONS/ABNORMAL BREATHINGELECTRONIC ALARM/APARTMENT/CONDO/TOWNHOME",
       "HEMORRHAGE/LACERATIONS/BLEEDING DISORDER",
       "HEMORRHAGE/LACERATIONS/DANGEROUS BODY AREA",
       "HEMORRHAGE/LACERATIONS/MINOR",
@@ -846,6 +723,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "MODERATE EYE INJURIES",
       "MOTEL FIRE",
       "MOTOR VEHICLE COLLISION",
+      "MOTOR VEHICLE COLLISION - MOTORCYCLE/BICYCLE",
       "MOTOR VEHICLE COLLISION - TRAIN INVOLVED",
       "MOTOR VEHICLE COLLISION WITH ENTRAPMENT",
       "MOTOR VEHICLE COLLISION HIGH VELOCITY IMPACT",
@@ -914,6 +792,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "OVERDOSE/POISONING/UNCONSCIOUS",
       "OVERDOSE/WITHOUT PRIORITY SYMPTOMS",
       "OVERDOSE/POISONING/NOT ALERT",
+      "OVERDOSE/POISONING/POISON CONTROL REQUEST FOR RESPONSE",
       "OVERDOSE/POISONING/UNK STATUS",
       "OVERDOSE/POISONING/SKIN CHANGING COLOR",
       "OVERDOSE/POISONING/UNCONSCIOUS PATIENT",
@@ -945,6 +824,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "POISONING- NO PRIORITY SYMPTOMS",
       "POISONING/NO PRIORITY SYMPTOMS",
       "PREGNANCY / CHILDBIRTH / IN LABOR",
+      "PREGNANCY / CHILDBIRTH / MISCARRIAGE",
       "PREGNANCY/ABDOMINAL PAIN <6 MONTHS",
       "PREGNANCY/CHILDBIRTH/IMMINENT DELIVERY",
       "PREGNANCY/CHILDBIRTH/IN LABOR",
@@ -965,15 +845,19 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "PSYCHIATRIC/INTENDING SUICIDE",
       "PSYCHIATRIC/NON-SUICIDAL & ALERT",
       "PSYCHIATRIC/NON-SUICIDAL/ALERT",
+      "PSYCHIATRIC/SUICIDE ATTEMPT/MINOR HEMORRHAGE",
       "PSYCHIATRIC PROBLEM",
+      "PSYCHIATRIC PROBLEM/ALTERED/NO KNOWN MENTAL HEALTH CONDITIONS",
       "PSYCHIATRIC PROBLEM/NON-SUICIDAL & ALERT",
       "PSYCHIATRIC PROBLEM/THREATENING SUICIDE",
+      "PSYCHIATRIC PROBLEMS/VIOLENT BEHAVIOR",
       "PSYCHIATRIC/NON-SUICIDAL/ALERT/HISTORY OF MENTAL HEALTH CONDITIONS",
       "PSYCHIATRIC/SUICIDE ATTEMPT",
       "PSYCHIATRIC/SUICIDE ATTEMPT",
       "PSYCHIATRIC/SUICIDE ATTEMPT/BRAVO OVERRIDE",
       "PSYCHIATRIC/SUICIDE ATTEMPT/DANGEROUS BLEEDING",
       "PSYCHIATRIC/SUICIDE ATTEMPT/MINOR BLEEDING",
+      "PSYCHIATRIC/SUICIDE ATTEMPT/MINOR HEMORRHAGE",
       "PSYCHIATRIC/SUICIDE ATTEMPT/NOT ALERT",
       "PSYCHIATRIC/SUICIDE ATTEMPT/NOT ALERT",
       "PSYCHIATRIC/SUICIDE ATTEMPT/SERIOUS BLEEDING",
@@ -1004,6 +888,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "SEIZURE/EFFECTIVE BREATHING NOT VERIFIED <35",
       "SEIZURE/EFFECTIVE BREATHING UNVERIFIED",
       "SEIZURE/FOCAL/ABSENCE/ALERT",
+      "SEIZURE/FOCAL OR ABSENCE/NOT ALERT",
       "SEIZURE/INEFFECTIVE BREATHING",
       "SEIZURE/NO LONGER SEIZING & BREATHING NORMALLY",
       "SEIZURE/NO LONGER SEIZING & BREATHING NORMALLY (KNOWN SEIZURE DISORDER)",
@@ -1040,9 +925,13 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "SELF INFLICTED GUNSHOT/OBVIOUS DEATH",
       "SERIOUS HEMORRHAGE/LACERATIONS",
       "SERVICE CALL",
+      "SERVICE CALL/DOWNED TREES & OTHER OBJECTS",
+      "SERVICE CALL/HYDRANT PROBLEMS",
+      "SERVICE CALL/INVESTIGATION",
       "SERVICE CALL/LOCKED IN/OUT OF BUILDING",
       "SERVICE CALL/PERSON/CHILD LOCKED IN A VEHICLE",
       "SERVICE CALL/WATER PROBLEM",
+      "SERVICE CALL/WELFARE CHECK",
       "SERVICE CALL-MULTIPLE UNITS",
       "SERVICE CALL-POSS MEDICAL ASSISTANCE",
       "SEVERE EYE PROBLEMS/INJURIES",
@@ -1071,6 +960,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "SMOKE INVESTIGATION -- HEAVY SMOKE",
       "SMOKE INVESTIGATION -- LIGHT SMOKE",
       "SMOKE INVESTIGATION -- ODOR OF SMOKE",
+      "SMOKE INVESTIGATION/HEAVY SMOKE",
       "SMOKE INVESTIGATION/LIGHT SMOKE",
       "SMOKE ODOR (RESIDENTIAL)",
       "SNAKEBITE",
@@ -1156,6 +1046,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "SYNCOPE/FAINTING/CHANGING SKIN COLOR",
       "SYNCOPE/FAINTING/FEMALE with ABDOMINAL PAIN",
       "SYNCOPE/FAINTING/NOT ALERT",
+      "SYNCOPE/FEMALE AGE 12-50/ABDOMINAL PAIN",
       "SYNCOPE/NOT ALERT",
       "SYNCOPE/ALERT/ABNORMAL BREATHING",
       "TEST EVENT TYPE",
@@ -1171,6 +1062,7 @@ public class ALMobileCountyParser extends SmartAddressParser {
       "TRAFFIC ACCIDENT WITH INJURIES",
       "TRAFFIC ACCIDENT, WITH INJURY",
       "TRAFFIC ACCIDENT/(UNCONFIRMED) NO INJURIES REPORTED",
+      "TRAFFIC ACCIDENT/ENTRAPMENT",
       "TRAFFIC ACCIDENT/NO INJURIES",
       "TRAFFIC ACCIDENT/HAZARDOUS SCENE",
       "TRAFFIC ACCIDENT/HIGH MECHANISM/PEDESTRIAN",
