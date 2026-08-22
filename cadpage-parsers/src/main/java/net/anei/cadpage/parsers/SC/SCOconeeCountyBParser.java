@@ -10,7 +10,7 @@ public class SCOconeeCountyBParser extends FieldProgramParser {
 
   public SCOconeeCountyBParser() {
     super("OCONEE COUNTY", "SC",
-          "ID CALL CALL2/SLS+? ADDR INFO! INFO/N+? ID/L Unit:UNIT? Map:GPS? END");
+          "ID CALL CALL2/SLS+? ADDR ADDR2? INFO! INFO/N+? ID/L Unit:UNIT? Map:GPS? END");
   }
 
   @Override
@@ -18,10 +18,16 @@ public class SCOconeeCountyBParser extends FieldProgramParser {
     return "zuercher@oconeelaw.com,no-reply@zuercherportal.com";
   }
 
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
   private static final Pattern DELIM = Pattern.compile(" /(?= |$)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    subject = stripFieldStart(subject, "[DISPATCH] ");
     if (!subject.startsWith("Call Dispatched:")) return false;
     return super.parseFields(DELIM.split(body),  data);
   }
@@ -30,6 +36,7 @@ public class SCOconeeCountyBParser extends FieldProgramParser {
   public Field getField(String name) {
     if (name.equals("CALL2")) return new CallField("Behavioral|Contusion|No Transport|Stabbing|Strain|Stroke|TIA");
     if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("ADDR2")) return new MyAddress2Field();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("ID")) return new IdField("[A-Z]+\\d\\d-\\d{6}", true);
     return super.getField(name);
@@ -59,6 +66,33 @@ public class SCOconeeCountyBParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return super.getFieldNames() + " CITY ST";
+    }
+  }
+
+  private static final Pattern ADDRESS_CITY_ST_PTN = Pattern.compile(".*, *[A-Z ]+, *SC(?: +\\d{5})?" );
+  private class MyAddress2Field extends MyAddressField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (!data.strCity.isEmpty()) return false;
+      if (field.equals("None") || INFO_DATE_TIME_PTN.matcher(field).matches()) return false;
+      if (!ADDRESS_CITY_ST_PTN.matcher(field).matches()) {
+        if (checkAddress(data.strAddress) != STATUS_STREET_NAME &&
+            checkAddress(new Parser(field).get(',')) != STATUS_STREET_NAME) return false;
+      }
+      field = data.strAddress + " / " + field;
+      data.strAddress = "";
+      super.parse(field, data);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
   }
 
