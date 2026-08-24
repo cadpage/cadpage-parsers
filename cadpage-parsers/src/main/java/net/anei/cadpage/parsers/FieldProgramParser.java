@@ -2960,6 +2960,9 @@ public class FieldProgramParser extends SmartAddressParser {
       String zip = null;
       Parser p = new Parser(field);
       String city = p.getLastOptional(',');
+      if (city.equals("USA") || city.equals("US")) {
+        city = p.getLastOptional(',');
+      }
       if (isValidCity(city)) {
         Matcher match = ST_ZIP_PTN.matcher(city);
         if (match.matches()) {

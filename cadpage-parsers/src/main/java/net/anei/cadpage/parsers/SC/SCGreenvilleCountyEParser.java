@@ -12,7 +12,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
 
   public SCGreenvilleCountyEParser() {
     super(SCGreenvilleCountyParser.CITY_LIST, "GREENVILLE COUNTY", "SC",
-          "CALL ADDR CITY_X APT_PLACE! INFO! INFO/N+? ( ID ( PRI X UNIT | CH UNIT ) | PRI ID UNIT/C+ ) INFO/N+");
+          "CALL ADDR CITY? X? APT_PLACE! INFO/N+? ( ID ( PRI X UNIT CH | CH? UNIT GPS1/d GPS2/d ) | PRI ID ( X | EMPTY | ) UNIT? CH ) EMPTY END");
     setupCallList(CALL_LIST);
     setupMultiWordStreets(MWORD_STREET_LIST);
     removeWords("GATEWAY", "PLACE", "ROAD");
@@ -24,12 +24,20 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
     return "InformCADPaging@Greenvillecounty.org,@whfd.org";
   }
 
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
   private static final Pattern NEW_CALL_PTN = Pattern.compile("\\*{3}New Call\\*{3}(.*) (ZTP_.*)");
+  private static final Pattern INCIDENT_TYPE_PTN = Pattern.compile("Incident Type: *(.*)Location: *(.*) (\\S+) City Fire UNIT\\(S\\) ASSIGNED: *(\\S+) CHANNEL: *(.*)");
+  private static final Pattern ADDR_CITY_PTN = Pattern.compile("(.*?)(?:\\(C\\)|,) *(.*)");
   private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<=Mutual Aid/Assist Outside Agen|Motor Vehicle Collision/Injury|Struct Fire Resi Single Family|Vehicle Fire Comm/Box/Mot Home)(?! )");
   private static final Pattern INFO_DELIM_PTN = Pattern.compile("(?: |(?<=[;~]))\\[\\d+\\] ");
   private static final Pattern TIME_FLD_PTN = Pattern.compile(";\\d\\d:\\d\\d:\\d\\d;");
   private static final Pattern CITY_DASH_PTN = Pattern.compile("(?<=[A-Z])-(?= )");
   private static final Pattern APT_PTN = Pattern.compile("[A-Z]?\\d{1,5}[A-Z]?|[A-Z]");
+  private static final Pattern ADDR_MARK_PTN = Pattern.compile("\\(A\\)|\\*{3,}");
 
   @Override
   protected boolean parseMsg(String body, Data data) {
@@ -43,6 +51,25 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       setFieldList("ADDR CALL");
       parseAddress(match.group(1).trim(), data);
       data.strCall = match.group(2);
+      return true;
+    }
+
+    match = INCIDENT_TYPE_PTN.matcher(body);
+    if (match.matches()) {
+      setFieldList("CALL ADDR APT CITY MAP UNIT CH");
+      data.strCall = match.group(1).trim();
+      String addr = match.group(2).trim();
+      data.strMap = match.group(3);
+      data.strUnit = match.group(4);
+      data.strChannel = match.group(5).trim();
+
+      match = ADDR_CITY_PTN.matcher(addr);
+      if (match.matches()) {
+        parseAddress(match.group(1).trim(), data);
+        data.strCity = match.group(2).trim();
+      } else {
+        parseAddress(StartType.START_ADDR, FLAG_ANCHOR_END, addr, data);
+      }
       return true;
     }
 
@@ -64,14 +91,20 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
     match = INFO_DELIM_PTN.matcher(body);
     if (match.find()) {
       good = true;
-      if (body.charAt(match.start()-1) != ';') {
+      char ch = body.charAt(match.start()-1);
+      if ( ch != ';' && ch != '~') {
         extra = body.substring(match.end()).trim();
         body = body.substring(0, match.start());
         if (body.endsWith(" ") || body.contains("   ")) return false;
       }
     }
 
-    if (body.contains(";")) {
+    if (body.contains("~")) {
+      if (!parseFields(body.split("~", -1), data)) return false;
+      good = true;
+    }
+
+    else if (body.contains(";")) {
 
       // Reject NCPolkCounty alerts
       if (TIME_FLD_PTN.matcher(body).find()) return false;
@@ -80,13 +113,10 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       good = true;
     }
 
-    else if (body.contains("~")) {
-      if (!parseFields(body.split("~", -1), data)) return false;
-      good = true;
-    }
 
     else {
 
+      if (body.contains("\n")) return false;
       body = MISSING_BLANK_PTN.matcher(body).replaceFirst(" ");
 
       setFieldList("CALL ADDR APT CITY ALERT PLACE INFO GPS");
@@ -101,10 +131,10 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
         good = true;
         String cityPlace = body.substring(pt+3).trim();
         body = body.substring(0, pt).trim();
-        pt = body.indexOf("(A)");
-        if (pt >= 0) {
-          data.strCall = body.substring(0,pt).trim();
-          parseAddress(body.substring(pt+3).trim(), data);
+        match = ADDR_MARK_PTN.matcher(body);
+        if (match.find()) {
+          data.strCall = body.substring(0,match.start()).trim();
+          parseAddress(body.substring(match.end()).trim(), data);
         } else {
           parseCallAndAddress(FLAG_IGNORE_AT | FLAG_START_FLD_NO_DELIM | FLAG_NO_CITY | FLAG_ANCHOR_END, body, data);
         }
@@ -112,10 +142,10 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
         parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, cityPlace, data);
         data.strPlace = stripLeadAlert(getLeft(), data);
       } else {
-        pt = body.indexOf("(A)");
-        if (pt >= 0) {
-          data.strCall = body.substring(0,pt).trim();
-          body = body.substring(pt+3).trim();
+        match = ADDR_MARK_PTN.matcher(body);
+        if (match.find()) {
+          data.strCall = body.substring(0,match.start()).trim();
+          body = body.substring(match.end()).trim();
           parseAddress(StartType.START_ADDR, FLAG_IGNORE_AT, body, data);
         } else {
           parseCallAndAddress(FLAG_START_FLD_REQ | FLAG_START_FLD_NO_DELIM | FLAG_IGNORE_AT, body, data);
@@ -168,33 +198,61 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
     return LEAD_CALL_PTN.matcher(call).matches();
   }
 
+  private static final Pattern GPS_PTN = Pattern.compile("\\d{8}|");
+
   @Override
   public Field getField(String name) {
-    if (name.equals("CITY_X")) return new MyCityCrossField();
+    if (name.equals("CITY")) return new MyCityField();
+    if (name.equals("X")) return new MyCrossField();
     if (name.equals("APT_PLACE")) return new MyAptPlaceField();
-    if (name.equals("ID")) return new IdField("(?:\\d{6}|[A-Z]{2}\\d{2})-\\d{6}", true);
-    if (name.equals("PRI")) return new PriorityField("(?:Non-)?Emergency|Special Assignment", true);
-    if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("ID")) return new IdField("(?:\\d{6}|[A-Z]{2}\\d{2})-\\d{6}|\\d{4}-\\d{6}", true);
+    if (name.equals("PRI")) return new PriorityField("(?:Non-)?Emergency|Routine|Self Initiated|Special Assignment|Traffic Stop|(?:Alpha|Bravo|Charlie|Delta|Echo)-[AB]LS|Combo \\d", true);
+    if (name.equals("CH")) return new ChannelField("(?:FD |GV )?(?:ADMIN|OPS|NORTH|CENTRAL|SOUTH) *\\d+(?:-[A-Z]+)?|[A-Z]+ DISP|FFDIS|GV FIRE ROAM|BELMONT FIRE MAJOR|", true);
+    if (name.equals("UNIT")) return new UnitField("[A-Z]{1,4}\\d{1,3}[A-Z]?|ERTRESC|GreenpondFD|", true);
     if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("GPS1")) return new GPSField(1, GPS_PTN, true);
+    if (name.equals("GPS2")) return new GPSField(2, GPS_PTN, true);
     return super.getField(name);
   }
 
-  private class MyCityCrossField extends Field {
+  private class MyCityField extends CityField {
     @Override
-    public void parse(String field, Data data) {
+    public boolean checkParse(String field, Data data) {
+      if (field.isEmpty()) return false;
       field = stripFieldStart(field, "(C)");
-      if (field.contains("/")) {
-        data.strCross = field;
-      } else {
-        data.strCity = field;
-      }
+      return super.checkParse(field, data);
     }
 
     @Override
-    public String getFieldNames() {
-      return "CITY X";
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
     }
   }
+
+  private class MyCrossField extends CrossField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.startsWith("[")) return false;
+      if (!field.contains("/")) return false;
+      field = stripFieldStart(field, "/");
+      field = stripFieldEnd(field, "/");
+      super.parse(field, data);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (field.isEmpty()) return;
+      if (!checkParse(field, data)) abort();
+    }
+  }
+
+
 
   private class MyAptPlaceField extends Field {
     @Override
@@ -213,19 +271,6 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern CH_PTN = Pattern.compile("(.*)\\bOPS\\b.*|ADMIN .*");
-  private class MyUnitField extends UnitField {
-    @Override
-    public void parse(String field, Data data) {
-      field = stripFieldStart(field, "Units Assigned");
-      if (CH_PTN.matcher(field).matches()) {
-        data.strChannel = append(data.strChannel, "/", field);
-      } else {
-        super.parse(field, data);
-      }
-    }
-  }
-
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -234,7 +279,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
 
     @Override
     public String getFieldNames() {
-      return "INFO GPS";
+      return "GPS INFO";
     }
   }
 
@@ -279,7 +324,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
 
   @Override
   public String getProgram() {
-    return super.getProgram() + " PRI ID UNIT CH X";
+    return super.getProgram() + " PRI? ID? UNIT? CH? X? GPS? INFO";
   }
 
   private static final String[] MWORD_STREET_LIST = new String[]{
@@ -1166,7 +1211,10 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       "ASSAULT",
       "ASSAULT/SEXUAL ASSAU",
       "ASSAULT/SEXUAL ASSAULT",
+      "AUTO AID/STRUCTURE FIRE",
       "AUTO/PEDESTRIAN_D2-M",
+      "AUTOMATIC CRASH NOTI",
+      "AUTOMATIC CRASH NOTIFICATION",
       "BACK PAIN",
       "BACK PAIN_A1",
       "BACK PAIN (NON TRAUMATIC)",
@@ -1238,6 +1286,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       "OUTSIDE FIRE DUMPSTER/RUBISH",
       "OUTSIDE FIRE WADE",
       "OUTSIDE FIRE WILDLAND",
+      "OUTSIDE TANK FIRE",
       "OVERDOSE",
       "OVERDOSE/POISONING",
       "PREGNANCY OB",
@@ -1269,6 +1318,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       "TRAFFIC/TRANSPORT",
       "TRAFFIC/TRANSPORT IN",
       "TRAFFIC/TRANSPORT INCIDENT",
+      "TRAIN & RAIL FIRE",
       "TRAUMATIC INJURY",
       "UNCONSCIOUS",
       "UNCONSCIOUS/FAINTING",
@@ -1276,12 +1326,16 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       "VEHICLE FIRE",
       "VEHICLE FIRE COMM/BOX/MOT HOME",
       "VEHICLE FIRE COMMERCIAL",
+      "WATER RESCUE",
       "WATER RESCUE/SINKING VEHICLE",
       "WATERCRAFT EMERG/COLLISION",
       "WILDLAND FIRE",
       "WORKING VEH FIRE THREATENING CAMPERVEHICLE FIRE",
+      "ZGF STRUCT FIRE REDUCED RESPON",
       "ZTP_ACCIDENT_HIT AND RUN",
+      "ZTP_ACCIDENT_INJURIES",
       "ZTP_ACCIDENT_NO INJURIES",
+      "ZTP_ACCIDENT_PRIVATE PROPERTY",
       "ZTP_ALARM_AUDIBLE",
       "ZTP_ALARM_COMMERCIAL SILENT",
       "ZTP_ALARM_RESIDENTIAL PANIC",
@@ -1293,6 +1347,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       "ZTP_BUSINESS CHECK",
       "ZTP_CHECK_WELFARE CHECK",
       "ZTP_CODES ENFORCEMENT",
+      "ZTP_DAMAGE_MALICIOUS",
       "ZTP_DISTURBANCE",
       "ZTP_DOMESTIC_VERBAL",
       "ZTP_EMS REQ ASSISTANCE",
@@ -1304,6 +1359,7 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       "ZTP_MINOR IN POSS TOBACCO",
       "ZTP_NOISE_LOUD MUSIC",
       "ZTP_NON CRIMINAL SERVICE",
+      "ZTP_OFFICER SIDE JOB",
       "ZTP_OFFICER_EXTRA PTRL BUS/RES",
       "ZTP_OFFICER_FOLLOW UP",
       "ZTP_OFFICER_REPORT TO",
@@ -1313,12 +1369,15 @@ public class SCGreenvilleCountyEParser extends FieldProgramParser {
       "ZTP_SEXUAL_OTHER",
       "ZTP_SHOPLIFTING",
       "ZTP_SUSPICIOUS_PERSON",
+      "ZTP_THREATENING CALLS",
       "ZTP_TRAFFIC_DUI",
       "ZTP_TRAFFIC_RECKLESS DRIVER",
       "ZTP_TRAFFIC_TRAFFIC STOP",
       "ZTP_TRAFFIC_WORKING RADAR AT LN",
       "ZTP_TRAFFIC_WORKING RADAR AT LS",
+      "ZTP_TRESPASSING",
       "ZTP_VEHICLE_STRANDED MOTORIST",
-      "ZTP_VEHICLE_SUSPICIOUS"
+      "ZTP_VEHICLE_SUSPICIOUS",
+      "ZTP_VICE_NARCOTICS"
  );
 }
