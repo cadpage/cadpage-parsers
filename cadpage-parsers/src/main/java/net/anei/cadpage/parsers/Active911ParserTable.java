@@ -167,6 +167,7 @@ public class Active911ParserTable {
       "US/AL/RUSCO911",                   "ALRussellCounty",
       "US/AL/RussellCounty",              "ALRussellCountyA",
       "US/AL/Shelby",                     "ALShelbyCounty",
+      "US/AL/SouthwestLeeCounty",         "ALLeeCountyB",
       "US/AL/StClairCounty",              "ALStClairCounty",
       "US/AL/SummitVFR",                  "ALBlountCountyB",
       "US/AL/TalladegaCounty",            "ALTalladegaCountyA",
