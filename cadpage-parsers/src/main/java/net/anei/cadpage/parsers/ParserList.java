@@ -508,6 +508,7 @@ public class ParserList {
               ,"IDBoundaryCounty"               ,"Boundary County, ID"
               ,"IDCaribouCounty"                ,"Caribou County, ID"
               ,"IDCanyonCounty"                 ,"Canyon County, ID"
+              ,"IDElmoreCounty"                 ,"Elmore County, ID"
               ,"IDFremontCounty"                ,"Fremont County, ID"
               ,"IDGemCounty"                    ,"Gem County, ID"
               ,"IDGoodingCounty"                ,"Gooding County, ID"
