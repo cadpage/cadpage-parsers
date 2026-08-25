@@ -2918,6 +2918,7 @@ public class Active911ParserTable {
       "US/TX/McLennanCFPA",               "TXMcLennanCountyB,TXMcLennanCountyE",
       "US/TX/McLennanCounty",             "TXMcLennanCountyF",
       "US/TX/Medapoint",                  "TXTravisCountyB",
+      "US/TX/MedicalArtsHospitalLamesa",  "TXDawsonCounty",
       "US/TX/MedinaCounty",               "TXMedinaCounty",
       "US/TX/Medstar911",                 "TXFortWorth",
       "US/TX/MidlandCounty",              "TXMidlandCounty",

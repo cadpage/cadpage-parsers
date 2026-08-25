@@ -1808,6 +1808,7 @@ public class ParserList {
               ,"TXCyFair"                       ,"Cypress-Harris, TX"
               ,"TXDallasCounty"                 ,"Dallas County, TX"
               ,"TXDalworthingtonGardens"        ,"Dalworthington Gardens, TX"
+              ,"TXDawsonCounty"                 ,"Dawson County, TX"
               ,"TXDecatur"                      ,"Decatur, TX"
               ,"TXDentonCounty"                 ,"Denton County, TX"
               ,"TXEastlandCounty"               ,"Eastland County, TX"
