@@ -14,7 +14,7 @@ public class MIJacksonCountyAParser extends DispatchH05Parser {
                                  "cross_streets:X! Fire_Quadrant:MAP! google_maps_Hyperlink:EMPTY! GPS! Qualifier:EMPTY! Local_Information:INFO! INFO/N+ " +
                             "| Call_Date/Time:SKIP! Common_Name:PLACE! Call_Address:ADDRCITY! Call_Date/Time:SKIP! Narrative:EMPTY! INFO_BLK+ Apt/Lot:APT! " +
                                  "Cross_Streets:X! Incident_Number:ID! Goole_Maps_Hyperlink:EMPTY! GPS Alerts:ALERT! Caller:NAME! Status_Times:EMPTY! TIMES " +
-                            "| Create_Date/Time:SKIP! Location:ADDRCITY! Narrative:EMPTY! INFO_BLK+ Common_Name:PLACE! Closest_Intersection:X! First_Unit:DATETIME " +
+                            "| Create_Date/Time:SKIP! Location:ADDRCITY! Narrative:EMPTY! INFO_BLK+ Common_Name:PLACE! Closest_Intersection:X! First_Unit:DATETIME Units_Assigned:UNIT " +
                             ") " +
           "| ( Call_Address:ADDRCITY! Call_Date/Time:DATETIME! Narrative:EMPTY! INFO_BLK+ Fire_Call_Type:CALL! " +
             "| Narrative:EMPTY! INFO_BLK+ Call_Address:ADDRCITY! Call_Date/Time:DATETIME! Fire_Call_Type:CALL! " +
