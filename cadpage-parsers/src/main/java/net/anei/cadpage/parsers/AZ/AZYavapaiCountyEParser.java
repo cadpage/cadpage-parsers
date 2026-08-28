@@ -15,8 +15,8 @@ public class AZYavapaiCountyEParser extends FieldProgramParser {
 
   public AZYavapaiCountyEParser(String defCity, String defState) {
     super(defCity, defState,
-          "Response:CALL! Chief_Complaint:CALL/S Criteria_Code:CODE! Address:ADDRCITYST! Resources:UNIT! INC_#:ID! Run_#:ID/L! " +
-              "Notes:INFO! INFO/N+ Tags:EMPTY! Status_Times:EMPTY! TIMES+");
+          "Response:CALL! Chief_Complaint:CALL/S Criteria_Code:CODE! Address:ADDRCITYST! Resources:UNIT! INC_#:ID? Run_#:ID/L! " +
+              "Notes:INFO! INFO/N+ Tags:EMPTY? Status_Times:TIMES");
   }
 
   public String getAliasCode() {
@@ -29,21 +29,25 @@ public class AZYavapaiCountyEParser extends FieldProgramParser {
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("(New Incident|Update to Incident|Incident Completed|Incident Cancelled) - (\\d+)");
+  private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=(?:Chief Complaint|Criteria Code|Address|Resources|Run #|Notes):)");
 
   private String times;
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    String type = null;
     Matcher match = SUBJECT_PTN.matcher(subject);
-    if (!match.matches()) return false;
-    String type = match.group(1);
+    if (match.matches()) type = match.group(1);
     times = "";
-    if (!parseFields(body.split("\n"), data)) return false;
-    if (type.equals("Incident Completed")) {
-      data.msgType = MsgType.RUN_REPORT;
-      data.strSupp = append(times, "\n", data.strSupp);
-    } else if (type.equals("Incident Cancelled")) {
-      data.strCall = append("Cancelled", " - ", data.strCall);
+    body = MISSING_BLANK_PTN.matcher(body).replaceAll(" ");
+    if (!super.parseMsg(body, data)) return false;
+    if (type != null) {
+      if (type.equals("Incident Completed")) {
+        data.msgType = MsgType.RUN_REPORT;
+        data.strSupp = append(times, "\n", data.strSupp);
+      } else if (type.equals("Incident Cancelled")) {
+        data.strCall = append("Cancelled", " - ", data.strCall);
+      }
     }
 
     return true;
@@ -86,9 +90,13 @@ public class AZYavapaiCountyEParser extends FieldProgramParser {
   private class MyTimesField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      if (field.equals("End")) return;
-      if (field.endsWith(":")) return;
-      times = append(times, "\n", field);
+      for (String line : field.split("\n")) {
+        line = line.trim();
+        if (line.equals("End")) return;
+        if (line.endsWith(":")) return;
+        if (line.startsWith("Finished:")) data.msgType = MsgType.RUN_REPORT;
+        times = append(times, "\n", line);
+      }
     }
   }
 }
