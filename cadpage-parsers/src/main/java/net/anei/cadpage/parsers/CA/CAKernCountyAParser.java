@@ -11,36 +11,67 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
   public class CAKernCountyAParser extends FieldProgramParser {
 
     public CAKernCountyAParser() {
-      super("KERN COUNTY", "CA", 
+      super("KERN COUNTY", "CA",
             "ADDR X! INFO/N+");
       setupCallList(CALL_LIST);
       setupMultiWordStreets(
+          "BAKER GRADE",
+          "BEAR MOUNTAIN",
+          "BODFISH CANYON",
+          "BROWN MATERIAL",
+          "CALIENTE BODFISH",
+          "CALIFORNIA CITY",
+          "CHINA GRADE",
           "CHINA LAKE",
+          "CLAY MINE",
+          "CROCKER SPRINGS",
           "CUMMINGS VALLEY",
+          "DUST DEVIL",
+          "EDMONSTON PUMPING PLANT",
+          "ELK HILLS",
+          "FLIGHT LINE",
+          "FLIGHT SYSTEMS",
+          "GARDNER FIELD",
+          "GENERAL BEALE",
+          "GOLDEN STATE",
           "HORACE MANN",
+          "KERN RIVER CANYON",
           "KING ARTHUR",
+          "LAKE STATION",
           "MT VERNON",
+          "NEAL RANCH",
           "OFFICE PARK",
-          "SANTA MARIA"
+          "OLIVE TREE",
+          "RANDSBURG LOOP",
+          "RED MOUNTAIN",
+          "RIO FRIO",
+          "RIO MESA",
+          "ROUND MOUNTAIN",
+          "SANTA MARIA",
+          "SEVENTH STANDARD",
+          "SODA LAKE",
+          "ST ANDREWS",
+          "VALLEY WEST",
+          "VISTA DEL ORO",
+          "VISTA DEL RIO"
       );
     }
-    
+
     @Override
     public String getFilter() {
-      return "Dispatch@co.kern.ca.us,Dispatch@kerncountyfire.org";
+      return "Dispatch@kerncountyfire.org";
     }
-    
+
     private static final Pattern TMT_PTN = Pattern.compile("\\bTMT\\b", Pattern.CASE_INSENSITIVE);
-    
+
     @Override
     public String adjustMapAddress(String addr) {
       addr = TMT_PTN.matcher(addr).replaceAll("TWENTY MULE TEAM");
       return super.adjustMapAddress(addr);
     }
-    
+
     @Override
-    public boolean parseMsg(String subject, String body, Data data) {
-      if (!subject.equals("!")) return false;
+    public boolean parseMsg(String body, Data data) {
       return parseFields(body.split("\n"), data);
     }
 
@@ -50,8 +81,8 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
       if (name.equals("X")) return new MyCrossField();
       return super.getField(name);
     }
-    
-    private static final Pattern CALL_ADDR_MAP_PTN = Pattern.compile("([A-Z][A-Z0-9]+)([- ]+)(.*) ([A-Z]{1,2}\\d+(?:-\\d+)?+(?:-[A-Z])?) *(.*)"); 
+
+    private static final Pattern CALL_ADDR_MAP_PTN = Pattern.compile("([A-Z][A-Z0-9]+)([- ]+)(.*) ([A-Z]{1,2}\\d+(?:-\\d+)?+(?:-[A-Z])?) *(.*)");
     private class MyAddressField extends AddressField {
       @Override
       public void parse(String field, Data data) {
@@ -62,13 +93,13 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
         field = match.group(3).trim();
         data.strMap = match.group(4);
         data.strPlace = match.group(5);
-        
+
         int pt = field.lastIndexOf(',');
         if (pt >= 0) {
           data.strCity = field.substring(pt+1).trim();
           field = field.substring(0,pt).trim();
         }
-        
+
         pt = field.indexOf(" - ");
         if (pt >= 0) {
           String place = field.substring(0,pt).trim();
@@ -81,7 +112,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
             }
           }
         }
-        
+
         field = field.replace('@', '&');
         StartType st;
         int flags;
@@ -97,13 +128,13 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
           data.strCall = convertCodes(data.strCode, CALL_CODES);
         }
       }
-      
+
       @Override
       public String getFieldNames() {
         return "CODE CALL ADDR APT CITY MAP PLACE";
       }
     }
-    
+
     private class MyCrossField extends CrossField {
       @Override
       public void parse(String field, Data data) {
@@ -126,13 +157,13 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
         data.strCross = append(cross, ", ", data.strCross);
         data.strPlace = append(data.strPlace, " - ", getLeft());
       }
-      
+
       @Override
       public String getFieldNames() {
         return "X PLACE";
       }
     }
-    
+
     private static final Properties CALL_CODES = buildCodeTable(new String[]{
         "AE",             "ARSON EVENT",
         "AL1",            "ALERT 1",
@@ -172,6 +203,7 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
         "SF",             "STRUCTURE FIRE",
         "SFR",            "STRUCTURE FIRE REINFORCED",
         "SI",             "SMOKE INVESTIGATION",
+        "TA",             "TA",
         "TC",             "TRAFFIC COLLISION",
         "TEST",           "TEST",
         "UTF",            "UNKNOWN TYPE FIRE",
@@ -186,15 +218,15 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
         "VFR",            "VEHICLE FIRE REINFORCED",
         "VG",             "VEGETATION FIRE"
     });
-    
-    // Initialize with old call descriptions that have been changed 
+
+    // Initialize with old call descriptions that have been changed
     // in the latest tables
     private static final CodeSet CALL_LIST = new CodeSet(
         "ASSIST OTHER DEPT OR AMB",
         "FIRE OUT INVEST. / REPORT",
         "STRUCTURE FIRE / RESPONSE"
     );
-    
+
     static {
       for (Object val : CALL_CODES.values()) {
         CALL_LIST.add((String)val);
