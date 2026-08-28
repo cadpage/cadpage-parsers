@@ -84,6 +84,9 @@ public class NEMadisonCountyParser extends SmartAddressParser {
       "EMERICK",
       "ENOLA",
       "KALAMAZOO",
-      "WARNERVILLE"
+      "WARNERVILLE",
+
+      // Stanton County
+      "STANTON"
   };
 }

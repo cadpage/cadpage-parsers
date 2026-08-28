@@ -1732,6 +1732,7 @@ public class Active911ParserTable {
       "US/NC/CatawbaCountyHickory",       "NCCatawbaCountyA",
       "US/NC/ChapelHill",                 "NCOrangeCountyA",
       "US/NC/ChathamCounty",              "NCChathamCounty",
+      "US/NC/ChathamVFDOC",               "NCOrangeCountyC",
       "US/NC/Cherokee911",                "NCCherokee",
       "US/NC/CherokeeCounty",             "NCCherokeeCounty",
       "US/NC/CherokeeDispatch",           "NCCherokeeCounty",
