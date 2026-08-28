@@ -2795,7 +2795,7 @@ public class Active911ParserTable {
       "US/TX/CityofDalworthGardens",      "TXDalworthingtonGardens",
       "US/TX/CityofDayton",               "TXLibertyCountyC",
       "US/TX/CityofDenison",              "TXGraysonCountyA",
-      "US/TX/CityofDickinson",            "TXGalvestonCountyA",
+      "US/TX/CityofDickinson",            "TXGalvestonCountyC",
       "US/TX/CityofElCampo",              "TXElCampo",
       "US/TX/CityofFlowerMound",          "TXFlowerMound",
       "US/TX/CityofHarlingen",            "TXCameronCountyD",
