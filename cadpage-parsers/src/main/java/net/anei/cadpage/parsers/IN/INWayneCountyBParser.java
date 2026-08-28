@@ -17,7 +17,7 @@ public class INWayneCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "no-reply@zuercherportal.com,noreply@co.wayne.in.us";
+    return "no-reply@zuercherportal.com,noreply@co.wayne.in.us,noreply@waynecounty.in.gov";
   }
 
   @Override
@@ -34,7 +34,7 @@ public class INWayneCountyBParser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private class MyUnitField extends UnitField {
     @Override
     public void parse(String field, Data data) {
