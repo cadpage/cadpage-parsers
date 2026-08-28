@@ -30,6 +30,7 @@ public class AZYavapaiCountyEParser extends FieldProgramParser {
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("(New Incident|Update to Incident|Incident Completed|Incident Cancelled) - (\\d+)");
   private static final Pattern MISSING_BLANK_PTN = Pattern.compile("(?<! )(?=(?:Chief Complaint|Criteria Code|Address|Resources|Run #|Notes):)");
+  private static final Pattern ZIP_CITY_PTN = Pattern.compile("[-0-9]+ +(.*)");
 
   private String times;
 
@@ -50,6 +51,8 @@ public class AZYavapaiCountyEParser extends FieldProgramParser {
       }
     }
 
+    match = ZIP_CITY_PTN.matcher(data.strCity);
+    if (match.matches()) data.strCity = match.group(1);
     return true;
   }
 

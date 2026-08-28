@@ -1675,7 +1675,9 @@ public static void addCodeTable(Properties props, String[] table) {
               .replace("&amp;", "&")
               .replace("&AMP;", "&")
               .replace("&gt;", ">")
-              .replace("&lt;", "<");
+              .replace("&lt;", "<")
+              .replace("&quot;", "\"")
+              .replace("&apos;", "\'");
 
    Matcher match = CODE_PTN.matcher(body);
    if (match.find()) {

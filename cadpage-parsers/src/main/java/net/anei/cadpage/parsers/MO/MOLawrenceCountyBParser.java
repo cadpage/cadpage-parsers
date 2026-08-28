@@ -40,11 +40,26 @@ public class MOLawrenceCountyBParser extends FieldProgramParser{
 
   @Override
   public Field getField(String name) {
+    if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("GPS")) return new MyGPSField();
     if (name.equals("NAME")) return new MyNameField();
     if (name.equals("CALL_RECEIVED")) return new SkipField("Call Received on .*");
     if (name.equals("INFOMAP")) return new MyInfoMapField();
     return super.getField(name);
+  }
+
+  private class MyAddressCityField extends AddressCityField {
+    @Override
+    public void parse(String field, Data data) {
+      Parser p = new Parser(field);
+      data.strCross = p.getLastOptional(" Intersection:");
+      super.parse(p.get(), data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return super.getFieldNames() + " X";
+    }
   }
 
   private class MyGPSField extends GPSField {
