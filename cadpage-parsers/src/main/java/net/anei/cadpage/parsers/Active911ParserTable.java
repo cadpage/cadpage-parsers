@@ -2913,6 +2913,7 @@ public class Active911ParserTable {
       "US/TX/Longview",                   "TXGreggCountyA",
       "US/TX/LubbockCounty",              "TXLubbockCountyA",
       "US/TX/Lufkin",                     "TXLufkin",
+      "US/TX/MadisonCountySheriff",       "TXMadisonCounty",
       "US/TX/ManvelPD",                   "TXBrazoriaCountyA",
       "US/TX/MarbleFalls",                "TXBurnetCountyB",
       "US/TX/MaverickCounty",             "TXMaverickCounty",

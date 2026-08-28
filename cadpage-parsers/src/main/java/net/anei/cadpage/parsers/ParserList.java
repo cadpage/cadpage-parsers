@@ -1868,6 +1868,7 @@ public class ParserList {
               ,"TXLongview"                     ,"Longview, TX"
               ,"TXLubbockCounty"                ,"Lubbock County, TX"
               ,"TXLufkin"                       ,"Lufkin, TX"
+              ,"TXMadisonCounty"                ,"Madison County, TX"
               ,"TXMansfield"                    ,"Mansfield, TX"
               ,"TXManvel"                       ,"Manvel, TX"
               ,"TXMaverickCounty"               ,"Maverick County, TX"
