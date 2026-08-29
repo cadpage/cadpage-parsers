@@ -64,6 +64,9 @@ public class AZYavapaiCountyEParser extends FieldProgramParser {
   }
 
   private static final Pattern AZ_PTN = Pattern.compile(", *AZ\\b");
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("([A-Z].*? \\d+) (\\d+)");
+  private static final Pattern HWY_NN_PTN = Pattern.compile("(?:[NSEW] +)(?:HWY|HIGHWAY|US|AZ) +\\d+", Pattern.CASE_INSENSITIVE);
+  private static final Pattern BACKWARD_ADDR_PTN = Pattern.compile("([A-Z].*?) +(\\d+)");
 
   private class MyAddressCityStateField extends AddressCityStateField {
     @Override
@@ -81,8 +84,23 @@ public class AZYavapaiCountyEParser extends FieldProgramParser {
       String apt = p.getLastOptional(" Apt. #");
       p.getLastOptional('(');
       super.parse(p.get(), data);
+
+      Matcher match = ADDR_APT_PTN.matcher(data.strAddress);
+      if (match.matches()) {
+        String addr = match.group(1);
+        if (!HWY_NN_PTN.matcher(addr).matches()) {
+          data.strAddress = addr;
+          data.strApt = match.group(2);
+        }
+      }
+
+      match = BACKWARD_ADDR_PTN.matcher(data.strAddress);
+      if (match.matches()){
+        data.strAddress = match.group(2) + ' ' + match.group(1);
+      }
+
       data.strApt = append(data.strApt, "-", apt);
-    }
+}
 
     @Override
     public String getFieldNames() {
