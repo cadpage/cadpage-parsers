@@ -1193,23 +1193,15 @@ public class FieldProgramParser extends SmartAddressParser {
     if (anyOrder) {
 
       // Loop through all of the fields
-      boolean parenKey = breakChar == ')';
-      int iStartKey = parenKey ? 1 : 0;
       int fldNdx = 0;
       for (String field : fields) {
 
         // Break field into keyword and value
         field = field.trim();
-        String tag = "";
-        String value = field;
-        if (!parenKey || field.startsWith("("))  {
-          int pt = field.indexOf(breakChar);
-          if (pt >= 0) {
-            tag = field.substring(iStartKey, pt).trim();
-            if (ignoreCase) tag = tag.toUpperCase();
-            value = field.substring(pt+1).trim();
-          }
-        }
+        String[] results = getFieldTag(field, false);
+        String tag = results[0];
+        String value = results[1];
+        if (tag == null) tag = "";
 
         // Get the field associated with this keyword
         // If not found, try it as an untagged field
@@ -1253,6 +1245,34 @@ public class FieldProgramParser extends SmartAddressParser {
     if (state.link(startLink)) return false;
     do {} while (!state.exec(data));
     return state.getResult();
+  }
+
+  /**
+   * Parse data field into possible data tag and value
+   * @param field data field
+   * @param doNotTrim true if data field should not be trimmed
+   * @return 2 element string array. First item containds data tag or null.
+   *         Second item contains the data value
+   */
+  private String[] getFieldTag(String field, boolean doNotTrim) {
+
+    if (field.isEmpty()) return new String[] {null, ""};
+
+    char startChar = breakChar == ')' ? '(' :
+                     breakChar == ']' ? '[' : 0;
+    String curTag = null;
+    String curVal = field;
+    if (startChar == 0 || field.charAt(0) == startChar) {
+      int pt = field.indexOf(breakChar);
+      if (pt >= 0) {
+        int ipt = startChar == 0 ? 0 : 1;
+        curTag = field.substring(ipt, pt).trim();
+        if (ignoreCase) curTag = curTag.toUpperCase();
+        curVal = field.substring(pt+1);
+        if (!doNotTrim) curVal = curVal.trim();
+      }
+    }
+    return new String[] { curTag, curVal };
   }
 
   // When executing, the parser acts as a state engine.  This class preserves the parser
@@ -1792,24 +1812,14 @@ public class FieldProgramParser extends SmartAddressParser {
       if (parseTags && field != null && !(field instanceof SelectField) && !field.isNoTag()) {
         Step startStep = this;
         int startNdx = ndx;
-        boolean parenBreak = breakChar == ')';
-        int iStartKey = parenBreak ? 1 : 0;
         while (true) {
 
           // See if data field is tagged
           // if it is extract the tag and adjust the current field value
           procStep = startStep;
-          String curTag = null;
-          String curVal = null;
-          if (!parenBreak || curFld.startsWith("(")) {
-            int pt = curFld.indexOf(breakChar);
-            if (pt >= 0) {
-              curTag = curFld.substring(iStartKey, pt).trim();
-              if (ignoreCase) curTag = curTag.toUpperCase();
-              curVal = curFld.substring(pt+1);
-              if (!doNotTrim) curVal = curVal.trim();
-            }
-          }
+          String[] result = getFieldTag(curFld, doNotTrim);
+          String curTag = result[0];
+          String curVal = result[1];
 
           // If this is an optional tagged step, take failure branch
           // if tags do not match, otherwise process this step

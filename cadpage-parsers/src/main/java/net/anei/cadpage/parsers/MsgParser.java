@@ -804,6 +804,9 @@ public abstract class MsgParser {
     int iColonPt = -1;
     int iNxtKey;
 
+    char startChar = breakChar == ')' ? '(' :
+                     breakChar == ']' ? '[' : 0;
+
     // Loop processing each keyword found
     do {
 
@@ -833,13 +836,13 @@ public abstract class MsgParser {
           if (iTempPt < iDataPt) continue;
           if (iTempPt > iDataPt) {
             char chr = body.charAt(iTempPt-1);
-            if (breakChar == ')') {
-              if (chr != '(') continue;
+            if (startChar != 0) {
+              if (chr != startChar) continue;
               iTemp2Pt--;
             } else {
               if (!Character.isWhitespace(chr)) continue;
             }
-          } else if (breakChar == ')') continue;
+          } else if (startChar != 0) continue;
           String keyword = body.substring(iTempPt, ipt);
           if (ignoreCase) keyword = keyword.toUpperCase();
           if (!keyword.equals(key)) continue;
