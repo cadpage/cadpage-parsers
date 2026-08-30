@@ -1962,6 +1962,7 @@ public class ParserList {
               ,"VAAugustaCounty"                ,"Augusta County, VA"
               ,"VABathCounty"                   ,"Bath County, VA"
               ,"VABedfordCounty"                ,"Bedford County, VA"
+              ,"VABlandCounty"                  ,"Bland County, VA"
               ,"VABotetourtCounty"              ,"Botetourt County, VA"
               ,"VABrunswickCounty"              ,"Brunswick County, VA"
               ,"VABuckinghamCounty"             ,"Buckingham County, VA"
