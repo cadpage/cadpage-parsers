@@ -1,5 +1,7 @@
 package net.anei.cadpage.parsers.dispatch;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,9 +12,9 @@ public class DispatchC08Parser extends FieldProgramParser {
 
   public DispatchC08Parser(String defCity, String defState) {
     super(defCity, defState,
-          "Trip_Number:ID! Run_Number:ID/L! Unit:UNIT! Patient_Name:NAME? Nature:CALL! Calltype:CALL/SDS! Level_of_Service:SKIP! Response_Priority:PRI? " +
-              "Transport_Priority:SKIP? PU_Date/Time:DATETIME! Pickup_Address:ADDR! Pickup_Rm/Suite:APT? Pickup_City,_State,_Zip:CITY_ST! Pickup_Lat,_Lon:GPS! " +
-              "Dropoff_Facility:DPLACE? Dropoff_Address:DADDR? Dropoff_Rm/Suite:DAPT? Dropoff_City,_State,_Zip:DCITY_ST! Dropoff_Lat,_Lon:DGPS? Dispatch_Notes:INFO/N! INFO/N+");
+          "Trip_Number:ID! Run_Number:ID/L! Unit:UNIT? Patient_Name:NAME? Nature:CALL! Calltype:CALL/SDS! Level_of_Service:SKIP? Response_Priority:PRI? " +
+              "Transport_Priority:SKIP? PU_Date/Time:DATETIME! Pickup_Address:ADDR! Pickup_Rm/Suite:APT? Pickup_City,_State,_Zip:CITY_ST? Pickup_Lat,_Lon:GPS? " +
+              "Dropoff_Facility:DPLACE? Dropoff_Address:DADDR? Dropoff_Rm/Suite:DAPT? Dropoff_City,_State,_Zip:DCITY_ST! Dropoff_Lat,_Lon:DGPS? Dispatch_Notes:INFO/N? INFO/N+");
   }
 
   @Override
@@ -23,7 +25,7 @@ public class DispatchC08Parser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d", true);
+    if (name.equals("DATETIME")) return new MyDateTimeField();
     if (name.equals("APT")) return new BaseAptField();
     if (name.equals("CITY_ST")) return new BaseCityStateField();
     if (name.equals("DPLACE")) return new BaseDeliverPlaceField();
@@ -32,6 +34,23 @@ public class DispatchC08Parser extends FieldProgramParser {
     if (name.equals("DCITY_ST"))  return new BaseDeliverCityStateField();
     if (name.equals("DGPS")) return new BaseDeliverGPSField();
     return super.getField(name);
+  }
+
+  private static final Pattern DATE_TIME_PTN = Pattern.compile("(\\d\\d/\\d\\d/\\d{4}) +(\\d\\d:\\d\\d(?: [AP]M)?)");
+  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm:ss aa");
+  private class MyDateTimeField extends DateTimeField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = DATE_TIME_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strDate = match.group(1);
+      String time = match.group(2);
+      if (time.endsWith("M")) {
+        setTime(TIME_FMT, time, data);
+      } else {
+        data.strTime = time;
+      }
+    }
   }
 
   private class BaseAptField extends AptField {
@@ -47,6 +66,7 @@ public class DispatchC08Parser extends FieldProgramParser {
 
     @Override
     public void parse(String field, Data data) {
+      if (field.equals("????, ??")) return;
       Matcher match = CITY_ST_PTN.matcher(field);
       if (!match.matches()) abort();
       data.strCity = match.group(1).trim();

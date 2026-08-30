@@ -1,20 +1,11 @@
 package net.anei.cadpage.parsers.AL;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class ALTuscaloosaCountyParser extends DispatchA19Parser {
+
+public class ALTuscaloosaCountyParser extends GroupBestParser {
 
   public ALTuscaloosaCountyParser() {
-    super("TUSCALOOSA COUNTY", "AL");
-  }
-
-  @Override
-  public String getFilter() {
-    return "batsignal@tuscaloosa.com";
-  }
-
-  @Override
-  public int getMapFlags() {
-    return MAP_FLG_PREFER_GPS;
+    super(new ALTuscaloosaCountyAParser(), new ALTuscaloosaCountyBParser());
   }
 }
