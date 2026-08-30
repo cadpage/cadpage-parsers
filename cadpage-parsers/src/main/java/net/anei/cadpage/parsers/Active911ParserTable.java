@@ -1302,6 +1302,7 @@ public class Active911ParserTable {
       "US/MI/Chippewa",                   "MIChippewaCounty",
       "US/MI/CityofAnnArbor",             "MIWashtenawCounty",
       "US/MI/ClareCounty",                "MIClareCounty",
+      "US/MI/ClayTownship",               "MIStClairCounty",
       "US/MI/ClintonCounty",              "MIClintonCounty",
       "US/MI/Coopersville",               "MIOttawaCounty",
       "US/MI/EatonCounty",                "MIEatonCounty",
