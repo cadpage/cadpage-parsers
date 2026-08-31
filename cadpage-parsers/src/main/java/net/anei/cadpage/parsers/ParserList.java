@@ -1450,6 +1450,7 @@ public class ParserList {
               ,"OHFairfield"                    ,"Fairfield, OH"
               ,"OHFairfieldCounty"              ,"Fairfield County, OH"
               ,"OHFranklin"                     ,"Franklin, OH"
+              ,"OHFranklinCounty"               ,"Franklin County, OH"
               ,"OHFultonCounty"                 ,"Fulton County, OH"
               ,"OHGalliaCounty"                 ,"Gallia County, OH"
               ,"OHGeaugaCounty"                 ,"Geauga County, OH"
