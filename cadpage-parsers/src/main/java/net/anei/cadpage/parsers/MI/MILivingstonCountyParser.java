@@ -5,6 +5,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class MILivingstonCountyParser extends GroupBestParser {
 
   public MILivingstonCountyParser() {
-    super(new MILivingstonCountyAParser(), new MILivingstonCountyBParser());
+    super(new MILivingstonCountyAParser(),
+          new MILivingstonCountyBParser());
   }
 }

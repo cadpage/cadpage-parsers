@@ -61,7 +61,8 @@ public class DispatchC08Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern CITY_ST_PTN = Pattern.compile("([^,]*), *([A-Z]{2})(?: +\\d{5}(?:-\\d{4})?)?");
+  private static final Pattern CITY_ST_PTN = Pattern.compile("([^,]*), *([A-Z]{2}|\\?\\?)(?: +\\d{5}(?:-\\d{4})?)?");
+  private static final Pattern BAD_DATA_PTN = Pattern.compile("\\?+");
   private class BaseCityStateField extends Field {
 
     @Override
@@ -69,8 +70,10 @@ public class DispatchC08Parser extends FieldProgramParser {
       if (field.equals("????, ??")) return;
       Matcher match = CITY_ST_PTN.matcher(field);
       if (!match.matches()) abort();
-      data.strCity = match.group(1).trim();
-      data.strState = match.group(2);
+      String city = match.group(1).trim();
+      if (!BAD_DATA_PTN.matcher(city).matches()) data.strCity = city;
+      String state = match.group(2);
+      if (!BAD_DATA_PTN.matcher(state).matches()) data.strState = state;
     }
 
     @Override
