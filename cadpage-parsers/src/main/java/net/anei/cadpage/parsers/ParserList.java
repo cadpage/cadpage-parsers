@@ -842,6 +842,7 @@ public class ParserList {
               ,"LAAcadianAmbulance"             ,"Acadian Ambulance, LA"
               ,"LAAllenParish"                  ,"Allen Parish, LA"
               ,"LAAscensionParish"              ,"Ascension Parish, LA"
+              ,"LAAssumptionParish"             ,"Assumption Parish, LA"
               ,"LAAvoyellesParish"              ,"Avoyelles Parish, LA"
               ,"LABeauregardParish"             ,"Beauregard Parish, LA"
               ,"LACaddoParish"                  ,"Caddo Parish, LA"

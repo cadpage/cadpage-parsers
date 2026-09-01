@@ -1171,6 +1171,7 @@ public class Active911ParserTable {
       "US/LA/AllenCounty",                "LAAllenParish",
       "US/LA/AscensionParish",            "LAAscensionParish",
       "US/LA/AscensionParishSO",          "LAAscensionParish",
+      "US/LA/AssumptionParish",           "LAAssumptionParish",
       "US/LA/AvoyellesCounty",            "LAAvoyellesParish",
       "US/LA/BeauregardParish",           "LABeauregardParish",
       "US/LA/CaddoParish",                "LACaddoParish",
