@@ -16,7 +16,7 @@ public class IDBinghamCountyAParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "rims@co.fremont.id.us,active911@shoshoneso.com,active911@benewahcounty.org,active911@boundarysheriff.org";
+    return "rims@co.fremont.id.us,active911@shoshoneso.com,active911@benewahcounty.org,active911@boundarysheriff.org,active911@benewahcountyid.gov";
   }
 
   @Override
