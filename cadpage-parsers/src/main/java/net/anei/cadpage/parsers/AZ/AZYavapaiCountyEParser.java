@@ -63,8 +63,9 @@ public class AZYavapaiCountyEParser extends FieldProgramParser {
     return super.getField(name);
   }
 
+  private static final Pattern PLACE_APDX_PTN = Pattern.compile("[^,()]*\\)[^,()]*\\(");
   private static final Pattern AZ_PTN = Pattern.compile(", *AZ\\b");
-  private static final Pattern ADDR_APT_PTN = Pattern.compile("([A-Z].*? \\d+) (\\d+)");
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("([A-Z].*? \\d+) ([A-Z]?\\d+)");
   private static final Pattern HWY_NN_PTN = Pattern.compile("(?:[NSEW] +)(?:HWY|HIGHWAY|US|AZ) +\\d+", Pattern.CASE_INSENSITIVE);
   private static final Pattern BACKWARD_ADDR_PTN = Pattern.compile("([A-Z].*?) +(\\d+)");
 
@@ -74,6 +75,11 @@ public class AZYavapaiCountyEParser extends FieldProgramParser {
       int pt = field.indexOf('(');
       if (pt >= 0) {
         String newAddr = stripFieldEnd(field.substring(pt+1), ")");
+        Matcher match = PLACE_APDX_PTN.matcher(newAddr);
+        if (match.lookingAt()) {
+          pt += match.end();
+          newAddr = field.substring(pt+1).trim();
+        }
         if (AZ_PTN.matcher(newAddr).find()) {
           String place = field.substring(0,pt).trim();
           if (!place.equals(newAddr)) data.strPlace = place;
