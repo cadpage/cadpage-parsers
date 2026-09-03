@@ -22,7 +22,9 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
     @Override
     public boolean parseMsg(String subject, String body, Data data) {
-      if (!subject.startsWith("DISPATCH - ") && !subject.startsWith("RE-PAGE UPDATE:")) return false;
+      if (!subject.startsWith("DISPATCH - ") &&
+          !subject.startsWith("RE-PAGE UPDATE:") &&
+          !subject.startsWith("New Dispatch:")) return false;
       return parseFields(body.split("\n"), data);
     }
 
