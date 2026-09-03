@@ -295,6 +295,7 @@ public class Active911ParserTable {
       "US/CA/HumboldtCounty",             "CAHumboldtCounty",
       "US/CA/Jpapage",                    "CASanDiegoCountyA",
       "US/CA/KernCounty",                 "CAKernCountyA",
+      "US/CA/KernCountyEdwardsAFB",       "CAKernCountyA",
       "US/CA/LakeCounty",                 "CALakeCounty",
       "US/CA/LakeCountyFireProtectionDistrict","CALakeCountyB",
       "US/CA/LemooreVFD",                 "CAKingsCounty",
