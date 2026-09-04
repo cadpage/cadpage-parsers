@@ -1900,6 +1900,7 @@ public class Active911ParserTable {
       "US/NE/Hastings",                   "NEAdamsCounty",
       "US/NE/SpringfieldVFD",             "NESarpyCounty",
       "US/NE/JohnsonCounty",              "NEJohnsonCounty",
+      "US/NE/MadisonCounty",              "NEMadisonCounty",
       "US/NH/BelknapCounty",              "NHBelknapCounty",
       "US/NH/CarrollCounty",              "NHCarrollCounty",
       "US/NH/Charlestown",                "NHSullivanCounty",

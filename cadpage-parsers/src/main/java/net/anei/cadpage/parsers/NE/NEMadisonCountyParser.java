@@ -26,7 +26,7 @@ public class NEMadisonCountyParser extends SmartAddressParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     if (subject.endsWith(" Dispatch")) {
       data.strSource = subject.substring(0,subject.length()-9).trim();
-    } else if (subject.isEmpty() && body.startsWith("NE911 ")) {
+    } else if (body.startsWith("NE911 ")) {
       body = body.substring(6).trim();
     } else {
       return false;
@@ -42,7 +42,7 @@ public class NEMadisonCountyParser extends SmartAddressParser {
         data.strCity = city;
         flags |= FLAG_NO_CITY;
       } else {
-        data.strSupp = body;
+        data.strSupp = stripFieldStart(body, "- ");
         body = city;
         flags |= FLAG_ANCHOR_END;
       }
@@ -64,7 +64,7 @@ public class NEMadisonCountyParser extends SmartAddressParser {
     else {
       parseAddress(StartType.START_CALL, flags, body, data);
     }
-    data.strSupp = append(getLeft(), "\n", data.strSupp);
+    data.strSupp = append(stripFieldStart(getLeft(), "- "), "\n", data.strSupp);
     return true;
   }
 
