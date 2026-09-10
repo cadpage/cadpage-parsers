@@ -27,6 +27,9 @@ public class TNUnionCountyBParser extends DispatchA88Parser {
       // Ghost town
       "LOYSTON",
 
+      // Anderson County
+      "ANDERSONVILLE",
+
       // Knox County
       "CORRYTON"
   };
