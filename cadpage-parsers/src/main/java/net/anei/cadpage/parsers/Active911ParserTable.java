@@ -2672,6 +2672,7 @@ public class Active911ParserTable {
       "US/SD/CorsonCounty",               "SDCorsonCounty",
       "US/SD/DeweyCounty",                "SDDeweyCounty",
       "US/SD/EdmundsCounty",              "SDEdmundsCounty",
+      "US/SD/Hughes",                     "SDHydeCounty",
       "US/SD/HutchinsonCounty",           "SDHutchinsonCounty",
       "US/SD/JonesCounty",                "SDJonesCounty",
       "US/SD/LincolnCounty",              "SDLincolnCounty",
