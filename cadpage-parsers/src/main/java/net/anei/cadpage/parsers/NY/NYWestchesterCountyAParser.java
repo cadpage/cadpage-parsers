@@ -17,7 +17,7 @@ public class NYWestchesterCountyAParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "IPAGE@westchestergov.com,messaging@iamresponding.com";
+    return "IPAGE@westchestergov.com,messaging@iamresponding.com,444440000";
   }
 
   @Override
