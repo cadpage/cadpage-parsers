@@ -3233,7 +3233,7 @@ public class Active911ParserTable {
       "US/WI/Brodhead",                   "WIRockCounty",
       "US/WI/BrownCounty",                "WIBrownCountyA,WIBrownCountyC",
       "US/WI/CityofLakeGeneva",           "WIWalworthCounty",
-      "US/WI/Crivitz",                    "WIMarinetteCountyA",
+      "US/WI/Crivitz",                    "WIMarinetteCountyA,WIMarinetteCountyB",
       "US/WI/DaneCounty",                 "WIDaneCounty",
       "US/WI/DoorCounty",                 "WIDoorCounty",
       "US/WI/DouglasCounty",              "WIDouglasCounty",
