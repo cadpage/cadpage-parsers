@@ -2256,6 +2256,7 @@ public class Active911ParserTable {
       "US/OH/MorrowCounty911",            "OHMorrowCountyB",
       "US/OH/MuskingumCounty",            "OHMuskingumCountyC",
       "US/OH/NewFranklinFD",              "OHSummitCountyH,OHSummitCountyI",
+      "US/OH/NewtonTWPFDPerryCO",         "OHMuskingumCountyE",
       "US/OH/NobleCounty",                "OHNobleCounty",
       "US/OH/NobleFire",                  "OHNobleCounty",
       "US/OH/PerryCounty",                "OHPerryCounty",

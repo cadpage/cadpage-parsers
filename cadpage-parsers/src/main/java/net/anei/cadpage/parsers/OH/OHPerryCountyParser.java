@@ -9,7 +9,11 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 public class OHPerryCountyParser extends SmartAddressParser {
 
   public OHPerryCountyParser() {
-    super(CITY_LIST, "PERRY COUNTY", "OH");
+    this("PERRY COUNTY", "OH");
+  }
+
+  public OHPerryCountyParser(String defCity, String defState) {
+    super(CITY_LIST, defCity, defState);
     setFieldList("DATE TIME ID CODE CALL UNIT ADDR APT CITY X");
   }
 

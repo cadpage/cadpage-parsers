@@ -10,6 +10,7 @@ public class OHMuskingumCountyParser extends GroupBestParser {
 
   public OHMuskingumCountyParser() {
     super(new OHMuskingumCountyCParser(),
-          new OHMuskingumCountyDParser());
+          new OHMuskingumCountyDParser(),
+          new OHMuskingumCountyEParser());
   }
 }
