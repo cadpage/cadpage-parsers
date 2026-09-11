@@ -10,9 +10,9 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
     public CAKernCountyBParser() {
       super("KERN COUNTY", "CA",
-            "CALL:CALL! PLACE_NAME:PLACE! GPS:GPS! ADDR:ADDR! ( CITY:CITY! ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! MAP:MAP! UNIT:UNIT! " +
-                                                             "| City:CITY! PRI:PRI! UPDATE_TIME:DATETIME " +
-                                                             ") INFO:INFO! INFO/N+");
+            "CALL:CALL! PLACE_NAME:PLACE! GPS:GPS! ADDR:ADDRCITY! ( CITY:CITY! ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! MAP:MAP! UNIT:UNIT! " +
+                                                                 "| City:CITY! PRI:PRI! UPDATE_TIME:DATETIME " +
+                                                                 ") INFO:INFO! INFO/N+");
     }
 
     @Override
@@ -32,9 +32,18 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 
     @Override
     public Field getField(String name) {
+      if (name.equals("CITY")) return new MyCityField();
       if (name.equals("DATE")) return new DateField("\\d\\d/\\d\\d/\\d{4}", true);
       if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
       if (name.equals("DATETIME")) return new DateTimeField(DATE_TIME_FMT, true);
       return super.getField(name);
+    }
+
+    private class MyCityField extends CityField {
+      @Override
+      public void parse(String field, Data data) {
+        if (field.isEmpty()) return;
+        super.parse(field, data);
+      }
     }
   }

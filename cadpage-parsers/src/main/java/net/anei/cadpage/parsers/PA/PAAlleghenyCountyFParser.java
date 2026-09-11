@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.PA;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,10 +64,15 @@ public class PAAlleghenyCountyFParser extends MsgParser {
     }
     int pt = field.lastIndexOf(',');
     if (pt >= 0) {
-      data.strCity = field.substring(pt+1).trim();
+      data.strCity = convertCodes(field.substring(pt+1).trim(), CITY_CODES);
       if (data.strCity.equals("PGH")) data.strCity = "PITTSBURGH";
       field = field.substring(0,pt);
     }
     super.parseAddress(field, data);
   }
+
+  private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "NFT", "NORTH FAYETTE TWP",
+      "PGH", "PITTSBURGH"
+  });
 }
