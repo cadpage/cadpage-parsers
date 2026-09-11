@@ -2207,7 +2207,7 @@ public class Active911ParserTable {
       "US/OH/GermantownFD",               "OHMontgomeryCountyA",
       "US/OH/GrangerFD",                  "OHMedinaCountyD",
       "US/OH/GreenTwpFireEMS",            "OHHamiltonCountyA",
-      "US/OH/GroveCity",                  "OHFranklinCounty",
+      "US/OH/GroveCity",                  "OHFranklinCountyA,OHFranklinCountyB",
       "US/OH/GuernseyCounty",             "OHGuernseyCounty",
       "US/OH/HamiltonCounty",             "OHHamiltonCountyA",
       "US/OH/HamiltonCountyDW",           "OHHamiltonCountyA",
