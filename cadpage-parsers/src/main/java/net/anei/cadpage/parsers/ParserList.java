@@ -2009,6 +2009,7 @@ public class ParserList {
               ,"VALoudounCounty"                ,"Loudoun County, VA"
               ,"VALouisaCounty"                 ,"Louisa County, VA"
               ,"VALunenburgCounty"              ,"Lunenburg County, VA"
+              ,"VALynchburg"                    ,"Lynchburg, VA"
               ,"VAMadisonCounty"                ,"Madison County, VA"
               ,"VAMecklenburgCounty"            ,"Mecklenburg County, VA"
               ,"VAMontgomeryCounty"             ,"Montgomery County, VA"
