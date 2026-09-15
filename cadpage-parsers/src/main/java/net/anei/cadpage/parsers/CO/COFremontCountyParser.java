@@ -14,7 +14,7 @@ public class COFremontCountyParser extends DispatchA57Parser {
 
   @Override
   public String getFilter() {
-    return "crcasmtp@hamilton.net";
+    return "crcasmtp@hamilton.net,crcasmtp@frecom911.com";
   }
 
   private static final Properties GPS_LOOKUP_TABLE = buildCodeTable(new String[] {
