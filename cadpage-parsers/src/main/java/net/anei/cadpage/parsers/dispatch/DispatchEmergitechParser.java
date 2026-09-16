@@ -868,6 +868,7 @@ public class DispatchEmergitechParser extends FieldProgramParser {
   private static final Pattern INFO_GPS_PTN9 = Pattern.compile("(?:(\\(\\d{3}\\)\\d{3}-\\d{4}))?LAT:([-+]?\\d{2,3}\\.\\d{5,7}|)LON:([-+]?\\d{2,3}\\.\\d{5,7}|)(?:ELV(?::\\d*|))?(?:COF:(?:\\d*|))?(?:COP:(?:0+|\\d{2}|))?\\.?");
   private static final Pattern INFO_GPS_PTN10 = Pattern.compile("(\\(\\d{3}\\)\\d{3}-\\d{4})([-+]\\d{3}\\.\\d{5,6})([-+]\\d{3}\\.\\d{5,6})\\b");
   private static final Pattern INFO_GPS_PTN11 = Pattern.compile("CALLBK=(\\(\\d{3}\\)\\d{3}-\\d{4})([-+]\\d{3}\\.\\d{6})([-+]\\d{3}\\.\\d{6})(?:CF=\\d{1,3}%)?");
+  private static final Pattern INFO_GPS_PTN12 = Pattern.compile("((?:LON:)?[-+]?\\d{1,3}\\.\\d{6,}) +(?:LAT:)?([-+]?\\d{1,3}\\.\\d{6,})\\b *");
   private static final Pattern INFO_GPS_TRUNC = Pattern.compile("ALT#[=(]|CF=|X=CALLBK=");
 
   private class BaseInfoField extends InfoField {
@@ -939,7 +940,7 @@ public class DispatchEmergitechParser extends FieldProgramParser {
         field = field.substring(pos).trim();
       }
 
-      // Alas, version 2 & 8 require space terminators so we can't get a way with the compressed search trick.
+      // Alas, version 2 & 8 & 12 require space terminators so we can't get a way with the compressed search trick.
       // Thankfully, the extra space logic seems to be fading a way.  Haven't seen it in any recent Emergitech formats
       // and with a bit of luck, we never will.  So we will just try to do without it
       else if ((match = INFO_GPS_PTN2.matcher(field)).lookingAt()) {
@@ -948,7 +949,10 @@ public class DispatchEmergitechParser extends FieldProgramParser {
         field = field.substring(match.end());
       }
       else if ((match = INFO_GPS_PTN8.matcher(field)).lookingAt()) {
-        found = true;
+        setGPSLoc(match.group(1)+','+match.group(2), data);
+        field = field.substring(match.end());
+      }
+      else if ((match = INFO_GPS_PTN12.matcher(field)).lookingAt()) {
         setGPSLoc(match.group(1)+','+match.group(2), data);
         field = field.substring(match.end());
       }
