@@ -12,8 +12,8 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
     super("PUTNAM COUNTY", "NY",
           "DASH? ( MARK DATETIME! Call_Type:CALL! Location:ADDRCITY/S6! Cross_St:X! Common_Name:PLACE! " +
                       "Additional_Location_Information:PLACE/SDS! Quadrant:MAP! Narrative:INFO! " +
-                "| ( DATETIME! | TIME ) ( Fire:CALL! EMS:CALL/SLS? | EMS:CALL! FIRE:CALL/SLS! | Call_Type:CALL! | CALL! ) NOC:INFO? " +
-                      "( Location:ADDRCITY/S6! ( Cross_Street:X! | X ) Common_Name:PLACE! Additional_Info:INFO? " +
+                "| ( DATETIME! | TIME ) ( Fire:CALL! EMS:CALL/SLS? | EMS:CALL! FIRE:CALL/SLS! | FIRE:CALL CALL2/SLS! | Call_Type:CALL! | CALL! ) NOC:INFO? " +
+                      "( Location:ADDRCITY/S6! ( Cross_Street:X! | X ) Common_Name:PLACE! Additional_Info:INFO/N " +
                       "| CALL ADDRCITY/ZS6 XS:X! PLACE " +
                       "| ADDRCITY/S6! X PLACE " +
                       ") ( Box:BOX! | BOX? ) EMS:CALL/SDS? Fire:CALL/SDS? " +
@@ -51,6 +51,7 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
     if (name.equals("DASH")) return new SkipField("-", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("CALL2")) return new MyCall2Field();
     if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("X")) return new MyCrossField();
@@ -82,6 +83,16 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
     @Override
     public String getFieldNames() {
       return "CALL BOX?";
+    }
+  }
+
+  private class MyCall2Field extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("EMS")) return;
+      field = stripFieldStart(field, "EMS ");
+      if (field.equals(data.strCall)) return;
+      super.parse(field, data);
     }
   }
 

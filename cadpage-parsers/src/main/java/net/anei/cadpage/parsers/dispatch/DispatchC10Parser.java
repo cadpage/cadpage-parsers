@@ -9,10 +9,6 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class DispatchC10Parser extends FieldProgramParser {
 
-  public DispatchC10Parser() {
-    this("PITTSYLVANIA COUNTY", "VA");
-  }
-
   public DispatchC10Parser(String defCity, String defState) {
     super(defCity, defState,
           "AgencyCode:SKIP! ReportNumber:ID! CadInciNumber:ID/L! NatureCode:CODE! NatureDescription:CALL! OriginalNatureCode:SKIP! StreetName:SKIP! StreetType:SKIP! " +

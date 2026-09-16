@@ -6,7 +6,6 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class NYPutnamCountyParser extends GroupBestParser {
 
   public NYPutnamCountyParser() {
-    super(new NYPutnamCountyAParser(),
-          new NYPutnamCountyBParser());
+    super(new NYPutnamCountyBParser());
   }
 }

@@ -194,25 +194,6 @@ public class ManageParsers {
 
   // fixed map mapping old to new location codes
   private static final Properties OLD_CODE_TABLE = MsgParser.buildCodeTable(new String[]{
-        "COClearCreekCountyB","ClearCreekCountyA",       // 05/02/2023
-        "CORioBlancoCountyB", "CORioBlancoCountyB",
-        "GAMurrayCountyA",    "GAMurrayCountyB",
-        "CACalaverasCountyA", "CACalaverasCountyB",      // 05/30/2023
-        "CATuolumneCountyA",  "CATuolumneCountyB",
-        "PAArmstrongCountyA", "General",                 // 06/03/2023
-        "PACumberlandCountyA","General",
-        "PABerksCountyA",     "General",
-        "PAPhiladelphia",     "General",                 // 06/12/2023
-        "MDPrinceGeorgesCountyE", "General",
-        "MOAndrewCountyA",    "MOAndrewCountyB",         // 06/26/2023
-        "MOPerryCountyA",     "MOPerryCountyB",
-        "KYMarshallCountyA",  "General",                 // 07/03/2023
-        "KYMarshallCountyB",  "General",
-        "ALDothanA",          "General",
-        "KYStatePoliceA",     "General",
-        "OHWarrenCountyA",    "General",
-        "MOStLouisCountyG",   "General",
-        "KYKnoxCountyA",      "General",                 // 08/22/2023
         "MOMonett",           "MOLawrenceCounty",        // 09/05/2023
         "PAPennStar",         "General",                 // 09/28/2023
         "PAAdamsCountyB",     "General",                 // 10/12/2023
@@ -284,7 +265,8 @@ public class ManageParsers {
         "VAWarrenCountyB",    "General",                 // 06/03/2026
         "OHMedinaCountyB",    "General",                 // 06/11/2026
         "MOBuchananCountyA",  "General",                 // 08/06/2026
-        "MOWarrenCountyA",    "General"                 // 08/27/2026
+        "MOWarrenCountyA",    "General",                 // 08/27/2026
+        "NYPutnamCountyA",    "General"                 // 09/16/2026
 
   });
 
