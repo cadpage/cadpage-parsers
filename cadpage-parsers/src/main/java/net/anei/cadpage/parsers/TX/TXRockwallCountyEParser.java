@@ -23,7 +23,7 @@ public class TXRockwallCountyEParser extends DispatchH05Parser {
 
   @Override
   public String getFilter() {
-    return "donotreply@rockwallcountytexas.com,cadpagingalerts@rockwallcountytexas.com";
+    return "cadpagingalerts@rockwallcountytexas.com";
   }
 
   @Override
@@ -81,7 +81,9 @@ public class TXRockwallCountyEParser extends DispatchH05Parser {
       "WYLIE",
 
       "COLLIN COUNTY",
+
       "HUNT COUNTY",
+        "UNION VALLEY",
       "ROCKWALL COUNTY"
   };
 }
