@@ -266,7 +266,8 @@ public class ManageParsers {
         "OHMedinaCountyB",    "General",                 // 06/11/2026
         "MOBuchananCountyA",  "General",                 // 08/06/2026
         "MOWarrenCountyA",    "General",                 // 08/27/2026
-        "NYPutnamCountyA",    "General"                 // 09/16/2026
+        "NYPutnamCountyA",    "General",                 // 09/16/2026
+        "TXHildagoCountyC",   "General"                 // 09/18/2026
 
   });
 

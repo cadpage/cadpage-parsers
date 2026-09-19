@@ -2929,7 +2929,7 @@ public class Active911ParserTable {
       "US/TX/ManvelPD",                   "TXBrazoriaCountyA",
       "US/TX/MarbleFalls",                "TXBurnetCountyB",
       "US/TX/MaverickCounty",             "TXMaverickCounty",
-      "US/TX/McAllen",                    "TXHidalgoCountyC,TXHidalgoCountyE",
+      "US/TX/McAllen",                    "TXHidalgoCountyE",
       "US/TX/Mcspage",                    "TXVanZandtCountyA,TXVanZandtCountyB",
       "US/TX/McLennanCFPA",               "TXMcLennanCountyB,TXMcLennanCountyE",
       "US/TX/McLennanCounty",             "TXMcLennanCountyF",

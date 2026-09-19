@@ -10,7 +10,6 @@ public class TXHidalgoCountyParser extends GroupBestParser {
   public TXHidalgoCountyParser() {
     super(new TXHidalgoCountyAParser(),
           new TXHidalgoCountyBParser(),
-          new TXHidalgoCountyCParser(),
           new TXHidalgoCountyEParser(),
           new TXHidalgoCountyFParser());
   }
