@@ -2883,7 +2883,7 @@ public class Active911ParserTable {
       "US/TX/GonzalesCounty",             "TXGonzalesCounty",
       "US/TX/GraniteShoalsFireRescue",    "TXBurnetCountyB",
       "US/TX/GrayCounty",                 "TXGrayCounty",
-      "US/TX/GraysonCounty",              "TXGraysonCountyB",
+      "US/TX/GraysonCounty",              "TXGraysonCountyB,TXGraysonCountyC",
       "US/TX/GreggCounty",                "TXGreggCountyA,TXGladewater",
       "US/TX/GrimesCounty",               "TXGrimesCounty",
       "US/TX/GuadalupeCounty",            "TXGuadalupeCounty",
