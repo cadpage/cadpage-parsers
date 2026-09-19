@@ -50,7 +50,7 @@ public class DispatchA46Parser extends SmartAddressParser {
 
   private static final Pattern BODY_PTN4 = Pattern.compile("On (\\d\\d?/\\d\\d?/\\d{4}) at (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?) CAD event (\\d+) was created in reference to a (.*?) located at +(.*?)\\. *(.*)");
 
-  private static final Pattern BODY_PTN5 = Pattern.compile("(?:There has been a|A)\\(n\\) (.*?) (?:has been )?reported(.*?) at ([^/:]*?)");
+  private static final Pattern BODY_PTN5 = Pattern.compile("(?:There has been a|A)\\(n\\) (.*?) (?:has been )?reported(.*?) at ([^:]*?)");
   private static final Pattern TRAIL_DOT_PTN = Pattern.compile(" +0*\\.$");
 
   @Override

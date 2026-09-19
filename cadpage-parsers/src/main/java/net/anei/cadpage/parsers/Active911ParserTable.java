@@ -1671,6 +1671,7 @@ public class Active911ParserTable {
       "US/MS/JacksonCounty",              "MSJacksonCounty",
       "US/MS/LafayetteCounty",            "MSLafayetteCounty",
       "US/MS/LoveFD",                     "MSDeSotoCountyB",
+      "US/MS/Marshall911",                "MSDeSotoCountyC",
       "US/MS/MetroAmbulanceService",      "MSLauderdaleCountyB",
       "US/MS/MontgomeryCounty",           "MSMontgomeryCounty",
       "US/MS/NeshobaCounty",              "MSNeshobaCountyB",

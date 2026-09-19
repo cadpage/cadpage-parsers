@@ -11,6 +11,8 @@ public class MSDeSotoCountyParser extends GroupBestParser {
   }
 
   public MSDeSotoCountyParser() {
-    super(new MSDeSotoCountyAParser(), new MSDeSotoCountyBParser());
+    super(new MSDeSotoCountyAParser(),
+          new MSDeSotoCountyBParser(),
+          new MSDeSotoCountyCParser());
   }
 }
