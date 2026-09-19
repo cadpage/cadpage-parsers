@@ -43,12 +43,14 @@ public class DispatchA46Parser extends SmartAddressParser {
   private static final Pattern ADDR_PTN2B = Pattern.compile("(.*?),(?:([^,]*),)? *([A-Z]{2})\\.?(?:[ ,]+(20\\d{8})?(?:,? *(.*))?)?");
   private static final Pattern ADDR_PTN3 = Pattern.compile("(.*?)[, ]+#?(\\d{2}-\\d+)(\\*.*)");
   private static final Pattern INFO_HEAD_PTN = Pattern.compile(".*?\\b\\d\\d?/\\d\\d?/\\d{4} +\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?: *(.*)");
+  private static final Pattern INFO_TRAIL_PTN = Pattern.compile("(.*?) *\\| Updated:.*");
 
   private static final Pattern SUBJECT_PTN3 = Pattern.compile("CAD (?:Autopage|Page for) EventID: *(\\d+)");
-  private static final Pattern BODY_PTN3 =  Pattern.compile("(?:A(?:\\(n\\))? )?(.*?) has been reported at (.*?) on (\\d\\d?/\\d\\d?/\\d{4}) at (\\d\\d?:\\d\\d [AP]M)\\.(?: Coordinates: *([-+]?\\d{2,3}\\.\\d{6,}, *[-+]?\\d{2,3}\\.\\d{6,}\\b))? *(.*)");
-  private static final DateFormat TIME_FMT = new SimpleDateFormat("hh:mm aa");
+  private static final Pattern BODY_PTN3 =  Pattern.compile("(?:A(?:\\(n\\))? )?(.*?) has been reported at (.*?) on (\\d\\d?/\\d\\d?/\\d{4}) at (\\d\\d?:\\d\\d(?::\\d\\d)?(?: [AP]M)?)\\.(?: +Coordinates: *([-+]?\\d{2,3}\\.\\d{5,}, *[-+]?\\d{2,3}\\.\\d{5,}\\b))? *(.*)");
 
-  private static final Pattern BODY_PTN4 = Pattern.compile("(?:There has been a|A)\\(n\\) (.*?) (?:has been )?reported(.*?) at (.*?)");
+  private static final Pattern BODY_PTN4 = Pattern.compile("On (\\d\\d?/\\d\\d?/\\d{4}) at (\\d\\d?:\\d\\d:\\d\\d(?: [AP]M)?) CAD event (\\d+) was created in reference to a (.*?) located at +(.*?)\\. *(.*)");
+
+  private static final Pattern BODY_PTN5 = Pattern.compile("(?:There has been a|A)\\(n\\) (.*?) (?:has been )?reported(.*?) at ([^/:]*?)");
   private static final Pattern TRAIL_DOT_PTN = Pattern.compile(" +0*\\.$");
 
   @Override
@@ -121,7 +123,7 @@ public class DispatchA46Parser extends SmartAddressParser {
     }
 
     else if ((mat = SUBJECT_PTN2.matcher(subject)).matches()) {
-      setFieldList("SRC CODE CALL ADDR PLACE? X? APT CITY ST ID INFO");
+      setFieldList("SRC CODE CALL ADDR APT PLACE? X? APT CITY ST ID INFO");
 
       data.strSource = getOptGroup(mat.group(1));
       String code = mat.group(2);
@@ -188,7 +190,7 @@ public class DispatchA46Parser extends SmartAddressParser {
         data.strCall = mat.group(1);
         String addr = mat.group(2);
         data.strDate =  mat.group(3);
-        setTime(TIME_FMT, mat.group(4), data);
+        setTime(mat.group(4), data);
         String gps = mat.group(5);
         if (gps != null) setGPSLoc(gps, data);
         data.strSupp = mat.group(6);
@@ -197,6 +199,16 @@ public class DispatchA46Parser extends SmartAddressParser {
       }
 
       else if ((mat = BODY_PTN4.matcher(body)).matches()) {
+        setFieldList("DATE TIME ID CALL ADDR APT CITY ST INFO");
+        data.strDate = mat.group(1);
+        setTime(mat.group(2), data);
+        data.strCallId = mat.group(3);
+        data.strCall = mat.group(4).trim();
+        parseThisAddress(mat.group(5).trim(), data);
+        data.strSupp = mat.group(6);
+      }
+
+      else if ((mat = BODY_PTN5.matcher(body)).matches()) {
         setFieldList("ID CALL ADDR APT CITY ST GPS INFO");
         data.strCall = append(trimField(mat.group(1)), " ", mat.group(2).trim());
         body = mat.group(3).trim();
@@ -212,9 +224,22 @@ public class DispatchA46Parser extends SmartAddressParser {
       line = line.trim();
       Matcher match = INFO_HEAD_PTN.matcher(line);
       if (match.matches()) line = match.group(1);
+      match = INFO_TRAIL_PTN.matcher(line);
+      if (match.matches()) line = match.group(1);
       data.strSupp = append(data.strSupp, "\n", line);
     }
     return true;
+  }
+
+  private static final DateFormat TIME_FMT1 = new SimpleDateFormat("hh:mm aa");
+  private static final DateFormat TIME_FMT2 = new SimpleDateFormat("hh:mm:ss aa");
+
+  private void setTime(String time, Data data) {
+    if (!time.endsWith("M")) {
+      data.strTime = time;
+    } else {
+      setTime((time.length() > 8 ? TIME_FMT2 : TIME_FMT1), time, data);
+    }
   }
 
   private static String trimField(String fld) {
@@ -225,8 +250,8 @@ public class DispatchA46Parser extends SmartAddressParser {
   }
 
   private static final Pattern ADDR_GPS_PTN = Pattern.compile("\\[(.*?)\\]\\. +\\[(.*)\\]");
-  private static final Pattern ADDR_ST_ZIP_PTN = Pattern.compile("(.*?), ([A-Z]{2})\\b(?: (\\d{5}|0000)(?:-\\d+)?)? *(.*)");
-  private static final Pattern ADDR_APT_PTN = Pattern.compile("(?:APT|ROOM|RM|LOT|UNIT) +(\\S+) +(.*)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_ST_ZIP_PTN = Pattern.compile("(.*?), *(?!RM)([A-Z]{2})\\b(?:[, ]+(\\d{5}|0000)(?:-\\d+)?)? *(.*)");
+  private static final Pattern ADDR_APT_PTN = Pattern.compile("(?:APT|ROOM|RM|LOT|SUITE|UNIT) +(\\S+) +(.*)", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_ZIP_PTN = Pattern.compile("(.*?) (\\d{5}|0000)(?:-\\d+)?");
 
   private void parseThisAddress(String addr, Data data) {

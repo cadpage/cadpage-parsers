@@ -7,6 +7,9 @@ public class MSJacksonCountyParser extends DispatchA46Parser {
 
   public MSJacksonCountyParser() {
     super(CITY_LIST, "JACKSON COUNTY", "MS");
+    for (String city : CITY_LIST) {
+      setupCities(city + " JACKSON", city + " MS JACKSON", city+" MSJAC");
+    }
   }
 
   @Override
@@ -21,9 +24,16 @@ public class MSJacksonCountyParser extends DispatchA46Parser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    body = body.replace("[", "").replace("]", "").replace("\n", "");
-    body = body.replace(" JACKSON, MS ", ", MS ").replace("EASTATES", "ESTATES");
-    return super.parseMsg(subject, body, data);
+//    body = body.replace("[", "").replace("]", "").replace("\n", "");
+//    body = body.replace(" JACKSON, MS ", ", MS ").replace("EASTATES", "ESTATES");
+    if (!super.parseMsg(subject, body, data)) return false;
+    data.strCity = stripFieldEnd(data.strCity, " MSJAC");
+    data.strCity = stripFieldEnd(data.strCity, " JACKSON");
+    data.strCity = stripFieldEnd(data.strCity, " MS");
+    data.strCity = data.strCity.replace("POIINT", "POINT");
+
+    data.strSupp = stripFieldStart(data.strSupp, "JACKSON, MS");
+    return true;
   }
 
   @Override
@@ -37,6 +47,7 @@ public class MSJacksonCountyParser extends DispatchA46Parser {
       // Cities
       "GAUTIER",
       "MOSS POINT",
+      "MOSS POIINT",   // Misspelled
       "OCEAN SPRINGS",
       "PASCAGOULA",
 
@@ -59,6 +70,9 @@ public class MSJacksonCountyParser extends DispatchA46Parser {
 
       // Ghost towns
       "BREWTON",
+
+      // George County
+      "LUCEDALE",
 
       // Harrison County
       "BILOXI"
