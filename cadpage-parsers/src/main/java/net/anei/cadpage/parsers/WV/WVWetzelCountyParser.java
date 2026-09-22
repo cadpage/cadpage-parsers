@@ -16,10 +16,10 @@ public class WVWetzelCountyParser extends MsgParser {
 
   @Override
   public String getFilter() {
-    return "no-reply@zuercherportal.com,wcemt9@hotmail.com,@wetzelwv.com";
+    return "no-reply@zuercherportal.com,wcemt9@hotmail.com,@wetzelwv.com,no-reply@csprosuite.centralsquarecloudgov.com";
   }
 
-  private static final Pattern MASTER = Pattern.compile("(.*?) (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d) (CFS\\d+)");
+  private static final Pattern MASTER = Pattern.compile("(.*?) (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d)[ \\*]+(CFS\\d+)");
   private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: (\\d{5}))?");
 
   @Override
