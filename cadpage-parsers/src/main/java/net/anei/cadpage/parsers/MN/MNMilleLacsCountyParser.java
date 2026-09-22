@@ -83,6 +83,7 @@ public class MNMilleLacsCountyParser extends DispatchA63Parser {
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
       "ML", "",
       "NA", "",
+      "OA", "Onamia",
       "PP", "Princeton"
   });
 }
