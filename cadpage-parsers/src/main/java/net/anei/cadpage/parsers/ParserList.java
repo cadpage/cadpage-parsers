@@ -1689,6 +1689,7 @@ public class ParserList {
               ,"SCSaludaCounty"                 ,"Saluda County, SC"
               ,"SCSpartanburgCounty"            ,"Spartanburg County, SC"
               ,"SCSumterCounty"                 ,"Sumter County, SC"
+              ,"SCUnionCounty"                  ,"Union County, SC"
               ,"SCWilliamsburgCounty"           ,"Williamsburg County, SC"
               ,"SCYorkCounty"                   ,"York County, SC"
           ),
