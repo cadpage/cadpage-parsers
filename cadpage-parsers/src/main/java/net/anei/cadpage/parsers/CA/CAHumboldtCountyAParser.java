@@ -11,11 +11,11 @@ import net.anei.cadpage.parsers.MsgParser;
  */
 public class CAHumboldtCountyAParser extends MsgParser {
 
-  private static final Pattern MASTER = Pattern.compile("RA: +([A-Z0-9]+); +([^;]+); +([^;]+?) +,([A-Z][^ ]*?) +(?:; *(.*?))? +X: +(-?[ \\d\\.]+?) +Y: +(-?[ \\d\\.]+?) +Inc# +(\\d+); +([^;]+?) *; *(?:Descr: *)?(.*)", Pattern.DOTALL);
+  private static final Pattern MASTER = Pattern.compile("RA: +([A-Z0-9]+); +([^;]+); +([^;]+?) +,([A-Z][^ ]*?) +(?:\\((.*?)\\) *)?(?:; *(.*?))? +X: +(-?[ \\d\\.]+?) +Y: +(-?[ \\d\\.]+?) +Inc# +(\\d+); +([^;]+?) *; *(?:Descr: *)?(.*)", Pattern.DOTALL);
 
   public CAHumboldtCountyAParser() {
     super("HUMBOLDT COUNTY", "CA");
-    setFieldList("SRC CALL ADDR APT CITY GPS ID UNIT INFO CH MAP");
+    setFieldList("SRC CALL ADDR APT CITY PLACE GPS ID UNIT INFO CH MAP");
   }
 
   @Override
@@ -37,6 +37,7 @@ public class CAHumboldtCountyAParser extends MsgParser {
     data.strCall = match.group(fld++);
     parseAddress(match.group(fld++), data);
     data.strCity = stripFieldEnd(match.group(fld++).replace('_', ' '), " STN");
+    data.strPlace = getOptGroup(match.group(fld++));
     data.strCall = append(data.strCall, " - ", getOptGroup(match.group(fld++)));
     setGPSLoc(match.group(fld++)+','+match.group(fld++), data);
     data.strCallId = match.group(fld++);
