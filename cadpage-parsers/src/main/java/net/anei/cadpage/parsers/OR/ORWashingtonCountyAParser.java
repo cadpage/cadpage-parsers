@@ -129,7 +129,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       if (gps1 != null) setGPSLoc(convertGPS(gps1)+','+convertGPS(gps2), data);
       String info = match.group(13);
       if (info == null) info = match.group(14);
-      if (info != null) data.strSupp = info.trim();
+      if (info != null) data.strSupp = parseInfo(info.trim());
       gps1 = match.group(15);
       gps2 = match.group(16);
       if (gps1 != null) setGPSLoc(convertGPS(gps1)+','+convertGPS(gps2), data);
@@ -143,7 +143,7 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
       String callAddr = match.group(2).trim();
       data.strUnit = match.group(3);
       String namePhone = getOptGroup(match.group(4));
-      data.strSupp = match.group(5).trim();
+      data.strSupp = parseInfo(match.group(5).trim());
 
       int pt = callAddr.indexOf(" at ");
       if (pt >= 0) {
@@ -179,6 +179,12 @@ public class ORWashingtonCountyAParser extends ORWashingtonCountyBaseParser {
     int pt = field.length()-6;
     if (field.length() > 6) field = field.substring(0, pt) + '.' + field.substring(pt);
     return field;
+  }
+
+  private static final Pattern INFO_BRK_PTN = Pattern.compile(" *(?=\\[\\d{1,2}\\])");
+
+  private String parseInfo(String info) {
+    return INFO_BRK_PTN.matcher(info).replaceAll("\n").trim();
   }
 
   @Override
