@@ -50,6 +50,7 @@ public class DispatchC11Parser extends FieldProgramParser {
     if (name.equals("ADDRCITYST1")) return new MyAddressCityStateField1();
     if (name.equals("ADDRCITYST2")) return new MyAddressCityStateField2();
     if (name.equals("X")) return new MyCrossField();
+    if (name.equals("INFO")) return new MyInfoField();
 
     return super.getField(name);
   }
@@ -163,6 +164,18 @@ public class DispatchC11Parser extends FieldProgramParser {
     public void parse(String field, Data data) {
       field = stripFieldStart(field, "/");
       field = stripFieldEnd(field, "/");
+      super.parse(field, data);
+    }
+  }
+
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.startsWith("CO=")) {
+        int pt = field.indexOf(',');
+        if (pt < 0) return;
+        field = field.substring(pt+1).trim();
+      }
       super.parse(field, data);
     }
   }
