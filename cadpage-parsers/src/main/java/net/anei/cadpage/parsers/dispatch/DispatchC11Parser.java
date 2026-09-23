@@ -20,7 +20,7 @@ public class DispatchC11Parser extends FieldProgramParser {
 
   public DispatchC11Parser(Properties cityCodes, String defCity, String defState, int flags) {
     super(cityCodes, defCity, defState,
-          "( SELECT/1 DISP ID CALL EMPTY? ADDRCITYST1 EMPTY? X! ( END | GPS! MAP " +
+          "( SELECT/1 DISP ID CODE? CALL EMPTY? ADDRCITYST1 EMPTY? X! ( END | GPS! MAP " +
                                                                      ((flags & C11_UNIT) != 0 ? "UNIT! " : "") +
                                                                      ((flags & C11_INFO) != 0 ? "INFO " : "") +
                                                                      ") " +
@@ -46,6 +46,7 @@ public class DispatchC11Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("DISP")) return new SkipField("DISP|CIN", true);
+    if (name.equals("CODE")) return new CodeField("\\d\\d?[A-Z]", true);
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDRCITYST1")) return new MyAddressCityStateField1();
     if (name.equals("ADDRCITYST2")) return new MyAddressCityStateField2();
