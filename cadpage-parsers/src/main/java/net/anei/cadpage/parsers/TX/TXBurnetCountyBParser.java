@@ -12,7 +12,7 @@ public class TXBurnetCountyBParser extends FieldProgramParser {
     super(CITY_CODES, "BURNET COUNTY", "TX",
           "Msg_ID:SKIP! ( SRC/Z! INFO/G! END " +
                        "| INFO/G! END " +
-                       "| SRC MAP? CALL STATUS? ADDRCITY UNIT! INFO/N+? ID X/Z? DATETIME END " +
+                       "| SRC MAP? CALL STATUS? ADDRCITY UNIT! MAP? INFO/N+? ID X/Z? DATETIME END " +
                        ")");
   }
 
@@ -151,6 +151,7 @@ public class TXBurnetCountyBParser extends FieldProgramParser {
       "JC",   "JOHNSON CITY",
       "JLV",  "JOLLYVILLE",
       "JO",   "JONAH",
+      "JOH",  "JOHNSON CITY",
       "JT",   "JONESTOWN",
       "KG",   "KINGSLAND",
       "KI",   "KIMBRO",
@@ -186,6 +187,7 @@ public class TXBurnetCountyBParser extends FieldProgramParser {
       "NS",   "NEW SWEDEN",
       "NVL",  "NOLANVILLE",
       "OA",   "OAKALLA",
+      "RM",   "ROUND MOUNTAIN",
       "SP",   "SPICEWOOD"
 
   });
