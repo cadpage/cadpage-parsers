@@ -181,6 +181,8 @@ public class DispatchH03Parser extends FieldProgramParser {
 
     @Override
     public boolean checkParse(String field, Data data) {
+      int pt = field.indexOf('\n');
+      if (pt >= 0) field = field.substring(0,pt).trim();
       Matcher match = TIME_DATE_PTN.matcher(field);
       if (!match.matches()) return false;
       setTime(TIME_FMT, match.group(1), data);

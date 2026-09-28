@@ -14,7 +14,7 @@ public class TXDallasCountyCParser extends DispatchH03Parser {
 
   @Override
   public String getFilter() {
-    return "NTEC@motocad.local,cad@ntecc.org";
+    return "cad@ntecc.org";
   }
 
   @Override
