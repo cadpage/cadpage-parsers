@@ -1,0 +1,21 @@
+package net.anei.cadpage.parsers.TX;
+
+import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
+
+public class TXMidlothianBParser extends DispatchA19Parser {
+
+  public TXMidlothianBParser() {
+    super("MIDLOTHIAN", "TX");
+  }
+
+  @Override
+  public String getFilter() {
+    return "FRN-midlothiantx@email.getrave.com";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
+  }
+
+}
