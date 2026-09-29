@@ -2979,6 +2979,7 @@ public class Active911ParserTable {
       "US/TX/SanPatricio",                "TXSanPatricoCounty",
       "US/TX/SantaFeFireRescue",          "TXLaPorte",
       "US/TX/Seabrook",                   "TXHarrisCountyC",
+      "US/TX/SeabrookEMS",                "TXHarrisCountyG",
       "US/TX/Seagoville",                 "TXDallasCountyH",
       "US/TX/Seguin",                     "TXGuadalupeCounty",
       "US/TX/SelmaFD",                    "TXBexarCountyB",
