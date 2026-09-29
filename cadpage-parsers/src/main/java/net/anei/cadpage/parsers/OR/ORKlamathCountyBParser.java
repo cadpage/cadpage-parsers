@@ -12,7 +12,11 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class ORKlamathCountyBParser extends FieldProgramParser {
 
   public ORKlamathCountyBParser() {
-    super("KLAMATH COUNTY", "OR",
+    this("KLAMATH COUNTY", "OR");
+  }
+
+  public ORKlamathCountyBParser(String defCity, String defState) {
+    super(defCity, defState,
           "DATETIME CODE_CALL ADDRCITY PLACE X! X+ Priority:PRI! CFS_Number:SKIP! Units:UNIT? Primary_Incident:ID! INFO/N+");
     setupGpsLookupTable(ORKlamathCountyParser.GPS_LOOKUP_TABLE);
   }
@@ -20,6 +24,11 @@ public class ORKlamathCountyBParser extends FieldProgramParser {
   @Override
   public String getFilter() {
     return "paging@klamath911.gov";
+  }
+
+  @Override
+  public String getAliasCode() {
+    return "ORKlamathCountyB";
   }
 
   private static final Pattern DELIM = Pattern.compile("(?<=\\D)/|/(?=//D)");

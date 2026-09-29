@@ -1,32 +1,12 @@
 package net.anei.cadpage.parsers.CA;
 
-import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchSPKParser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-
-public class CAModocCountyParser extends DispatchSPKParser {
-  
+/**
+ * Modoc County, CA
+ */
+public class CAModocCountyParser extends GroupBestParser {
   public CAModocCountyParser() {
-    super("MODOC COUNTY", "CA");
+    super(new CAModocCountyAParser(), new CAModocCountyBParser());
   }
-  
-  @Override
-  public String getFilter() {
-    return "sheriffoffice@modocsheriff.us";
-  }
-
-  @Override
-  protected boolean parseHtmlMsg(String subject, String body, Data data) {
-    if (!super.parseHtmlMsg(subject, body, data)) return false;
-    data.strCity = stripFieldEnd(data.strCity, " HILL UNITS");
-    data.strCity = stripFieldEnd(data.strCity, " RURAL");
-    return true;
-  }
-  
-  @Override
-  public String adjustMapCity(String city) {
-    if (city.startsWith("CAL PINES")) return "ALTURAS";
-    return city;
-  }
-
 }
