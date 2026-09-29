@@ -1,6 +1,9 @@
 package net.anei.cadpage.parsers.dispatch;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,6 +16,8 @@ public class DispatchC11Parser extends FieldProgramParser {
   public final static int C11_INFO = 2;
 
   private final Properties cityCodes;
+  private Pattern codePtn =  null;
+  private Set<String> codeList = null;
 
   public DispatchC11Parser(String defCity, String defState, int flags) {
     this(null, defCity, defState, flags);
@@ -22,11 +27,19 @@ public class DispatchC11Parser extends FieldProgramParser {
     super(cityCodes, defCity, defState,
           "( SELECT/1 DISP ID CODE? CALL EMPTY? ADDRCITYST1 EMPTY? X! ( END | GPS! MAP " +
                                                                      ((flags & C11_UNIT) != 0 ? "UNIT! " : "") +
-                                                                     ((flags & C11_INFO) != 0 ? "INFO " : "") +
+                                                                     ((flags & C11_INFO) != 0 ? "INFO/N+ " : "") +
                                                                      ") " +
           "| CALL CALL/SDS ADDRCITYST2! " +
           ") END");
     this.cityCodes = cityCodes;
+  }
+
+  public void setCodePattern(String codePtn) {
+    this.codePtn = (codePtn == null ? null : Pattern.compile(codePtn));
+  }
+
+  public void setCodeList(String ... args) {
+    this.codeList = new HashSet<String>(Arrays.asList(args));
   }
 
   private static final Pattern DELIM = Pattern.compile("~ ");
@@ -46,7 +59,7 @@ public class DispatchC11Parser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("DISP")) return new SkipField("DISP|CIN", true);
-    if (name.equals("CODE")) return new CodeField("\\d\\d?[A-Z]", true);
+    if (name.equals("CODE")) return new MyCodeField();
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDRCITYST1")) return new MyAddressCityStateField1();
     if (name.equals("ADDRCITYST2")) return new MyAddressCityStateField2();
@@ -54,6 +67,24 @@ public class DispatchC11Parser extends FieldProgramParser {
     if (name.equals("INFO")) return new MyInfoField();
 
     return super.getField(name);
+  }
+
+  private class MyCodeField extends CodeField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      do {
+        if (codePtn != null && codePtn.matcher(field).matches()) break;
+        if (codeList != null && codeList.contains(field)) break;
+        return false;
+      } while (false);
+      super.parse(field, data);
+      return true;
+    }
   }
 
   private class MyCallField extends CallField {
@@ -65,7 +96,7 @@ public class DispatchC11Parser extends FieldProgramParser {
   }
 
   private static final Pattern APT_PTN = Pattern.compile("(?:#|APT|LOT|APARTMENT|RM|ROOM) *(.*)");
-  private static final Pattern STATE_PTN = Pattern.compile("[A-Z]{2}");
+  private static final Pattern STATE_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: +(\\d{5}))?");
   private static final Pattern ZIP_PTN = Pattern.compile("\\d{5}");
   private class MyAddressCityStateField1 extends AddressCityStateField {
     @Override
@@ -109,14 +140,19 @@ public class DispatchC11Parser extends FieldProgramParser {
 
       data.strApt = append(data.strApt, "-", trailApt);
 
+      String zip = null;
       String state =  p.get(',');
       if (state.isEmpty()) return;
-      if (!STATE_PTN.matcher(state).matches()) abort();
-      data.strState = state;
+      Matcher match = STATE_ZIP_PTN.matcher(state);
+      if (!match.matches()) abort();
+      data.strState = match.group(1);
+      zip = match.group(2);
 
-      String zip = p.get(',');
-      if (zip.isEmpty()) return;
-      if (!ZIP_PTN.matcher(zip).matches()) abort();
+      if (zip ==  null) {
+        zip = p.get(',');
+        if (zip.isEmpty()) return;
+        if (!ZIP_PTN.matcher(zip).matches()) abort();
+      }
       if (data.strCity.isEmpty()) data.strCity = zip;
 
       data.strApt = append(data.strApt, "-", p.get());
@@ -143,7 +179,7 @@ public class DispatchC11Parser extends FieldProgramParser {
 
       String state =  p.get(',');
       if (state.isEmpty()) return;
-      if (!STATE_PTN.matcher(state).matches()) abort();
+      if (!STATE_ZIP_PTN.matcher(state).matches()) abort();
       data.strState = state;
 
       String zip = p.get(',');
@@ -169,6 +205,8 @@ public class DispatchC11Parser extends FieldProgramParser {
     }
   }
 
+  private static final Pattern INFO_BRK_PTN = Pattern.compile(" +(?:-{3,}|/{2}) +");
+
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -177,6 +215,7 @@ public class DispatchC11Parser extends FieldProgramParser {
         if (pt < 0) return;
         field = field.substring(pt+1).trim();
       }
+      field = INFO_BRK_PTN.matcher(field).replaceAll("\n");
       super.parse(field, data);
     }
   }
