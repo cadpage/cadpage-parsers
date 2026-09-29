@@ -23,7 +23,7 @@ public class DispatchA57Parser extends FieldProgramParser {
           "( SELECT/1 Call_Time:DATETIME? " +
               "( CFS_Number:ID1! Primary_Incident:ID2/L! Address:ADDRCITYST/S6! Common_Name:PLACE! Police_Call_Type:CALL! Fire_Call_Type:CALL! Closest_Intersection:X! Additional_Location_Info:INFO! Nature_of_Call:INFO! " +
                   "Assigned_Units:UNIT! Quadrant:MAP! District:MAP! Beat:MAP! Radio_Channel:CH? Narrative:INFO! INFO/N+ " +
-              "| Call_Type:CALL! Nature_of_Call:CALL/SDS? Radio_Channel:CH? Common_Name:PLACE? Address:ADDRCITYST/S6! " +
+              "| Callers_Number:PHONE? Call_Type:CALL! Nature_of_Call:CALL/SDS? Radio_Channel:CH? Common_Name:PLACE? Address:ADDRCITYST/S6! " +
                 "( Cross_Sts:X! Unit:UNIT! INFO/N+? DATETIME! GPS? " +
                 "| City:CITY Common_Name:PLACE Custom_Layer:MAP? Map_Page:MAP? ( Latt:GPS1! Long:GPS2 | ) Closest_Intersection:X EMPTY+? Narrative:INFO Additional_Location_Info:INFO EMPTY+? Nature_of_Call:INFO EMPTY+? " +
                       "( Lat:GPS1! Long:GPS2 | ) ( Assigned_Units:UNIT% | Dispatched_Units:UNIT% ) Priority:PRI? ( Narrative:INFO/N | Nar:INFO/N | ) INFO/N+ Status:SKIP? ( Fire_Box:BOX EMS_District:MAP | Quadrant:MAP District:MAP ) Beat:MAP " +
@@ -61,7 +61,9 @@ public class DispatchA57Parser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    if (body.startsWith("Call Time:") || body.startsWith("Call Type:")) {
+    if (body.startsWith("Call Time:") ||
+        body.startsWith("Call Type:") ||
+        body.startsWith("Callers Number:")) {
       setSelectValue("1");
       return super.parseFields(DELIM1.split(body), data);
     }

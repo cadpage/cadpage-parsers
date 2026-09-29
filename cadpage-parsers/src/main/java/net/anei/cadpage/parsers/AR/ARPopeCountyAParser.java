@@ -8,12 +8,12 @@ public class ARPopeCountyAParser extends FieldProgramParser {
 
   public ARPopeCountyAParser() {
     super("POPE COUNTY", "AR",
-          "Call_Time:DATETIME! Service_Call_Type:CALL! Street_Address:ADDRCITY! Common_Name:PLACE! Latitude:GPS1! Longitude:GPS2! Cross_Streets:X! Emergency_Nature:CALL/SDS! Station_Assignment:UNIT! Narrative:INFO! INFO/N+");
+          "Call_Time:DATETIME! Service_Call_Type:CALL! Street_Address:ADDRCITY! Common_Name:PLACE! Latitude:GPS1! Longitude:GPS2! Cross_Streets:X! Station_Assignment:UNIT! Narrative:INFO! INFO/N+");
   }
 
   @Override
   public String getFilter() {
-    return "no-reply@popeco911.org,relay@popecountyar.gov";
+    return "relay@popecountyar.gov";
   }
 
   @Override

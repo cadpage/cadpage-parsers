@@ -1,9 +1,9 @@
 package net.anei.cadpage.parsers.AR;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA87Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA57Parser;
 
 
-public class ARPopeCountyBParser extends DispatchA87Parser {
+public class ARPopeCountyBParser extends DispatchA57Parser {
 
   public ARPopeCountyBParser() {
     super("POPE COUNTY", "AR");
@@ -11,7 +11,7 @@ public class ARPopeCountyBParser extends DispatchA87Parser {
 
   @Override
   public String getFilter() {
-    return "no-reply@popeco911.org";
+    return "relay@popecountyar.gov";
   }
 
   @Override
