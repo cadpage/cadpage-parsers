@@ -1,13 +1,12 @@
 package net.anei.cadpage.parsers.AL;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.dispatch.DispatchC12Parser;
 
-public class ALBarbourCountyParser extends FieldProgramParser {
+public class ALBarbourCountyParser extends DispatchC12Parser {
 
   public ALBarbourCountyParser() {
-    super(CITY_LIST, "BARBOUR COUNTY", "AL",
-          "ADDR/S PLACE EMPTY+? PHONE? EMPTY+? TIME CALL! INFO/N+");
+    super(CITY_LIST, "BARBOUR COUNTY", "AL");
   }
 
   @Override
@@ -16,23 +15,15 @@ public class ALBarbourCountyParser extends FieldProgramParser {
   }
 
   @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    if (subject.isEmpty()) return false;
-    data.strSource = subject;
-
-    return parseFields(body.split("\n"), data);
-  }
-
-  @Override
-  public String getProgram() {
-    return "SRC " + super.getProgram();
-  }
-
-  @Override
-  public Field getField(String name) {
-    if (name.equals("PHONE")) return new PhoneField("\\d{10}", true);
-    if (name.equals("TIME")) return new TimeField("\\d\\d:\\d\\d:\\d\\d", true);
-    return super.getField(name);
+    if (!super.parseMsg(subject, body, data)) return false;
+    data.strAddress = stripFieldEnd(data.strAddress, " BEGIN");
+    return true;
   }
 
   private static final String[] CITY_LIST = new String[] {
@@ -59,10 +50,14 @@ public class ALBarbourCountyParser extends FieldProgramParser {
       // Dale County
       "ARITON",
       "CLOPTON",
+      "SKIPPERVILLE",
 
       // Henry County
       "HENRY COUNTY",
-      "ABBEVILLE"
+      "ABBEVILLE",
+
+      // Houston County
+      "DOTHAN"
 
 
   };
