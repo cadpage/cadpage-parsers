@@ -121,6 +121,7 @@ public class MIBarryCountyBParser extends FieldProgramParser {
           data.strPlace = field;
         }
       }
+      if (data.strCity.equals("MI")) data.strCity = "";
     }
 
     @Override
@@ -183,6 +184,12 @@ public class MIBarryCountyBParser extends FieldProgramParser {
       field = field.replace("; ", ",");
       super.parse(field, data);
     }
+  }
+
+  @Override
+  public String adjustMapCity(String city) {
+    if (city.equalsIgnoreCase("OUTSIDE COUNTY")) return "";
+    return city;
   }
 
   private static final String[] CITY_LIST = new String[]{
@@ -278,6 +285,13 @@ public class MIBarryCountyBParser extends FieldProgramParser {
       "CALHOUN COUNTY",
       "BATTLE CREEK",
 
+      // Clinton County
+      "CLINTON",
+      "CLINTON CO",
+      "CLINTON COUNTY",
+      "LEBANON TWP",
+      "WESTPHALIA TWP",
+
       // Eaton County
       "EATON",
       "EATON CO",
@@ -291,6 +305,7 @@ public class MIBarryCountyBParser extends FieldProgramParser {
       "KALAMAZOO",
       "KALAMAZOO CO",
       "KALAMAZOO COUNTY",
+      "AUGUSTA",
       "ROSS TWP",
       "RICHLAND",
 
@@ -299,6 +314,9 @@ public class MIBarryCountyBParser extends FieldProgramParser {
       "KENT CO",
       "KENT COUNTY",
       "CALEDONIA",
-      "GRAND RAPIDS"
+      "GRAND RAPIDS",
+
+      // Other
+      "OUTSIDE COUNTY"
   };
 }
