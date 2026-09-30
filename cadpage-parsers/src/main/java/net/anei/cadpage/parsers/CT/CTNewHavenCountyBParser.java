@@ -37,6 +37,8 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
     return "CTNewHavenCountyB";
   }
 
+  private static final Pattern BAD_MARK_PTN = Pattern.compile("\\| *PRI \\d *\\|");
+
   @Override
   public String getFilter() {
     return "FirePaging@hamdenfirefighters.org,paging@branfordfire.com,paging@easthavenfire.com,paging@easthavenpolice.com,paging@mail.nbpolicect.org,paging@nbpolicect.org,noreply@nexgenpss.com,pdpaging@farmington-ct.org,noreply@whpd.com,page@watertownctpd.com,FirePaging@hamdenfirefighters.org,paging@townofstratford.com,ngpager@rockyhillct.gov,pubsafetypaging@uconn.edu,publicsafety@uchc.edu,nexgen@nbpolicect.org";
@@ -58,6 +60,8 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
 
   @Override
   public boolean parseMsg(String body, Data data) {
+
+    if (BAD_MARK_PTN.matcher(body).find()) return false;
 
     body = stripFieldStart(body, "no subject / ");
 

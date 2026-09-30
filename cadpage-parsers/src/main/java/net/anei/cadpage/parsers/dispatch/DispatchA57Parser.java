@@ -52,7 +52,7 @@ public class DispatchA57Parser extends FieldProgramParser {
       setSelectValue("1");
       return parseFields(newFlds.toArray(new String[0]), data);
     }
-
+    setSelectValue("2");
     return super.parseHtmlMsg(subject, body, data);
   }
 

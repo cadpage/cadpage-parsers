@@ -27,8 +27,15 @@ public class CTNewLondonCountyCParser extends FieldProgramParser {
     return "Mobiletec@town.groton.ct.us,mobiletec@groton-ct.gov,NexgenAlerts@groton-ct.gov,CAD_Page@grotonambulance.com";
   }
 
+  private static final Pattern BAD_MARK_PTN = Pattern.compile("\\| *PRI \\d *\\|");
+
   @Override
   public boolean parseMsg(String body, Data data) {
+
+    // CTNewLondCountyB alerts don't look anything like ours, but they use the same delimiters and can pass, so
+    // we need to get rid of them
+    if (BAD_MARK_PTN.matcher(body).find()) return false;
+
     int pt = body.indexOf("\n\nDisclaimer");
     if (pt >= 0) body = body.substring(0,pt).trim();
     return parseFields(body.split("\\|"), 4, data);
