@@ -17,8 +17,6 @@ import net.anei.cadpage.parsers.dispatch.DispatchOSSIParser;
 
 public class NCJohnstonCountyParser extends DispatchOSSIParser {
 
-  private static final Pattern ENROUTE_PTN = Pattern.compile("CAD:([A-Z0-9]+),Enroute,.*");
-
   private String lastCrossPlaceFld;
 
   public NCJohnstonCountyParser() {
@@ -46,25 +44,17 @@ public class NCJohnstonCountyParser extends DispatchOSSIParser {
 
     if (!body.startsWith("CAD:")) body = "CAD:" + body;
 
-    boolean enroute = ENROUTE_PTN.matcher(body).matches();
-    if (enroute) body = body.replace(',', ';');
-
     lastCrossPlaceFld = "";
     if (!super.parseMsg(body, data)) return false;
     if (!data.strCode.isEmpty()) {
       String call = CALL_CODES.getCodeDescription(data.strCode.replace("-", ""));
       if (call != null) data.strCall = call;
     }
-    if (enroute) {
-      data.msgType = MsgType.GEN_ALERT;
-      data.strCall = append("enroute", " - ",  data.strCall);
-    }
     return true;
   }
 
   @Override
   protected Field getField(String name) {
-    if (name.equals("ENROUTE")) return new SkipField("Enroute", true);
     if (name.equals("CALL_CODE")) return new MyCallCodeField();
     if (name.equals("CH")) return new ChannelField("OPS.*|.*FR|VPR.*|2ND", true);
     if (name.equals("SRC")) return new SourceField("[A-Z]{2,5}\\d?");
@@ -83,7 +73,7 @@ public class NCJohnstonCountyParser extends DispatchOSSIParser {
         field = match.group(1);
         data.strCode = match.group(2);
       }
-      data.strCall = field;
+      data.strCall = append(data.strCall, " ", field);
     }
 
     @Override

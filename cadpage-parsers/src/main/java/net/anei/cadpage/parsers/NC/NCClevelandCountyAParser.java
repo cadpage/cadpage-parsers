@@ -20,7 +20,7 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
 
   public NCClevelandCountyAParser() {
     super(CITY_LIST, "CLEVELAND COUNTY", "NC",
-          "( UNIT ENROUTE ADDR CITY_CODE CALL! END " +
+          "( UNIT ENROUTE ADDR CITY_CODE CALL/S! END " +
           "| ( NAME PHONE CALL | NAME NAME PHONE CALL | PHONE CALL | NAME NAME CALL | NAME CALL | CALL ) ADDRCITYST! ADDR2? ( SKIP CITY | ) ( X X? | PLACE X  X? | PLACE PLACE X X? | ) INFO/N+ )");
     setupMultiWordStreets("OAK GROVE-CLOVER HILL CH", "SANDY RUN CHURCH");
   }
@@ -50,7 +50,6 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ENROUTE")) return new SkipField("Enroute");
     if (name.equals("CITY_CODE")) return new MyCityCodeField();
     if (name.equals("NAME")) return new MyNameField();
     if (name.equals("PHONE")) return new PhoneField("\\d{10}");
@@ -175,9 +174,8 @@ public class NCClevelandCountyAParser extends DispatchOSSIParser {
    * @return converted text message
    */
   private String fixBody(String body) {
-    if (body.contains(",Enroute,")) {
-      return body.replace(',', ';');
-    }
+    if (body.contains(",Enroute,")) return body;
+
     StringBuilder sb = new StringBuilder(body);
     int st = 0;
     String hypWord = null;

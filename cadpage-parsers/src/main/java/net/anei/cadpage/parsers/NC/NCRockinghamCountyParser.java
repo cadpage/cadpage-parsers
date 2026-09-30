@@ -14,8 +14,15 @@ public class NCRockinghamCountyParser extends DispatchOSSIParser {
 
   public NCRockinghamCountyParser() {
     super(CITY_CODES, "ROCKINGHAM COUNTY", "NC",
-          "ID?: ( SELECT/1 Incident#:ID1! Report#:EMPTY! Date:DATE! Time_Out:TIME! Nature:CALL! MP:CODE! Business:PLACE! Address:ADDR! City:CITY! Addt_Address:ADDADDR! Cross:X! X+ Subdivision:SKIP! Neighborhood:SKIP Notes:INFO/N! INFO/N+ Units:UNIT! INFO/N+ " +
-               "| FYI? ( ADDR/Z CITY X/Z+? CALL2 UNIT2 | CALL2 ADDR APT? X/Z+? ( CITY ID? APT2? ( CODE2 UNIT2? CH? | UNIT2 CH? | CH | PLACE CODE2 UNIT2? CH? | PLACE UNIT2 CH? | PLACE CH | ) | ID CODE2? UNIT2? CH? | CODE2 UNIT2? CH? | UNIT2 CH? | CH ) ) INFO+ )");
+          "ID?: ( SELECT/1 Incident#:ID1! Report#:EMPTY! Date:DATE! Time_Out:TIME! Nature:CALL! MP:CODE! Business:PLACE! Address:ADDR! " +
+                      "City:CITY! Addt_Address:ADDADDR! Cross:X! X+ Subdivision:SKIP! Neighborhood:SKIP Notes:INFO/N! INFO/N+ Units:UNIT! " +
+               "| INFO/G END " +
+               "| UNIT/Z ENROUTE ADDR CITY CALL/S " +
+               "| FYI? ( ADDR/Z CITY X/Z+? CALL2 UNIT2! " +
+                      "| CALL2 ADDR! APT? X/Z+? ( CITY ID? APT2? ( CODE2 UNIT2? CH? | UNIT2 CH? | CH | PLACE CODE2 UNIT2? CH? | PLACE UNIT2 CH? | PLACE CH | ) " +
+                                              "| ID CODE2? UNIT2? CH? | CODE2 UNIT2? CH? | UNIT2 CH? | CH ) " +
+                      ") INFO/N+ " +
+               ")");
   }
 
   @Override

@@ -22,14 +22,12 @@ public class GAWhitfieldCountyDParser extends DispatchOSSIParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Text Message")) return false;
-    if (body.contains(",Enroute,")) body = body.replace(',', ';');
     if (!body.startsWith("CAD:")) body = "CAD:" + body;
     return super.parseMsg(body,  data);
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ENROUTE")) return new CallField("Enroute", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("CODE")) return new CodeField("[A-Z]\\d{1,2}[A-Z]?", true);
     return super.getField(name);

@@ -113,6 +113,11 @@ public class DispatchOSSIParser extends FieldProgramParser {
     // Body must start with 'CAD:'
     if (!body.startsWith("CAD:")) return false;
 
+    // for some unknown reason, status messages use comma delimiters
+    if (body.contains(",Enroute,")) {
+      return parseFields(body.substring(4).trim().split(","), data);
+    }
+
     // Break down string into generally semicolon delimited fields
     // with some complications involving text in square brackets
 
@@ -210,6 +215,7 @@ public class DispatchOSSIParser extends FieldProgramParser {
   protected Field getField(String name) {
     if (name.equals("FYI")) return new SkipField("FYI:|Update:", true);
     if (name.equals("CANCEL")) return new BaseCancelField();
+    if (name.equals("ENROUTE")) return new CallField("Enroute", true);
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} +\\d\\d:\\d\\d:\\d\\d", true);
     return super.getField(name);
   }

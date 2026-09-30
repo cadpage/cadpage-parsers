@@ -28,17 +28,12 @@ public class MIRoscommonCountyParser extends DispatchOSSIParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    if (body.contains(",Enroute,")) {
-      return parseFields(stripFieldStart(body, "CAD:").split(","), data);
-    } else {
-      if (!body.startsWith("CAD:")) body = "CAD:" + body;
-      return super.parseMsg(body, data);
-    }
+    if (!body.startsWith("CAD:")) body = "CAD:" + body;
+    return super.parseMsg(body, data);
   }
 
   public Field getField(String name) {
     if (name.equals("UNIT2")) return new UnitField("[A-Z]{3,4}", true);
-    if (name.equals("ENROUTE")) return new CallField("Enroute");
     if (name.equals("GPS1")) return new MyGPSField(1);
     if (name.equals("GPS2")) return new MyGPSField(2);
     return super.getField(name);

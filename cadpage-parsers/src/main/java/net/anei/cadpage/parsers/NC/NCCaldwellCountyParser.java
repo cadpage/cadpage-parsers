@@ -10,7 +10,7 @@ public class NCCaldwellCountyParser extends DispatchOSSIParser {
 
   public NCCaldwellCountyParser() {
     super(CITY_CODES, "CALDWELL COUNTY", "NC",
-           "( UNIT/Z ENROUTE ADDR CITY CALL! END " +
+           "( UNIT/Z ENROUTE ADDR CITY CALL/S! END " +
            "| CANCEL ADDR CITY APT? " +
            "| CALL ( ADDR/Z ID! " +
                   "| PLACE? ADDR/Z CITY/Y! APT? X/Z+? ID CODE? " +
@@ -30,16 +30,11 @@ public class NCCaldwellCountyParser extends DispatchOSSIParser {
     } else if (!body.startsWith("CAD:")) {
       body = "CAD:" + body;
     }
-    if (body.contains(",Enroute,")) {
-      return parseFields(stripFieldStart(body, "CAD:").split(","), data);
-    } else {
-      return super.parseMsg(body, data);
-    }
+    return super.parseMsg(body, data);
   }
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ENROUTE")) return new SkipField("Enroute", true);
     if (name.equals("CANCEL")) return new BaseCancelField("Clear Stand By");
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("ID")) return new IdField("\\d{10}", true);

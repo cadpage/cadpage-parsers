@@ -14,7 +14,7 @@ public class MOBooneCountyParser extends DispatchOSSIParser {
 
   public MOBooneCountyParser() {
     super(CITY_CODES, "BOONE COUNTY", "MO",
-          "( SELECT/2 UNIT CALL ADDR CITY CALL2/S! END " +
+          "( UNIT ENROUTE ADDR CITY CALL2/S! END " +
           "| CANCEL ADDR CITY! INFO/N+ " +
           "| FYI? DATETIME ID ( MAP ADDR? | ADDR ) PLACE1? ( CODE | PLACE CODE | CITY/Z PLACE CODE | CITY/Z X/Z X/Z CODE | CITY PLACE X X CODE ) CALL1 SRC! UNIT PHONE INFO/N+ )");
   }
@@ -33,13 +33,7 @@ public class MOBooneCountyParser extends DispatchOSSIParser {
 
   protected boolean parseMsg(String subject, String body, Data data) {
     gps = null;
-    if (body.contains(",Enroute,")) {
-      setSelectValue("2");
-      return parseFields(body.split(","), data);
-    } else {
-      setSelectValue("1");
-      return parseMsg("CAD:"+body, data);
-    }
+    return parseMsg("CAD:"+body, data);
   }
 
   @Override
