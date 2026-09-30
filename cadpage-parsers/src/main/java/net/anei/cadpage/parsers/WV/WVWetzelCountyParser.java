@@ -20,7 +20,8 @@ public class WVWetzelCountyParser extends MsgParser {
   }
 
   private static final Pattern MASTER = Pattern.compile("(.*?) (\\d\\d/\\d\\d/\\d\\d) (\\d\\d:\\d\\d:\\d\\d)[ \\*]+(CFS\\d+)");
-  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: (\\d{5}))?");
+  private static final Pattern ST_ZIP_PTN = Pattern.compile("([A-Z]{2})(?: (\\d+))?");
+  private static final Pattern ZIP1_PTN = Pattern.compile("[-+]?\\d{2,3}\\.\\d+");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
@@ -44,10 +45,16 @@ public class WVWetzelCountyParser extends MsgParser {
       zip = match.group(2);
       city = p.getLastOptional(',');
     }
-    if (city.length() == 0 && zip != null) city = zip;
-    data.strCity = city;
+    addr = p.get();
+    if (ZIP1_PTN.matcher(city).matches()) {
+      addr = append(addr, ", ", city);
+      city = "";
+    }
 
-    parseAddress(p.get(), data);
+    if (city.length() == 0 && zip != null && zip.length() == 5) city = zip;
+    if (!city.equals(data.strState)) data.strCity = city;
+
+    parseAddress(addr, data);
 
     return true;
   }

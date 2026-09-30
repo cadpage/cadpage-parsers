@@ -107,6 +107,13 @@ public class DispatchC11Parser extends FieldProgramParser {
       if (place.equals("EMS")) place = p.get(':');
       data.strPlace = place;
 
+      field = p.get();
+      if (field.startsWith("LL(")) {
+        data.strAddress = field;
+        return;
+      }
+      p = new Parser(field);
+
       String trailApt = p.getLastOptional(':');
       if (trailApt.equals(place)) {
         trailApt = "";
