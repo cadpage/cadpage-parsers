@@ -1633,6 +1633,7 @@ public class Active911ParserTable {
       "US/MO/SouthernBoone",              "MOBooneCounty",
       "US/MO/StCharlesCounty",            "MOStCharlesCounty",
       "US/MO/StCharlesCountyFireRehab",   "MOStCharlesCounty",
+      "US/MO/StClairCounty",              "MOStClairCounty",
       "US/MO/SteGenevieveCounty",         "MOSteGenevieveCountyB",
       "US/MO/StFrancoisCounty",           "MOStFrancoisCounty",
       "US/MO/StLouisCounty",              "MOStLouisCountyC,MOStLouisCountyJ",

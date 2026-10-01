@@ -1165,6 +1165,7 @@ public class ParserList {
               ,"MOShelbyCounty"                 ,"Shelby County, MO"
               ,"MOSikeston"                     ,"Sikeston, MO"
               ,"MOStCharlesCounty"              ,"St Charles County, MO"
+              ,"MOStClairCounty"                ,"St Clair County, MO"
               ,"MOSteGenevieveCounty"           ,"Ste Genevieve County, MO"
               ,"MOStFrancoisCounty"             ,"St Francois County, MO"
               ,"MOStLouisCounty"                ,"St Louis County, MO"
