@@ -10,7 +10,7 @@ public class FLCalhounCountyParser extends DispatchA98Parser {
 
   @Override
   public String getFilter() {
-    return "no-reply@smartcopcloud.com";
+    return "no-reply@smartcopcloud.com,no-reply@smartcop.com";
   }
 
   @Override
