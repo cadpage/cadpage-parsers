@@ -16,7 +16,7 @@ public class COElPasoCountyAParser extends FieldProgramParser {
 
   public COElPasoCountyAParser() {
     super("EL PASO COUNTY", "CO",
-          "( FROM_EPSO_NOTIFICATION%EMPTY CALL! At:ADDR! Apt_#:APT_PLACE! JURIS:SRC! ( CMD:CH! | CH! ) TA_Resp:CH! Inc_#:ID! Units:UNIT? Details:INFO! " +
+          "( FROM_EPSO_NOTIFICATION%EMPTY CALL! At:ADDR! Apt_#:APT_PLACE! JURIS:SRC! ( CMD:CH! | CH! ) TA_Resp:CH! Inc_#:ID? Units:UNIT? Details:INFO! " +
           "| Add:ADDR! Problem:CALL! Apt:APT! Loc:PLACE! Code:CODE! RP_Ph:PHONE! GPS:GPS/d? Inc_#:ID? Units:UNIT? Caution/Access_Info:INFO! " +
           "| ID? ( SRC UNIT | SRC_UNIT | SRC UNIT ) " +
                    "( DISTRICT CALL PLACE ADDR UNIT/C EMPTY! " +
@@ -201,7 +201,7 @@ public class COElPasoCountyAParser extends FieldProgramParser {
 
   private class MyUnitField extends UnitField {
     public MyUnitField() {
-      super("[,pA-Z0-9 ]+", true);
+      super("(?:2nd-)?[,pA-Z0-9 ]+", true);
     }
 
     @Override
