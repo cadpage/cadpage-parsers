@@ -10,7 +10,7 @@ public class DispatchA90Parser extends FieldProgramParser {
 
   public DispatchA90Parser(String defCity, String defState) {
     super(defCity, defState,
-          "INCIDENT:ID! TITLE:CALL! PLACE:PLACE? ADDRESS:ADDR? CITY:CITY? STATE:ST? GPS:GPS? ( BOX:BOX! | Box:BOX! | ) NOTES:INFO/N+");
+          "INCIDENT:ID! TITLE:CALL! PLACE:PLACE? ADDRESS:ADDR? CITY:CITY? STATE:ST? CROSSSTREET:X? GPS:GPS? ( BOX:BOX! | Box:BOX! | ) NOTES:INFO/N+");
   }
 
   @Override
