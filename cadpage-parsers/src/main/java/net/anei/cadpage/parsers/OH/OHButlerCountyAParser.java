@@ -11,7 +11,7 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
 public class OHButlerCountyAParser extends FieldProgramParser {
   public OHButlerCountyAParser() {
     super("BUTLER COUNTY", "OH",
-          "Master_Incident_Number:ID! Response_Date:DATETIME! Response_Area:MAP Incident_Type:CODE Problem:CALL! Priority_Number:SKIP Priority_Description:PRI Location_Name:PLACE! Address:ADDR! Apartment:APT! City:CITY! Location_Type:SKIP Longitude:GPS3/d! Latitude:GPS3/d! Cross_Street:X! Call_Back_Phone:PHONE! Caller_Name:NAME! Caller_Location_Name:SKIP! INFO/N+ All_Units_Assigned:UNIT! Case_Number:ID! EMD_Used:SKIP",
+          "Master_Incident_Number:ID! Response_Date:DATETIME! Response_Area:MAP Incident_Type:CODE Problem:CALL! Priority_Number:SKIP Priority_Description:PRI Location_Name:PLACE! Address:ADDR! Apartment:APT! City:CITY! Location_Type:SKIP Longitude:GPS3/d! Latitude:GPS3/d! Cross_Street:X! Call_Back_Phone:PHONE! Caller_Name:NAME! Caller_Location_Name:SKIP INFO/N+ All_Units_Assigned:UNIT! Case_Number:ID! EMD_Used:SKIP",
           FLDPROG_ANY_ORDER);
   }
 
