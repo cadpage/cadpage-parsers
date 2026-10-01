@@ -1527,6 +1527,7 @@ public class CASanBernardinoCountyAParser extends FieldProgramParser {
       "INH-O1t",    "CO detector - no symptoms - suicide attempt (other toxic substances)",
       "INH-O1u",    "CO detector - no symptoms - unknown",
       "JUMP",       "JUMP / Threatening to jump",
+      "LEA",        "Law Enforcement Assist",
       "LAR",        "LAR Lg Anml Rq",
       "LAW",        "Law Enforcement Assist",
       "Law Enforce","Law Enforcement Assist",
