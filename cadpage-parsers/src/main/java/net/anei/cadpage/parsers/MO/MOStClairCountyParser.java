@@ -7,7 +7,7 @@ public class MOStClairCountyParser extends FieldProgramParser {
 
   public MOStClairCountyParser() {
     super("ST CLAIR COUNTY", "MO",
-          "CAD CALL:CALL! ADDR:ADDR! X:X? ID:ID! DATE:DATE! TIME:TIME! UNIT:UNIT! ( INFO:INFO INFO/N+? URL! | URL! ) END");
+          "CAD CALL:CALL! ADDR:ADDRCITYST! X:X? ID:ID! DATE:DATE! TIME:TIME! UNIT:UNIT! ( INFO:INFO INFO/N+? URL! | URL! ) END");
   }
 
   @Override

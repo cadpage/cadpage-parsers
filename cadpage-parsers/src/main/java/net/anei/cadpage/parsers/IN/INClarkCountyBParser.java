@@ -6,7 +6,7 @@ public class INClarkCountyBParser extends DispatchH05Parser {
 
   public INClarkCountyBParser() {
     super("CLARK COUNTY", "IN",
-          "DATETIME MAP ADDRCITY PLACE X CALL! INFO+BLK+? UNIT! TIMES");
+          "DATETIME MAP ADDRCITY PLACE X CALL! INFO_BLK+? UNIT! TIMES");
   }
 
   @Override
