@@ -201,7 +201,7 @@ public class COElPasoCountyAParser extends FieldProgramParser {
 
   private class MyUnitField extends UnitField {
     public MyUnitField() {
-      super("(?:2nd-)?[,pA-Z0-9 ]+", true);
+      super("((?:\\b(?:2nd-|p)?[A-Z0-9]+\\b,?)*)(?: *,)?", true);
     }
 
     @Override
@@ -233,14 +233,4 @@ public class COElPasoCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
-
-  private String cvtJurisCity(String city) {
-    return convertCodes(city, JURIS_CITY_TABLE);
-  }
-
-  private static final Properties JURIS_CITY_TABLE = buildCodeTable(new String[]{
-      "El Paso County SO",              "El Paso County",
-      "EPSO Unincorporated Area",       "",
-      "USAFA SF",                       "Air Force Academy"
-  });
 }
