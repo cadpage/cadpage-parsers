@@ -12,7 +12,7 @@ public class DispatchC05Parser extends FieldProgramParser {
           "ID ID2/L? PRI CALL PLACE+? ADDRCITYST/Z UNIT EMPTY! INFO/N+");
   }
 
-  private static final Pattern DELIM = Pattern.compile(" /(?= )");
+  private static final Pattern DELIM = Pattern.compile(" /(?= |$)");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {

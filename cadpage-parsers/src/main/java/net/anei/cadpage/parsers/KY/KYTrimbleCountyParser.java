@@ -4,8 +4,10 @@ import net.anei.cadpage.parsers.GroupBestParser;
 
 
 public class KYTrimbleCountyParser extends GroupBestParser {
-  
+
   public KYTrimbleCountyParser() {
-    super(new KYTrimbleCountyAParser(), new KYTrimbleCountyBParser());
+    super(new KYTrimbleCountyAParser(),
+          new KYTrimbleCountyBParser(),
+          new KYTrimbleCountyCParser());
   }
 }
