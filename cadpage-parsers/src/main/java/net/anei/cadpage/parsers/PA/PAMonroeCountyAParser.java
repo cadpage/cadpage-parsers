@@ -7,11 +7,12 @@ public class PAMonroeCountyAParser extends FieldProgramParser {
 
   public PAMonroeCountyAParser() {
     super(PAMonroeCountyParser.CITY_LIST, "MONROE COUNTY", "PA",
-          "( E:CALL! F:CALL/SDS! P:CALL/SDS! ADDRCITY! EMPTY X_ST:X! " +
-          "| CALL ( PRI_N ADDRCITY PLACE X_ST:X! UNIT " +
-                 "| ADDRCITY/S! Priority:PRI! INFO! PLACE! X_ST:X! " +
+          "( PHONE_CALL NAME PHONE STARS INFO/N+? STARS ADDRCITY! " +
+          "| CALL ( PRI_N ADDRCITY PLACE X_ST:X! " +
+                 "| ALARM_LEVEL:PRI ADDRCITY PLACE X_ST:X " +
                  ") " +
-          ") GPS! INFO/N+ ");
+            "( GPS UNIT! | UNIT GPS! ) INFO/N+ " +
+          ")");
     removeWords("ROAD", "FS", "SQ");
     setupSpecialStreets("SUNSET STRIP");
   }
@@ -32,6 +33,8 @@ public class PAMonroeCountyAParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("PHONE_CALL")) return new CallField("PHONE CALL", true);
+    if (name.equals("STARS")) return new SkipField("\\*{3,}", true);
     if (name.equals("PRI_N")) return new PriorityField("\\d", true);
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("PLACE")) return new MyPlaceField();
