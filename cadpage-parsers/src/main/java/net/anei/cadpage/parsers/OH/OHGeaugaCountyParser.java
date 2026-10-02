@@ -7,8 +7,10 @@ import net.anei.cadpage.parsers.GroupBestParser;
  */
 
 public class OHGeaugaCountyParser extends GroupBestParser {
-  
+
   public OHGeaugaCountyParser() {
-    super(new OHGeaugaCountyAParser(), new OHGeaugaCountyBParser());
+    super(new OHGeaugaCountyAParser(),
+          new OHGeaugaCountyBParser(),
+          new OHGeaugaCountyCParser());
   }
 }

@@ -2205,7 +2205,7 @@ public class Active911ParserTable {
       "US/OH/FayettevilleFD",             "WVFayetteCounty",   // A911 misassigned state
       "US/OH/FultonCounty",               "OHFultonCounty",
       "US/OH/GalliaCounty",               "OHGalliaCounty",
-      "US/OH/GeaugaCounty",               "OHGeaugaCountyB",
+      "US/OH/GeaugaCounty",               "OHGeaugaCountyB,OHGeaugaCountyC",
       "US/OH/GenevaOnTheLake",            "OHAshtabulaCounty",
       "US/OH/GermantownFD",               "OHMontgomeryCountyA",
       "US/OH/GrangerFD",                  "OHMedinaCountyD",
