@@ -25,7 +25,7 @@ public class DispatchA57Parser extends FieldProgramParser {
                   "Assigned_Units:UNIT! Quadrant:MAP! District:MAP! Beat:MAP! Radio_Channel:CH? Narrative:INFO! INFO/N+ " +
               "| Callers_Number:PHONE? Call_Type:CALL! Nature_of_Call:CALL/SDS? Radio_Channel:CH? Common_Name:PLACE? Address:ADDRCITYST/S6! " +
                 "( Cross_Sts:X! Unit:UNIT! INFO/N+? DATETIME! GPS? " +
-                "| City:CITY Common_Name:PLACE Custom_Layer:MAP? Map_Page:MAP? ( Latt:GPS1! Long:GPS2 | ) Closest_Intersection:X EMPTY+? Narrative:INFO Additional_Location_Info:INFO EMPTY+? Nature_of_Call:INFO EMPTY+? " +
+                "| City:CITY Common_Name:PLACE Custom_Layer:MAP? Map_Page:MAP? ( Latt:GPS1! Long:GPS2 | ) Caller_Phone_Number:PHONE? Closest_Intersection:X EMPTY+? Narrative:INFO Additional_Location_Info:INFO EMPTY+? Nature_of_Call:INFO EMPTY+? " +
                       "( Lat:GPS1! Long:GPS2 | ) ( Assigned_Units:UNIT% | Dispatched_Units:UNIT% ) Priority:PRI? ( Narrative:INFO/N | Nar:INFO/N | ) INFO/N+ Status:SKIP? ( Fire_Box:BOX EMS_District:MAP | Quadrant:MAP District:MAP ) Beat:MAP " +
                       "Lat_and_Long:GPS CFS_Number:ID1? Primary_Incident:ID2/L CFS_Number:ID1? Radio_Channel:CH? ( Nar:INFO | Narrative:INFO ) INFO/N+ CallerNumber:PHONE? Lat:GPS1 ( Long:GPS2 | Lon:GPS2 ) Units:UNIT " +
                 ") " +
