@@ -2,10 +2,10 @@ package net.anei.cadpage.parsers.TX;
 
 import java.util.regex.Pattern;
 
-import net.anei.cadpage.parsers.FieldProgramParser;
+import net.anei.cadpage.parsers.HtmlProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
-public class TXBastropCountyBParser extends FieldProgramParser {
+public class TXBastropCountyBParser extends HtmlProgramParser {
 
   public TXBastropCountyBParser() {
     super("BASTROP COUNTY", "TX",
@@ -24,9 +24,13 @@ public class TXBastropCountyBParser extends FieldProgramParser {
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("(?:Update to Incident|New Incident) - \\d+");
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (!SUBJECT_PTN.matcher(subject).matches()) return false;
-    return parseFields(body.split("\n"), data);
+  protected boolean parseHtmlMsg(String subject, String body, Data data) {
+    if (body.startsWith("<meta")) {
+      return super.parseHtmlMsg(subject, body, data);
+    } else {
+      if (!SUBJECT_PTN.matcher(subject).matches()) return false;
+      return parseFields(body.split("\n"), data);
+    }
   }
 
   @Override
