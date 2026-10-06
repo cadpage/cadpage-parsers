@@ -11,7 +11,7 @@ public class GAHartCountyParser extends DispatchSPKParser {
 
   @Override
   public String getFilter() {
-    return "hartcong911@hartcountyga.gov";
+    return "hartcong911@hartcountyga.gov,hartcounty911@dsctech.com";
   }
 
   @Override
