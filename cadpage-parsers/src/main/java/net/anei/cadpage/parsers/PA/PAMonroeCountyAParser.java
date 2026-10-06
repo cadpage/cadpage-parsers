@@ -11,7 +11,7 @@ public class PAMonroeCountyAParser extends FieldProgramParser {
           "| CALL ( PRI_N ADDRCITY PLACE X_ST:X! " +
                  "| ALARM_LEVEL:PRI ADDRCITY PLACE X_ST:X " +
                  ") " +
-            "( GPS UNIT! | UNIT GPS! ) INFO/N+ " +
+            "( Lat/Lon:GPS UNIT! | GPS UNIT! | UNIT GPS! ) INFO/N+ " +
           ")");
     removeWords("ROAD", "FS", "SQ");
     setupSpecialStreets("SUNSET STRIP");
