@@ -1170,6 +1170,33 @@ public class FieldProgramParser extends SmartAddressParser {
   }
 
   /**
+   * This method is invoked to process fields retrieved from a pattern match
+   * @param match Pattern match containing field groups
+   * @param data Data object to be filled
+   * @return true if parsing was successful
+   */
+  protected boolean parseFields(Matcher match, Data data) {
+    String[] flds = new String[match.groupCount()];
+    for (int jj = 0; jj < flds.length; jj++) {
+      flds[jj] = match.group(jj);
+    }
+    return parseFields(flds, data);
+  }
+
+  /**
+   * This field parses a single string field, typically a complex address field
+   * @param field field to be processed
+   * @param data Data object to be filled
+   * @return true if parsing was successful
+   */
+  protected boolean parseFields(String field, Data data) {
+    if (!parseFields(new String[] {field}, data)) return false;
+    fieldRecord = null;
+    return true;
+
+  }
+
+  /**
    * This method is invoked to process an array of parsed fields as determined
    * by the field program passed to the constructor
    * @param fields Array of fields to be processed

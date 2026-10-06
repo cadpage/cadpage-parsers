@@ -9,8 +9,8 @@ public class CORioBlancoCountyParser extends GroupBestParser {
 
 
   public CORioBlancoCountyParser() {
-    super(new CORioBlancoCountyAParser());
-  }
+    super(new CORioBlancoCountyAParser(), new CORioBlancoCountyBParser());
+   }
 }
 
 

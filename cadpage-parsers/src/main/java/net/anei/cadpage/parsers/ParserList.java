@@ -1065,6 +1065,7 @@ public class ParserList {
               ,"MSJacksonCounty"                ,"Jackson County, MS"
               ,"MSLafayetteCounty"			  	    ,"Lafayette County, MS"
               ,"MSLauderdaleCounty"             ,"Lauderdale County, MS"
+              ,"MSLincolnCounty"                ,"Lincoln County, MS"
               ,"MSMadisonCounty"                ,"Madison County, MS"
               ,"MSMarionCounty"                 ,"Marion County, MS"
               ,"MSMonroeCounty"                 ,"Monroe County, MS"
