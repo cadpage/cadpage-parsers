@@ -1974,7 +1974,7 @@ public class Active911ParserTable {
       "US/NJ/McGuireAFB",                 "NJBurlingtonCountyI",
       "US/NJ/MICCOM",                     "NJMICOMB",
       "US/NJ/Middle",                     "NJCapeMayCounty",
-      "US/NJ/MonmouthCounty",             "NJMonmouthCountyA,NJMonmouthCountyD",
+      "US/NJ/MonmouthCounty",             "NJMonmouthCountyA,NJMonmouthCountyD,NJMonmouthCountyJ",
       "US/NJ/MorrisCounty",               "NJMorrisCountyA",
       "US/NJ/MountainLakesJFD",           "NJMorrisCountyA",
       "US/NJ/MountainLakesVFD",           "NJMorrisCountyA",

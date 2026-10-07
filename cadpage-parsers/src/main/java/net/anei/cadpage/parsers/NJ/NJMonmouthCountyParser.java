@@ -13,7 +13,8 @@ public class NJMonmouthCountyParser extends GroupBestParser {
   public NJMonmouthCountyParser() {
     super(new NJMonmouthCountyAParser(), new NJMonmouthCountyBParser(),
           new NJMonmouthCountyCParser(), new NJMonmouthCountyDParser(),
-          new NJMonmouthCountyFParser(), new NJMonmouthCountyGParser());
+          new NJMonmouthCountyFParser(), new NJMonmouthCountyGParser(),
+          new NJMonmouthCountyJParser());
   }
 
   static final String[] CITY_LIST = new String[]{
