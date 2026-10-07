@@ -28,6 +28,7 @@ public class MNAitkinCountyParser extends FieldProgramParser {
     if (name.equals("ADDR1")) return new MyAddressCityStateField(false);
     if (name.equals("ADDRCITYST")) return new MyAddressCityStateField(true);
     if (name.equals("MAP")) return new MapField("(?:Township|Section) - +(?:None()|(.*))", true);
+    if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("DATETIME")) return new DateTimeField("Time of Call - +(\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d)", true);
     if (name.equals("PHONE")) return new PhoneField("Caller phone - +(?:None()|(.*))", true);
     if (name.equals("ID")) return new IdField("Call Number - +(\\d+)", true);
@@ -55,6 +56,14 @@ public class MNAitkinCountyParser extends FieldProgramParser {
         data.strAddress = "";
         super.parse(addr, data);
       }
+    }
+  }
+
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      super.parse(field, data);
     }
   }
 }
