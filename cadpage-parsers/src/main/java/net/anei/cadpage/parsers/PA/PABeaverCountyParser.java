@@ -273,6 +273,7 @@ public class PABeaverCountyParser extends FieldProgramParser {
 
       // Butler County
       "CRANBERRY TWP",
+      "ZELIENOPLE",
 
       // Fayette County
       "FAYETTE COUNTY",
