@@ -22,6 +22,7 @@ public class NCStanlyCountyCParser extends DispatchC11Parser {
         "ANIMAL_RESCUE",
         "COMMERCIAL",
         "COMMERCIAL_INDUSTRIAL",
+        "COMPLAINT",
         "DEFAULT",
         "DETECTOR",
         "ELECTRICAL_ARC",
@@ -41,6 +42,7 @@ public class NCStanlyCountyCParser extends DispatchC11Parser {
         "OTHERMISC",
         "OUTSIDE_COMM",
         "OUTSIDE_ODOR",
+        "P129_PER",
         "RESIDENTIAL",
         "RESIDENTIAL_SING",
         "SERVICE_CALL",
@@ -52,9 +54,11 @@ public class NCStanlyCountyCParser extends DispatchC11Parser {
         "TREE_OBJECT",
         "TREES_OBJECTS_FIRE",
         "UNKNOWN",
+        "UNKNOWN_EXPL",
         "VEHICLE_FIRE",
         "VEH_THR_BUILD",
-        "WIRES_DOWN");
+        "WIRES_DOWN",
+        "WIRES_DOWN_SMK");
   }
 
   @Override
