@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class DispatchC11Parser extends FieldProgramParser {
 
@@ -29,7 +30,7 @@ public class DispatchC11Parser extends FieldProgramParser {
                                                                      ((flags & C11_UNIT) != 0 ? "UNIT! " : "") +
                                                                      ((flags & C11_INFO) != 0 ? "INFO/N+ " : "") +
                                                                      ") " +
-          "| CALL CALL/SDS ADDRCITYST2! " +
+          "| UDTS:CALL CALL/SDS ADDRCITYST2! " +
           ") END");
     this.cityCodes = cityCodes;
   }
@@ -42,17 +43,28 @@ public class DispatchC11Parser extends FieldProgramParser {
     this.codeList = new HashSet<String>(Arrays.asList(args));
   }
 
+  private static final Pattern GEN_ALERT_PTN = Pattern.compile("Subject: '(.*?)' Message: '(.*?)'?");
   private static final Pattern DELIM = Pattern.compile("~ ");
 
   protected boolean parseMsg(String body, Data data) {
-    if (body.startsWith("Subject: '' Message: 'UDTS: ")) {
-      setSelectValue("2");
-      body = body.substring(28).trim();
-      body = stripFieldEnd(body, "'");
+    Matcher match = GEN_ALERT_PTN.matcher(body);
+    if (match.matches()) {
+      String subject = match.group(1);
+      if (subject.equals("No Subject")) subject = "";
+      body = match.group(2);
+      if (body.startsWith("UDTS:")) {
+        setSelectValue("2");
+      } else {
+        setFieldList("CALL INFO");
+        data.strCall = subject;
+        data.msgType = MsgType.GEN_ALERT;
+        data.strSupp = body;
+        return true;
+      }
     } else {
       setSelectValue("1");
-      if (body.endsWith("~")) body = body.substring(0, body.length()-1);
     }
+    if (body.endsWith("~")) body = body.substring(0, body.length()-1);
     return parseFields(DELIM.split(body, -1), data);
   }
 
