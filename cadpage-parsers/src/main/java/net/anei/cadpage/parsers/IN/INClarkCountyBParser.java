@@ -34,7 +34,7 @@ public class INClarkCountyBParser extends DispatchH05Parser {
     return super.getField(name);
   }
 
-  private static final Pattern TRAIL_APT_PTN = Pattern.compile("(.*,.*) (\\d+[A-Z]?|[A-Z]+)");
+  private static final Pattern TRAIL_APT_PTN = Pattern.compile("(.*,.*?) (\\.?\\d+[- ]?[A-Z]?|[A-Z]+)");
 
   private class MyAddressCityField extends AddressCityField {
     @Override

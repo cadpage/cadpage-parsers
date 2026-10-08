@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.TX;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.HtmlProgramParser;
@@ -9,7 +10,7 @@ public class TXBastropCountyBParser extends HtmlProgramParser {
 
   public TXBastropCountyBParser() {
     super("BASTROP COUNTY", "TX",
-          "Location:ADDRCITYST! Coordinates:GPS? Call_Type:CALL! EMD_Code:CODE! Comments:INFO! INFO/N+ Responding_Units:UNIT! Incident_Number:ID! Created_Date/Time:SKIP! END");
+          "Location:ADDRCITYST/S6! Coordinates:GPS? Call_Type:CALL! EMD_Code:CODE! Comments:INFO! INFO/N+ Responding_Units:UNIT! Incident_Number:ID! Created_Date/Time:SKIP! END");
   }
 
   @Override
@@ -23,10 +24,15 @@ public class TXBastropCountyBParser extends HtmlProgramParser {
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("(?:Update to Incident|New Incident) - \\d+");
+  private static final Pattern ZIP_CITY_PTN = Pattern.compile("\\d{5} +(.*)");
+
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     if (body.startsWith("<meta")) {
-      return super.parseHtmlMsg(subject, body, data);
+      if (!super.parseHtmlMsg(subject, body, data)) return false;
+      Matcher match = ZIP_CITY_PTN.matcher(data.strCity);
+      if (match.matches()) data.strCity = match.group(1);
+      return true;
     } else {
       if (!SUBJECT_PTN.matcher(subject).matches()) return false;
       return parseFields(body.split("\n"), data);
@@ -55,5 +61,13 @@ public class TXBastropCountyBParser extends HtmlProgramParser {
     public String getFieldNames() {
       return super.getFieldNames() + " SRC";
     }
+  }
+
+  private static final Pattern NOT_APT_PTN = Pattern.compile("[A-Z]");
+
+  @Override
+  protected boolean isNotExtraApt(String apt) {
+    if (NOT_APT_PTN.matcher(apt).matches()) return true;
+    return super.isNotExtraApt(apt);
   }
 }

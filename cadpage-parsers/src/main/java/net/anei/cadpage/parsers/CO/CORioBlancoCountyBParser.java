@@ -40,6 +40,12 @@ public class CORioBlancoCountyBParser extends FieldProgramParser {
       body = stripFieldEnd(body, "None");
       String[] flds = INFO_BRK_PTN.split(body);
       if (!parseFields(flds[0], data)) return false;
+      String tmpAddr = setGPSLoc(data.strAddress, data);
+      if (tmpAddr.isEmpty()) {
+        data.strGPSLoc = "";
+      } else {
+        data.strAddress = tmpAddr;
+      }
       if (flds.length > 1) data.strCall = flds[1];
       for (int jj = 2; jj<flds.length; jj++) {
         data.strSupp = append(data.strSupp, "\n", flds[jj]);
