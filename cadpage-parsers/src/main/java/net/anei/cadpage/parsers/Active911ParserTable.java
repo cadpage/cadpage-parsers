@@ -2683,6 +2683,7 @@ public class Active911ParserTable {
       "US/SD/Hughes",                     "SDHydeCounty",
       "US/SD/HutchinsonCounty",           "SDHutchinsonCounty",
       "US/SD/JonesCounty",                "SDJonesCounty",
+      "US/SD/LakeCounty",                 "SDLakeCounty",
       "US/SD/LincolnCounty",              "SDLincolnCounty",
       "US/SD/McCookCounty",               "SDMcCookCounty",
       "US/SD/McPhersonCounty",            "SDMcPhersonCounty",
