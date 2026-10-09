@@ -13,8 +13,9 @@ public class KSRenoCountyParser extends DispatchH05Parser {
 
   public KSRenoCountyParser() {
     super("RENO COUNTY", "KS",
-          "( SELECT/1 ID1 ADDRCITY1 PLACE CALL UNIT1! INFO/N+ " +
-          "| CALL2 ADDRCITY2 NAME_PHONE? DATETIME2! INFO_BLK/Z+? UNIT2! TIMES+? ID FINAL END )");
+          "( SELECT/1 ( DATETIME CALL ADDRCITY! INFO/N+ " +
+                     "| ID1 ADDRCITY1 PLACE CALL UNIT1! INFO/N+ ) " +
+          "| CALL2 ADDRCITY2 NAME_PHONE? DATETIME! INFO_BLK/Z+? UNIT2! TIMES+? ID FINAL END )");
   }
 
   @Override
@@ -52,8 +53,8 @@ public class KSRenoCountyParser extends DispatchH05Parser {
     if (name.equals("CALL2")) return new MyCall2Field();
     if (name.equals("ADDRCITY2")) return new MyAddressCity2Field();
     if (name.equals("NAME_PHONE")) return new MyNamePhoneField();
-    if (name.equals("DATETIME2")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d:\\d\\d:\\d\\d", true);
-    if (name.equals("UNIT2")) return new UnitField("(?:\\b(?:[A-Z]+\\d+|DC-\\d+|\\S+ ?NOTIFY)\\b[, ]*)+", true);
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d?/\\d\\d?/\\d{4} +\\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("UNIT2")) return new UnitField("(?:\\b(?:[A-Z]+\\d+|DC-\\d+|\\d{3}|\\S+ ?NOTIFY)\\b[, ]*)+", true);
     if (name.equals("FINAL")) return new SkipField("Final", true);
     return super.getField(name);
   }
@@ -99,14 +100,14 @@ public class KSRenoCountyParser extends DispatchH05Parser {
       if (parts.length < 3) abort();
       parseAddress(parts[0].replace('@', '&'), data);
       data.strCity = parts[1];
-      data.strApt = append(data.strApt, "-", parts[2]);
+      data.strPlace = append(data.strApt, "-", parts[2]);
       for (int ndx = 3; ndx < parts.length; ndx++)
       data.strCross = append(data.strCross, " / ", parts[ndx]);
     }
 
     @Override
     public String getFieldNames() {
-      return "ADDR CITY APT X";
+      return "ADDR APT CITY PLACE X";
     }
   }
 
