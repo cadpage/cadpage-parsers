@@ -24,7 +24,7 @@ public class TXBastropCountyBParser extends HtmlProgramParser {
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("(?:Update to Incident|New Incident) - \\d+");
-  private static final Pattern ZIP_CITY_PTN = Pattern.compile("\\d{5} +(.*)");
+  private static final Pattern ZIP_CITY_PTN = Pattern.compile("\\d{5}(?:-\\d{4})? +(.*)");
 
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
@@ -48,13 +48,41 @@ public class TXBastropCountyBParser extends HtmlProgramParser {
   private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
+
+      // Look for leading place field with regular address following in parentheisis
+      // Checking for some special character that proves this is not a alpha source field
       if (field.endsWith(")")) {
-        int pt = field.indexOf('(');
-        if (pt < 0) abort();
-        data.strSource = field.substring(pt+1, field.length()-1).trim();
-        field = field.substring(0, pt).trim();
+        boolean good = false;
+        int cnt = 0;
+        int pt = field.length()-1;
+        for ( ; pt >= 0; pt--) {
+          char chr = field.charAt(pt);
+          if (chr == ')') cnt++;
+          else if (chr == '(') cnt--;
+          if (!good) {
+            if (cnt > 1 || Character.isDigit(chr) || chr == '/' || chr == '&') good = true;
+          }
+          if (cnt == 0) break;
+        }
+        if (cnt > 0) abort();
+        if (good) {
+          data.strPlace = field.substring(0, pt).trim();
+          field = field.substring(pt+1, field.length()-1).trim();
+        }
       }
+
+      // OK, now we can look for the trailing source and address fields
+      Parser p = new Parser(field);
+      String apt = p.getLastOptional(')');
+      data.strSource = p.getLastOptional('(');
+      field = p.get();
+      if (field.isEmpty()) abort();
       super.parse(field, data);
+      if (!data.strApt.isEmpty() && data.strAddress.toUpperCase().endsWith("COUNTY LINE RD")) {
+        data.strAddress = data.strAddress + ' ' + data.strApt;
+        data.strApt = "";
+      }
+      data.strApt = append(data.strApt, "-", apt);
     }
 
     @Override
