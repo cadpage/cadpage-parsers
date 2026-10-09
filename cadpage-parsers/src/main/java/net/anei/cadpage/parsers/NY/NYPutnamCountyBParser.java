@@ -12,8 +12,8 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
     super("PUTNAM COUNTY", "NY",
           "DASH? ( MARK DATETIME! Call_Type:CALL! Location:ADDRCITY/S6! Cross_St:X! Common_Name:PLACE! " +
                       "Additional_Location_Information:PLACE/SDS! Quadrant:MAP! Narrative:INFO! " +
-                "| ( DATETIME! | TIME ) ( Fire:CALL! EMS:CALL/SLS? | EMS:CALL! FIRE:CALL/SLS! | FIRE:CALL CALL2/SLS! | Call_Type:CALL! | CALL! ) NOC:INFO? " +
-                      "( Location:ADDRCITY/S6! ( Cross_Street:X! | X ) Common_Name:PLACE! Additional_Info:INFO/N " +
+                "| ( DATETIME! | TIME ) ( Fire:CALL! EMS:CALL/SLS? | EMS:CALL! FIRE:CALL/SLS! | FIRE:CALL ( EMS:CALL2/SLS | CALL2/SLS! ) | Call_Type:CALL! | CALL! ) NOC:INFO? " +
+                      "( Location:ADDRCITY/S6! ( Cross_Street:X! | X ) BOX_ASSGN? Common_Name:PLACE! Additional_Info:INFO/N " +
                       "| CALL ADDRCITY/ZS6 XS:X! PLACE " +
                       "| ADDRCITY/S6! X PLACE " +
                       ") ( Box:BOX! | BOX? ) EMS:CALL/SDS? Fire:CALL/SDS? " +
@@ -35,8 +35,19 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
                .replace("Quadrant::", "Quadrant:")
                .replace("Additional Info::", "Additional Info:");
     if (!parseFields(body.split("\\n+"), data)) return false;
+    if (data.strCall.isEmpty()) return false;
     if (data.strCity.equals("OUTSIDE PUTNAM COUNTY")) data.strCity = "OUTSIDE COUNTY";
-    return !data.strCall.isEmpty();
+    String box = data.strBox;
+    if (!box.isEmpty()) {
+      int pt = box.indexOf('(');
+      if (pt >= 0) {
+        box = box.substring(pt);
+      } else {
+        box = '(' + box + ')';
+      }
+      data.strCall = data.strCall + ' ' + box;
+    }
+    return true;
   }
 
   @Override
@@ -56,6 +67,7 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("BOX")) return new BoxField(BOX_PTN, true);
+    if (name.equals("BOX_ASSGN")) return new BoxField("Box Assignment *(.*)", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
