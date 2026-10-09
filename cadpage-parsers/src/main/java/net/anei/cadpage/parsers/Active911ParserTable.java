@@ -387,6 +387,7 @@ public class Active911ParserTable {
       "US/CO/CityofLoveland",             "COLarimerCountyF",
       "US/CO/CityofThornton",             "COThornton",
       "US/CO/ColoradoSprings",            "COElPasoCountyB",
+      "US/CO/ColoradoSpringsCMD",         "COElPasoCountyB",
       "US/CO/ConejosCounty",              "COConejosCounty",
       "US/CO/Crisppaging",                "COLarimerCountyC",
       "US/CO/CSPCostillaCounty",          "COCostillaCounty",
