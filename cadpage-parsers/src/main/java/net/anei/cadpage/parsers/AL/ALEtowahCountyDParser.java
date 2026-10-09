@@ -7,16 +7,18 @@ public class ALEtowahCountyDParser extends FieldProgramParser {
 
   public ALEtowahCountyDParser() {
     super("ETOWAH COUNTY", "AL",
-          "CALL:CALL! PLACE:PLACE? ADDR:ADDR/SXP! CITY:CITY! ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! UNIT:UNIT! INFO:INFO INFO/N+");
+          "CALL:CALL! PLACE:PLACE? ADDR:ADDR/SXP! CITY:CITY! ID:ID! PRI:PRI! DATE:DATE! TIME:TIME! MAP:MAP? UNIT:UNIT! INFO:INFO INFO/N+");
   }
 
   @Override
   public String getFilter() {
-    return "CAD@attallacity.org";
+    return "CAD@attallacity.org,no-reply@angeltracksoftware.com";
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    int pt = body.indexOf("\n--\n");
+    if (pt >= 0) body = body.substring(0,pt).trim();
     return parseFields(body.split("\n"), data);
   }
 
