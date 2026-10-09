@@ -15,8 +15,9 @@ public class TXWylieAParser extends FieldProgramParser {
 
   public TXWylieAParser() {
     super("", "TX",
-        "( NATURE:CALL! BOX:BOX! ADDRESS:ADDR! CROSS_STREETS(S):X! WYFD CHANNEL:CH! CITY2 UNITS:UNIT! " +
-        "| CALL! BOX:BOX? ADDR! ( CROSS_STREET(S):X | INTERSECTS_WITH:X | ) ( CHANNEL:CH | ) SKIP+? CITY1!");
+        "( NATURE:CALL! BOX:BOX! ADDRESS:ADDR! CROSS_STREET(S):X! WYFD_CHANNEL:CH! CITY2 UNITS:UNIT! " +
+        "| CALL! BOX:BOX? ADDR! ( CROSS_STREET(S):X | INTERSECTS_WITH:X | ) ( CHANNEL:CH | ) SKIP+? CITY1! " +
+        ")");
     setupProtectedNames("BUTSCHERS BLOCK");
   }
 
