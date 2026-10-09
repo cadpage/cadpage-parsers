@@ -22,6 +22,11 @@ public class PAMonroeCountyAParser extends FieldProgramParser {
     return "notify@monroeco911.com";
   }
 
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
   private String addressLine;
 
   @Override
