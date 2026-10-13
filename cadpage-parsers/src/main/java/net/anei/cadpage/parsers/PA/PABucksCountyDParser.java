@@ -29,36 +29,44 @@ public class PABucksCountyDParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS;
   }
 
+  private static final Pattern SPLIT_GPS_PTN = Pattern.compile("\n([-+]?\\d{2}\\.\\d+)\n([-+]?\\d{2}\\.\\d+)\n");
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+
+    if (subject.startsWith("Station")) {
+      data.strSource = subject;
+      body = body.replace("\nBtwn:", "\nbtwn:").replace(" \nBox:", " Box:").replace("Call \nText:", "Call Text:");
+      body = SPLIT_GPS_PTN.matcher(body).replaceFirst("\n$1,$2\n");
+    } else if (!subject.equals("CAD PAGE")) return false;
 
     int pt = body.indexOf("\n******");
     if (pt >= 0) body = body.substring(0,pt).trim();
 
-    if (subject.equals("CAD PAGE")) {
-      setFieldList("CALL INFO");
-      if (body.startsWith("COVER NOTIFICATION:,")) {
+    setFieldList("CALL INFO");
+    if (body.startsWith("COVER NOTIFICATION:,")) {
+      data.msgType = MsgType.GEN_ALERT;
+      data.strCall = "COVER NOTIFICATION";
+      for (String line : body.substring(20).split(",")) {
+        data.strSupp = append(data.strSupp, "\n", line.trim());
+      }
+      return true;
+    }
+    else {
+      String[] flds = body.split("\n");
+      if (flds.length >= 10) {
+        return parseFields(flds, data);
+      } else {
+        setFieldList("INFO");
         data.msgType = MsgType.GEN_ALERT;
-        data.strCall = "COVER NOTIFICATION";
-        for (String line : body.substring(20).split(",")) {
-          data.strSupp = append(data.strSupp, "\n", line.trim());
-        }
+        data.strSupp = body;
         return true;
       }
-      else {
-        String[] flds = body.split("\n");
-        if (flds.length >= 10) {
-          return parseFields(flds, data);
-        } else {
-          setFieldList("INFO");
-          data.msgType = MsgType.GEN_ALERT;
-          data.strSupp = body;
-          return true;
-        }
-      }
     }
+  }
 
-    return false;
+  @Override
+  public String getProgram() {
+    return "SRC " + super.getProgram();
   }
 
   @Override
