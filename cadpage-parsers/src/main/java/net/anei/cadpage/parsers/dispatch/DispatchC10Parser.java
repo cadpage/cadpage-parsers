@@ -11,12 +11,12 @@ public class DispatchC10Parser extends FieldProgramParser {
 
   public DispatchC10Parser(String defCity, String defState) {
     super(defCity, defState,
-          "AgencyCode:SKIP! ReportNumber:ID! CadInciNumber:ID/L! NatureCode:CODE! NatureDescription:CALL! OriginalNatureCode:SKIP! StreetName:SKIP! StreetType:SKIP! " +
-          "FullAddress:ADDR! CityCode:SKIP! CityCodeDescription:CITY! State:ST! EventLatitude:GPS1! EventLongitude:GPS2! DMSLatitude:SKIP! DMSLongitude:SKIP! " +
+          "AgencyCode:SKIP! ReportNumber:ID! CadInciNumber:ID/L! NatureCode:CODE! NatureDescription:CALL! OriginalNatureCode:SKIP! EventPriorityCode:PRI StreetName:SKIP! StreetType:SKIP! " +
+          "ApartmentSuite:APT FullAddress:ADDR! CityCode:SKIP! CityCodeDescription:CITY! State:ST! ZipCode:ZIP SiteName:PLACE EventLatitude:GPS1! EventLongitude:GPS2! DMSLatitude:SKIP! DMSLongitude:SKIP! AdditionalAddressInfo:PLACE " +
           "EventStartTime:SKIP! E911CallReceived:SKIP! FirstDispatchTime:DISPATCH_TIME! FirstEnrouteTime:ENROUTE_TIME! FirstOnSceneTime:ONSCENE_TIME! " +
           "UnderControlTime:UNDER_CONTROL_TIME! LastUnitClearTime:CLEAR_TIME! FirstTransportTime:TRANSPORT_TIME! LastTransportArriveTime:TRANSPORT_ARRIVE_TIME! EventCompletedTime:COMPLETED_TIME! " +
-          "LastExportTime:SKIP! EventStation:SRC! CadResponsePlan:BOX! CallTakerUserId:SKIP! DispatcherUserId:SKIP! FirstAgencyArriveTime:SKIP! CadNotes:INFO! " +
-          "PrimaryUnit:SKIP! ReclassifiedNatureCode:SKIP! ReclassifiedNatureDescription:SKIP! CrossStreet1:SKIP! CrossStreet2:SKIP! CrossStreets:X! " +
+          "LastExportTime:SKIP! EventStation:SRC! CadResponsePlan:BOX! CadResponsePlanCategory:BOX/D CallerName:NAME CallerAddress:SKIP CallerPhone:PHONE CallTakerUserId:SKIP! DispatcherUserId:SKIP! FirstAgencyArriveTime:SKIP! CadNotes:INFO! " +
+          "PrimaryUnit:SKIP! LinkedEvents:SKIP ReclassifiedNatureCode:SKIP! ReclassifiedNatureDescription:SKIP! CrossStreet1:SKIP! CrossStreet2:SKIP! CrossStreets:X! " +
           "UnitCode:UNIT/C+", FLDPROG_XML);
   }
 
