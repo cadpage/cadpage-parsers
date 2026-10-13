@@ -4,23 +4,23 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchH05Parser;
 
 public class MOHowellCountyParser extends DispatchH05Parser {
-  
+
   public MOHowellCountyParser() {
-    super("HOWELL COUNTY", "MO", 
-          "( SELECT/1 CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! X_STREET:X1! LAT/LON:GPS1 NOTE:INFO1% INFO1/N+ " + 
+    super("HOWELL COUNTY", "MO",
+          "( SELECT/1 CALL:CALL! PLACE:PLACE! ADDR:ADDRCITY! X_STREET:X1! LAT/LON:GPS1 NOTE:INFO1% INFO1/N+ " +
           "| REPORT_DATE/TIME:DATETIME2! CALLER_NAME:NAME! CBN:PHONE! ADDR:ADDRCITY! CALL_DATE/TIME:SKIP! UNIT:UNIT! INFO:EMPTY! INFO_BLK+ INCIDENT_INFORMATION:EMPTY! INC_#:ID2! TIMES:EMPTY! TIMES+ )");
   }
-  
+
   @Override
   public String getFilter() {
     return "cad@howellcounty911.com,cad@howellcountymo911.gov";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-  
+
   @Override
   protected boolean parseHtmlMsg(String subject, String body, Data data) {
     if (subject.startsWith("Automatic R&R Notification:")) {
@@ -31,7 +31,7 @@ public class MOHowellCountyParser extends DispatchH05Parser {
       return parseFields(body.split("\n"), data);
     }
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
@@ -42,11 +42,11 @@ public class MOHowellCountyParser extends DispatchH05Parser {
     if (name.equals("ID2")) return new MyId2Field();
     return super.getField(name);
   }
-  
+
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
-      field = field.replace('@', '&');
+      field = field.replace('@', '&').replace('~', ',');
       super.parse(field, data);
     }
   }
@@ -60,7 +60,7 @@ public class MOHowellCountyParser extends DispatchH05Parser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyGPS1Field extends GPSField {
     @Override
     public void parse(String field, Data data) {
@@ -68,7 +68,7 @@ public class MOHowellCountyParser extends DispatchH05Parser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyInfo1Field extends InfoField {
     @Override
     public void parse(String field, Data data) {
@@ -78,7 +78,7 @@ public class MOHowellCountyParser extends DispatchH05Parser {
       super.parse(field, data);
     }
   }
-  
+
   private class MyId2Field extends IdField {
     @Override
     public void parse(String field, Data data) {
