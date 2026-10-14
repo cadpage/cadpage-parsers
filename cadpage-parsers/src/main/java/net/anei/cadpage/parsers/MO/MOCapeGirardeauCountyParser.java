@@ -8,6 +8,7 @@ public class MOCapeGirardeauCountyParser extends GroupBestParser {
   public MOCapeGirardeauCountyParser() {
     super(new MOCapeGirardeauCountyAParser(),
           new MOCapeGirardeauCountyBParser(),
-          new MOCapeGirardeauCountyCParser());
+          new MOCapeGirardeauCountyCParser(),
+          new MOCapeGirardeauCountyDParser());
   }
 }
