@@ -1,15 +1,12 @@
 package net.anei.cadpage.parsers.IN;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA19Parser;
+import net.anei.cadpage.parsers.GroupBestParser;
 
-public class INAllenCountyParser extends DispatchA19Parser {
+public class INAllenCountyParser extends GroupBestParser {
 
   public INAllenCountyParser() {
-    super("ALLEN COUNTY", "IN");
+    super(new INAllenCountyAParser(),
+          new INAllenCountyBParser());
   }
 
-  @Override
-  public String getFilter() {
-    return "911@allencounty.us,@nobleco.gov";
-  }
 }
