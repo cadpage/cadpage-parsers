@@ -20,7 +20,8 @@ public class PAMontgomeryCountyParser extends GroupBestParser {
            new PAMontgomeryCountyFParser(),
            new PAMontgomeryCountyGParser(),
            new PAMontgomeryCountyKParser(),
-           new PAMontgomeryCountyMParser());
+           new PAMontgomeryCountyMParser(),
+           new PAMontgomeryCountyNParser());
   }
 
   public static final Properties CITY_CODES = buildCodeTable(new String[]{
