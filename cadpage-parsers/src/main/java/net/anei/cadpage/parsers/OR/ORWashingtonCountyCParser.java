@@ -77,7 +77,7 @@ public class ORWashingtonCountyCParser extends FieldProgramParser {
       return true;
     }
 
-    if (subject.isEmpty()) return false;
+    if (subject.isEmpty() && !isPositiveId()) return false;
     setFieldList("UNIT INFO");
     data.msgType = MsgType.GEN_ALERT;
     match = GEN_UNIT_PTN.matcher(body);
