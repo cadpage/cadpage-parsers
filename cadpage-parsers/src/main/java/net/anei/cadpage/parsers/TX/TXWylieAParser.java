@@ -15,7 +15,7 @@ public class TXWylieAParser extends FieldProgramParser {
 
   public TXWylieAParser() {
     super("", "TX",
-        "( NATURE:CALL! BOX:BOX! ADDRESS:ADDR! CROSS_STREET(S):X! WYFD_CHANNEL:CH! CITY2 UNITS:UNIT! " +
+        "( NATURE:CALL! BOX:BOX? ADDRESS:ADDR! ( CROSS_STREET(S):X! | INTERSECTS_WITH:X | ) CH1+? CITY2 UNITS:UNIT! " +
         "| CALL! BOX:BOX? ADDR! ( CROSS_STREET(S):X | INTERSECTS_WITH:X | ) ( CHANNEL:CH | ) SKIP+? CITY1! " +
         ")");
     setupProtectedNames("BUTSCHERS BLOCK");
@@ -26,7 +26,7 @@ public class TXWylieAParser extends FieldProgramParser {
     return "wyliefiredispatch@gmail.com,wyliedispatch@wylietexas.gov";
   }
 
-  private static final Pattern SUBJECT_PATTERN = Pattern.compile("(?:Primary: )?ALERT \\- (.+)|String Match .*");
+  private static final Pattern SUBJECT_PATTERN = Pattern.compile("(?:Primary: )?(?:ALERT \\- (.+)|String Match .*)");
   private static final Pattern BODY_PATTERN = Pattern.compile("^CITY OF WYLIE DISPATCH\\n\\n(.*)", Pattern.DOTALL);
 
   @Override
@@ -49,9 +49,41 @@ public class TXWylieAParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("X")) return new MyCrossField();
+    if (name.equals("CH1")) return new MyChannel1Field();
     if (name.equals("CITY1")) return new CityField("IN +(.*)", true);
     if (name.equals("CITY2")) return new CityField("CITY +(.*)", true);
     return super.getField(name);
   }
 
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "/");
+      field = stripFieldEnd(field, "/");
+      super.parse(field, data);
+    }
+  }
+
+  private static final Pattern CH1_PTN = Pattern.compile("([A-Z]+) C?HANNEL: *(.*)");
+  private class MyChannel1Field extends ChannelField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      Matcher match = CH1_PTN.matcher(field);
+      if (!match.matches()) return false;
+      field = append(match.group(1), "-", match.group(2));
+      super.parse(field, data);
+      return true;
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      if (!checkParse(field, data)) abort();
+    }
+  }
 }
