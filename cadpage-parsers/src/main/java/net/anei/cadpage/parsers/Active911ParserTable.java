@@ -1689,6 +1689,7 @@ public class Active911ParserTable {
       "US/MS/PassChristian",              "MSHarrisonCountyD",
       "US/MS/PearlRiverCounty",           "MSPearlRiverCounty",
       "US/MS/PicayunePolice",             "MSPearlRiverCounty",
+      "US/MS/PrentissCounty",             "MSPrentissCounty",
       "US/MS/Southaven",                  "MSDeSotoCountyB",
       "US/MS/TateCounty",                 "MSTateCountyB",
       "US/MS/WarrenCounty",               "MSWarrenCounty",

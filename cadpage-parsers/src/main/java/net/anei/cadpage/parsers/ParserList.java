@@ -1076,6 +1076,7 @@ public class ParserList {
               ,"MSPanolaCounty"                 ,"Panola County, MS"
               ,"MSPearlRiverCounty"             ,"Pearl River County, MS"
               ,"MSPontotocCounty"               ,"Pontotoc County, MS"
+              ,"MSPrentissCounty"               ,"Prentiss County, MS"
               ,"MSRankinCounty"                 ,"Rankin County, MS"
               ,"MSTateCounty"                   ,"Tate County, MS"
               ,"MSWarrenCounty"                 ,"Warren County, MS"
