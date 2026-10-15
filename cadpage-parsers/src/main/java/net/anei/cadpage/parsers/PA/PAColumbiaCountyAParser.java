@@ -10,8 +10,9 @@ public class PAColumbiaCountyAParser extends FieldProgramParser {
 
   public PAColumbiaCountyAParser() {
     super("COLUMBIA COUNTY", "PA",
-          "CALL_TYPE:CALL! INCIDENT_LOCATION:ADDRCITY/S6! CROSS_STREETS:X! UNITS:UNIT! INCIDENT_DATE:DATETIME! INCIDENT_NUMBER:ID! GPS:GPS! " +
-              "FIRE_GROUND_TALKGROUP:CH! DETAILS:INFO! INFO/N+");
+          "( CALL_TYPE:CALL! INCIDENT_LOCATION:ADDRCITY/S6! CROSS_STREETS:X! UNITS:UNIT! INCIDENT_DATE:DATETIME! INCIDENT_NUMBER:ID! GPS:GPS! " +
+                "FIRE_GROUND_TALKGROUP:CH! DETAILS:INFO! INFO/N+ " +
+          "| CALL PLACE ADDRCITY GPS1 GPS2 EMPTY X Box_Area:BOX! Notes:INFO! INFO/N+ Units_Due:UNIT END )");
     removeWords("STREET");
   }
 
@@ -23,7 +24,11 @@ public class PAColumbiaCountyAParser extends FieldProgramParser {
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Notification")) return false;
-    return parseFields(body.split("\n"), data);
+    if (body.startsWith("CALL TYPE:")) {
+      return parseFields(body.split("\n"), data);
+    } else {
+      return parseFields(body.split(";"), data);
+    }
   }
 
   @Override
