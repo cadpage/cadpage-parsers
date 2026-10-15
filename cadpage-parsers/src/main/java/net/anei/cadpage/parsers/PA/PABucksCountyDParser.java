@@ -12,7 +12,7 @@ public class PABucksCountyDParser extends FieldProgramParser {
   public PABucksCountyDParser() {
     super("BUCKS COUNTY", "PA",
           "CALL! ( Inc#:ID! ( Box:BOX! Alrm_Lvl:PRI! ( Place_Name:PLACE! Addr:ADDR! | Addr:ADDR! Place_Name:PLACE! ) btwn:X! Pri_Remarks:INFO ( Call_Text:INFO/N! | Text:INFO/N! ) Channel:CH! ( Units:UNIT! | Run:UNIT! ) GPS! TIME! Caller:NAME Phone:PHONE Alt:PHONE/L " +
-                           "| Units:UNIT! Place_Name:PLACE Addr:ADDR! btwn:X! GPS! ( Box:BOX! | FIRE_Box:BOX! EMS_Box:BOX/L! | Fire_Box#:BOX! EMS_Box#:BOX/L! | Fire_Box:BOX! EMS_Box:BOX/L! | Sector:MAP! ) ( Pri_Remarks:PRI! | PRI_Remarks:PRI! ) Call_Text:INFO! ( Caller:NAME! | Caller_Name:NAME! Caller_Adr:SKIP! Caller_Apt#:SKIP! ) Phone:PHONE! Alt_Ph:PHONE/L! Alrm_Lvl:PRI! Channel:CH! ( Time_Out:TIME! | TIME! ) G:SKIP D:SKIP " +
+                           "| Units:UNIT! Place_Name:PLACE Addr:ADDR! btwn:X! GPS! ( Box:BOX! | FIRE_Box:BOX! EMS_Box:BOX/L! | Fire_Box#:BOX! EMS_Box#:BOX/L! | Fire_Box:BOX! EMS_Box:BOX/L! | Sector:MAP! ) ( Pri_Remarks:PRI! | PRI_Remarks:PRI! ) Call_Text:INFO! INFO/N+ ( Caller:NAME! | Caller_Name:NAME! Caller_Adr:SKIP! Caller_Apt#:SKIP! ) Phone:PHONE! Alt_Ph:PHONE/L! Alrm_Lvl:PRI! Channel:CH! ( Time_Out:TIME! | TIME! ) G:SKIP D:SKIP " +
                            "| Sector:MAP! Place_Name:PLACE! Addr:ADDR! btwn:X! Pri_Remarks:PRI! Call_Text:INFO! GPS! TIME! Units:UNIT! Caller:NAME Phone:PHONE Alt:PHONE/L " +
                            ") END " +
                 "| Box:BOX! ADDR! btwn:X! GPS! Text:INFO! TIME_ID! Run:UNIT! " +
@@ -35,6 +35,7 @@ public class PABucksCountyDParser extends FieldProgramParser {
 
     if (subject.startsWith("Station")) {
       data.strSource = subject;
+      if (body.startsWith("RESEND\n")) body = "RESEND," + body.substring(7);
       body = body.replace("\nBtwn:", "\nbtwn:").replace(" \nBox:", " Box:").replace("Call \nText:", "Call Text:");
       body = SPLIT_GPS_PTN.matcher(body).replaceFirst("\n$1,$2\n");
     } else if (!subject.equals("CAD PAGE")) return false;
