@@ -6,8 +6,7 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class NCForsythCountyParser extends GroupBestParser {
 
   public NCForsythCountyParser() {
-    super(new NCForsythCountyAParser(),
-          new NCForsythCountyBParser(),
+    super(new NCForsythCountyBParser(),
           new NCForsythCountyCParser());
   }
 }

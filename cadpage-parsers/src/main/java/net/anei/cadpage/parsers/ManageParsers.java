@@ -268,7 +268,8 @@ public class ManageParsers {
         "MOWarrenCountyA",    "General",                 // 08/27/2026
         "NYPutnamCountyA",    "General",                 // 09/16/2026
         "TXHildagoCountyC",   "General",                 // 09/18/2026
-        "MIBarryCountyA",     "General"                 // 09/28/2026
+        "MIBarryCountyA",     "General",                 // 09/28/2026
+        "NCForsythCountyA",   "General"                 // 10/15/2026
 
   });
 
