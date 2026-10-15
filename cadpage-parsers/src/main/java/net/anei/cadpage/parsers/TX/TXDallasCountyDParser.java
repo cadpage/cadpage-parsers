@@ -11,7 +11,7 @@ public class TXDallasCountyDParser extends HtmlProgramParser {
 
   public TXDallasCountyDParser() {
     super("DALLAS COUNTY", "TX",
-          "CALL! SKIP+ Reporting_Party:PHONE! Location:ADDRCITYST! Disposition:CALL2! INFO/N+? TIMES+");
+          "CALL! SKIP+ Reporting_Party:NAME_PHONE! Location:ADDRCITYST! Disposition:CALL2! INFO/N+? TIMES+");
   }
 
   @Override
@@ -35,11 +35,33 @@ public class TXDallasCountyDParser extends HtmlProgramParser {
 
   @Override
   public Field getField(String name) {
+    if (name.equals("NAME_PHONE")) return new MyNamePhoneField();
     if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("CALL2")) return new MyCall2Field();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("TIMES")) return new MyTimesField();
     return super.getField(name);
+  }
+
+  private static final Pattern NAME_PHONE_PTN = Pattern.compile("(?:(.*) - )?([-0-9]+)");
+
+  private class MyNamePhoneField extends NameField {
+
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = NAME_PHONE_PTN.matcher(field);
+      if (match.matches()) {
+        field = getOptGroup(match.group(1));
+        data.strPhone = match.group(2);
+      }
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "NAME PHONE";
+    }
+
   }
 
   private static final Pattern ST_ZIP_PTN = Pattern.compile(", *[A-Z]{2}(?: +\\d{5})? *,");
