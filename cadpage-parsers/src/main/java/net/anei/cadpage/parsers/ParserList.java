@@ -1820,6 +1820,7 @@ public class ParserList {
               ,"TXDecatur"                      ,"Decatur, TX"
               ,"TXDentonCounty"                 ,"Denton County, TX"
               ,"TXEastlandCounty"               ,"Eastland County, TX"
+              ,"TXEctorCounty"                  ,"Ector County, TX"
               ,"TXElCampo"                      ,"El Campo, TX"
               ,"TXElPasoCounty"                 ,"El Paso County, TX"
               ,"TXEllisCounty"                  ,"Ellis County, TX"
