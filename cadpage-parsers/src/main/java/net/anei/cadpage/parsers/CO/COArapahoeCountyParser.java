@@ -17,7 +17,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
 
   COArapahoeCountyParser(String defCity, String defState) {
     super(defCity, defState,
-          "( Resp._Info:MAP! ADDR ( GPS/d | GPS1/d GPS2/d ) APT APT PLACE CALL ID! " +
+          "( Resp._Info:MAP1! MAP? ADDR ( GPS/d | GPS1/d GPS2/d ) APT APT PLACE CALL ID! " +
           "| Address_Changed:MAP! ( GPS/d | GPS1/d GPS2/d ) ADDR2 PLACE CALL ( ID! | SKIP! ) " +
           "| Incident_Location_Changed_to:ID3 MAP ADDR GPS1/d GPS2/d APT APT PLACE CALL UNIT! " +
           "| Inc_Address_Update:ADDR! ID3 MAP GPS1/d GPS2/d EMPTY EMPTY PLACE " +
@@ -43,7 +43,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
   }
 
   private static final Pattern PREFIX = Pattern.compile("(UNIVERSAL PRECAUTIONS(?:, SOB)?) *");
-  private static final Pattern MASTER1 = Pattern.compile("RI:([A-Z]{1,2}-\\d{2}-[A-Z](?:-[A-Z])?) (.*?) +([A-Z][,A-Z0-9]+)");
+  private static final Pattern MASTER1 = Pattern.compile("RI: *([A-Z]{1,2}-\\d{2}-[A-Z]\\b[-,A-Z0-9]*) (.*?)");
   private static final Pattern MASTER2 = Pattern.compile("([ A-Z]+) (?:-|RESPOND:?)(.*?)([A-Z]-\\d{2}-[A-Z](?:-[A-Z])?) (.*?)(?: Cmnd Chnl:(.*))?");
   private static final Pattern MASTER3 = Pattern.compile("ADDRESS CHANGE *([A-Z]-\\d{2}-[A-Z](?:-[A-Z])?) (.*)");
   private static final Pattern MASTER4 = Pattern.compile("(Call Completed) Timestamps:(.*?)(?: (Assigned:.*))?");
@@ -65,7 +65,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
     if (pt >= 0) body = body.substring(0, pt).trim();
 
     body = body.replace("Resp.Info:", "Resp. Info:");
-    body = body.replace("Resp. Info: |", "Resp. Info: ");
+//    body = body.replace("Resp. Info: |", "Resp. Info: ");
 
     // We have two different page formats
     // Check for the pipe delimited field format
@@ -77,10 +77,9 @@ public class COArapahoeCountyParser extends FieldProgramParser {
     // No go. Check for the undelimited field format
     else if ((match = MASTER1.matcher(body)).matches()) {
 
-      setFieldList("MAP ADDR APT PLACE CALL UNIT");
+      setFieldList("MAP ADDR APT PLACE CALL");
       data.strMap = match.group(1);
       body = match.group(2).trim();
-      data.strUnit = match.group(3);
 
       String call = CALL_LIST.getCode(body, true);
       if (call != null) body = body.substring(0,body.length()-call.length()).trim();
@@ -143,9 +142,12 @@ public class COArapahoeCountyParser extends FieldProgramParser {
     return true;
   }
 
+  private static final String MAP_PTN_STR = "([A-Z]{1,2}-\\d{2}-[A-Z](?:-[A-Z])?)|NOT FOUND()";
+
   @Override
   public Field getField(String name) {
-    if (name.equals("MAP")) return new MapField("([A-Z]{1,2}-\\d{2}-[A-Z](?:-[A-Z])?)|NOT FOUND()", true);
+    if (name.equals("MAP1")) return new MapField(MAP_PTN_STR+'|', true);
+    if (name.equals("MAP")) return new MapField(MAP_PTN_STR, true);
     if (name.equals("GPS")) return new GPSField("\\d{8,9} \\d{8,9}", true);
     if (name.equals("ID")) return new IdField("(?:Case ?# *)?(\\d\\d-[A-Z]{2,4}-\\d*|\\d\\d-\\d{7}|\\d\\d-[A-Z]{2})", true);
     if (name.equals("ID3")) return new IdField("\\d{4}-\\d{7}", true);
@@ -173,6 +175,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       "2nd Alarm WL Interface",
       "Abdominal Pain/Problems",
       "Air Alert 2 Inflight Emergency",
+      "Air Alert 3 Aircraft Emergency",
       "Alarm-CO No Sick Parties",
       "Alarm-Fire Alarm Commercial",
       "Alarm-Fire Alarm High Occ",
@@ -195,6 +198,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       "Auto Crash Notification (ACN)",
       "Back Pain (Non-Traumatic)",
       "Breathing Problems",
+      "Bureau Follow-Up",
       "Burns or Scalds",
       "Cardiac or Respiratory Arrest",
       "Chest Pain (Non-Traumatic)",
@@ -213,6 +217,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       "Fire-Illegal Burn",
       "Fire-Outside Fire",
       "Fire-Vehicle Fire",
+      "Fire-Wildland Interface Fire",
       "Fuel Spill Large",
       "Fuel Spill Small",
       "Fire-Unknown Fire",
@@ -251,6 +256,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       "Resc-Animal Rescue",
       "Resc-Confined Space Rescue",
       "Resc-Elevators Parties Trapped",
+      "Resc-Rope Rescue",
       "SF-Comm Str Fire Reported",
       "SF-Comm Structure Fire Reportd",
       "SF-Multi-Fam Str Fire Report",
@@ -261,6 +267,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
       "Sick Person (Specific Diag)",
       "Special Event Coverage",
       "Stab/Gunshot/Penetrating Traum",
+      "Standby Blue",
       "Standby In The Area",
       "Stroke(CVA)",
       "Stroke (CVA)",
