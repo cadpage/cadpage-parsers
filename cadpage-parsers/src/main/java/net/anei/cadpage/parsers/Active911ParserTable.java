@@ -1997,7 +1997,7 @@ public class Active911ParserTable {
       "US/NJ/RFAS",                       "NJEssexCountyB",
       "US/NJ/Robbinsville",               "NJBurlingtonCountyH",
       "US/NJ/RowanUniversity",            "NJGloucesterCountyA",
-      "US/NJ/Rutgers",                    "NJMiddlesexCountyE",
+      "US/NJ/Rutgers",                    "NJMiddlesexCountyE,NJMiddlesexCountyG",
       "US/NJ/RWJBHealthEMS",              "NJMiddlesexCountyF",
       "US/NJ/SaddleRiverPD",              "NJBergenCountyC",
       "US/NJ/SalemCounty",                "NJSalemCountyC",

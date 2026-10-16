@@ -13,6 +13,7 @@ public class NJMiddlesexCountyParser extends GroupBestParser {
     super(new NJMiddlesexCountyAParser(),
           new NJMiddlesexCountyBParser(),
           new NJMiddlesexCountyEParser(),
-          new NJMiddlesexCountyFParser());
+          new NJMiddlesexCountyFParser(),
+          new NJMiddlesexCountyGParser());
   }
 }
