@@ -11,7 +11,7 @@ public class IAMitchellCountyParser extends DispatchA47Parser {
 
   @Override
   public String getFilter() {
-    return "swmail@somcia.us";
+    return "swmail@somcia.us,SWMail@mitchellcountyiowa.gov";
   }
 
   private static final String[] CITY_LIST =new String[]{
