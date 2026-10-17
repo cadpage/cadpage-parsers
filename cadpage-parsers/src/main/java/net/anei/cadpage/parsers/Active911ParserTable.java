@@ -171,7 +171,7 @@ public class Active911ParserTable {
       "US/AL/Shelby",                     "ALShelbyCounty",
       "US/AL/SouthwestLeeCounty",         "ALLeeCountyB",
       "US/AL/StClairCounty",              "ALStClairCounty",
-      "US/AL/SummitVFR",                  "ALBlountCountyB",
+      "US/AL/SummitVFR",                  "ALBlountCountyA",
       "US/AL/TalladegaCounty",            "ALTalladegaCountyA",
       "US/AL/Tallapoosa911",              "ALTallapoosaCountyB,ALTallapoosaCountyD",
       "US/AL/TallapoosaCounty",           "ALTallapoosaCountyC",
