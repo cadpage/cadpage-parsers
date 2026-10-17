@@ -1395,6 +1395,7 @@ public class CTNewHavenCountyBParser extends FieldProgramParser {
       "SICK CALL- P-2 GENERAL WEAKNESS",
       "SICK CALL- P-2 NO PRIORITY SYMPTOMS",
       "SICK CALL- P-2 UNKNOWN",
+      "SICK CALL- P-2 UNWELL/ILL",
       "SICK CALL - ABNORMAL B/P - PRI 2",
       "SICK CALL - ABNORMAL B/P - PRI 2 -",
       "SICK CALL, AMS - PRI 1 -",

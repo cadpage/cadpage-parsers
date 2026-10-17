@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
+import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
 public class DispatchA89Parser extends FieldProgramParser {
 
@@ -15,6 +16,12 @@ public class DispatchA89Parser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
+    if (subject.equals("CAD MESSAGE")) {
+      setFieldList("INFO");
+      data.msgType = MsgType.GEN_ALERT;
+      data.strSupp = body;
+      return true;
+    }
     if (!subject.equals("CAD DISPATCH") && !subject.equals("CAD INCIDENT")) return false;
     return parseFields(body.split("\n\\s*"), data);
   }
