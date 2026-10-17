@@ -34,6 +34,7 @@ public class INAllenCountyBParser extends FieldProgramParser {
       data.strMap = p.getLastOptional(" Zone:");
       if (data.strMap.isEmpty()) abort();
       data.strPlace = p.getLastOptional(';');
+      data.strPlace = append(p.getLastOptional(';'), " - ", data.strPlace);
       field = p.get();
       if (field.isEmpty()) abort();
       super.parse(field, data);

@@ -54,6 +54,12 @@ public class PAMontgomeryCountyNParser extends FieldProgramParser {
       data.strCall = field.substring(pt+1).trim();
       field = field.substring(0,pt).trim();
       super.parse(field, data);
+      pt = data.strAddress.lastIndexOf(',');
+      if (pt >= 0) {
+        String city = data.strAddress.substring(pt+1).trim();
+        data.strAddress = data.strAddress.substring(0,pt).trim();
+        if (!city.isEmpty()) data.strCity = city;
+      }
     }
 
     @Override
@@ -61,7 +67,7 @@ public class PAMontgomeryCountyNParser extends FieldProgramParser {
       return super.getFieldNames() + " CALL";
     }
   }
-  
+
   private Pattern INFO1_BRK_PTN = Pattern.compile(" +-- +");
   private class MyInfo1Field extends InfoField {
     @Override

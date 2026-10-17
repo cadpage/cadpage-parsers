@@ -2754,6 +2754,7 @@ public class FieldProgramParser extends SmartAddressParser {
     }
 
     protected boolean isValidCity(String fld) {
+      if (fld.startsWith("LAT:") || fld.startsWith("LON:")) return false;
       if (GPS_COMPONENT_PTN.matcher(fld).matches()) return false;
       return (startType == null || startType == StartType.START_ADDR || !ADDR_AT_PTN.matcher(fld).find());
     }
@@ -2876,6 +2877,7 @@ public class FieldProgramParser extends SmartAddressParser {
 
     @Override
     public boolean checkParse(String field, Data data) {
+      if (field.isEmpty() || field.equals("0")) return true;
       if (! ZIP_PATTERN.matcher(field).matches()) return false;
       if (data.strCity.length() == 0) data.strCity = field;
       return true;

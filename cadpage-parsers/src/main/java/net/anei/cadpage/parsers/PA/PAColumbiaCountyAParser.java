@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.PA;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,13 +41,21 @@ public class PAColumbiaCountyAParser extends FieldProgramParser {
     return super.getField(name);
   }
 
+  private static final Pattern PAREN_CITY_PTN = Pattern.compile("([^-,]*?)\\(([A-Z ]+?)(?: - [A-Z ]+)?\\)(.*)");
   private static final Pattern APT_CITY_PTN = Pattern.compile("[A-Z ]{4,}");
   private static final Pattern APT_PTN = Pattern.compile("\\d+.*|[A-Z]|(?:APT|ROOM|RM) +(.*)", Pattern.CASE_INSENSITIVE);
   private class MyAddressCityField extends AddressCityField {
     @Override
     public void parse(String field, Data data) {
+      Matcher match = PAREN_CITY_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1) + ", " + match.group(2) + match.group(3);
+      }
+
       Parser p = new Parser(field+' ');
-      super.parse(p.get(" - ").replace('@', '&'), data);
+      field = p.get(" - ").replace('@', '&').replace(';', ',');
+
+      super.parse(field, data);
       data.strApt = stripFieldStart(data.strApt, "Apartment");
 
       if (data.strCity.isEmpty()) {
@@ -62,7 +71,7 @@ public class PAColumbiaCountyAParser extends FieldProgramParser {
       if (!city.isEmpty()) data.strCity = city;
       data.strPlace = p.get(" - ");
       String name = p.get();
-      Matcher match = APT_PTN.matcher(name);
+      match = APT_PTN.matcher(name);
       if (match.matches()) {
         String apt = match.group(1);
         if (apt == null) apt =name;
@@ -88,4 +97,9 @@ public class PAColumbiaCountyAParser extends FieldProgramParser {
       super.parse(field, data);
     }
   }
+
+  private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "LUZ CO",   "LUZERENE COUNTY",
+      "LYCO",     ""
+  });
 }
