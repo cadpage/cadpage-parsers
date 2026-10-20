@@ -1194,6 +1194,7 @@ public class Active911ParserTable {
       "US/LA/Kenner",                     "LAJeffersonParishB",
       "US/LA/LafayetteParish",            "LALafayetteParish",
       "US/LA/LafourcheParish",            "LALafourcheParish",
+      "US/LA/LaPlace",                    "LAStJohnTheBaptistParish",
       "US/LA/LivingstonCounty",           "LALivingstonParish",
       "US/LA/MonroeCounty",								"ALMonroeCounty",    // Wrong state
       "US/LA/OuachitaParish",             "LAOuachitaParish",
@@ -2209,6 +2210,7 @@ public class Active911ParserTable {
       "US/OH/Elyria",                     "OHLorainCountyC,OHLorainCountyD",
       "US/OH/ElmValley",                  "OHMorrowCounty",
       "US/OH/Fairfield",                  "OHFairfieldCounty",
+      "US/OH/FayetteCounty",              "OHFayetteCounty",
       "US/OH/FayettevilleFD",             "WVFayetteCounty",   // A911 misassigned state
       "US/OH/FultonCounty",               "OHFultonCounty",
       "US/OH/GalliaCounty",               "OHGalliaCounty",
