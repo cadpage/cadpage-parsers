@@ -10,6 +10,11 @@ public class SCSpartanburgCountyBParser extends DispatchA52Parser {
     super(CALL_CODES, "SPARTANBURG COUNTY", "SC", ZIP_CITY_TABLE);
   }
 
+  @Override
+  public String getFilter() {
+    return "cadoffice@spartanburgcounty.gov";
+  }
+
   private static final Properties ZIP_CITY_TABLE = buildCodeTable(new String[] {
       "29301", "Spartanburg",
       "29302", "Spartanburg",
