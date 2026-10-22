@@ -10,7 +10,7 @@ public class GAAugustaParser extends FieldProgramParser {
 
   public GAAugustaParser() {
     super("AUGUSTA", "GA",
-          "CALL? ADDRCITY/S6 X ( SELECT/1 INFO/N+? UNIT_CH EMPTY CALL! EMPTY+? | INFO UNIT CH! ) END");
+          "CALL? ADDRCITY/S6 X ( SELECT/1 INFO/N+? UNIT_CH EMPTY CALL! EMPTY+? | INFO UNIT! EMPTY? CH ) END");
   }
 
   @Override
@@ -23,8 +23,7 @@ public class GAAugustaParser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatch")) return false;
     int pt = body.indexOf("\n\n\n___");
-    if (pt < 0) return false;
-    body = body.substring(0,pt);
+    if (pt >= 0) body = body.substring(0,pt);
 
     Matcher match = MASH_PTN.matcher(body);
     if (match.lookingAt()) {
@@ -42,7 +41,7 @@ public class GAAugustaParser extends FieldProgramParser {
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("UNIT")) return new UnitField("(?:\\b[A-Z]{0,4}\\d{0,3}\\b,? *)*", true);
-    if (name.equals("CH")) return new ChannelField("(?:FIRE TAC|EMS) \\d+|", true);
+    if (name.equals("CH")) return new ChannelField("(?:FIRE TAC|EMS) \\d+|\\d+", true);
     if(name.equals("UNIT_CH")) return new MyUnitChannelField();
     return super.getField(name);
   }
