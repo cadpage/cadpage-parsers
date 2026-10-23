@@ -14,7 +14,7 @@ public class SCCharlestonCountyAParser extends FieldProgramParser {
           "( PN:CALL! AD:ADDR! IC:CH! UN:UNIT! END " +
           "| IN:ID! PN:CODE_CALL! IC:CH! PR:PLACE! AD:ADDR! CS:X! CT:CITY! BD:EMPTY! AN:UNIT! END " +
           "| Comment:INFO ( Problem:CALL! Address:ADDR! X_Street:X! " +
-                         "| IN:ID! PN:CALL! IC:EMPTY! PR:APT! AD:ADDR! CS:X! CT:CITY! BD:EMPTY! AN:SKIP! ) " +
+                         "| IN:ID! PN:CALL! IC:EMPTY! PR:APT! AD:ADDR! CS:X! CT:CITY! BD:SKIP! AN:SKIP! ) " +
           "| PREFIX Address:ADDR! X_Street:X Cmd_Channel:CH% " +
           "| ADDR2/SC! X_Street:X Cmd_Channel:CH! Units_Assigned:UNIT% Time:TIME " +
           ") END");
@@ -74,9 +74,15 @@ public class SCCharlestonCountyAParser extends FieldProgramParser {
     do {
       FParser p = new FParser(body);
 
+      int callLen = 0;
       if (p.checkAhead(116, " U:")) {
+        callLen = 19;
+      } else if (p.checkAhead(117, " U:")) {
+        callLen = 20;
+      }
+      if (callLen > 0) {
         setFieldList("CALL APT ADDR X GPS UNIT");
-        data.strCall = p.get(19);
+        data.strCall = p.get(callLen);
         String apt = p.get(15);
         parseAddress(p.get(30), data);
         data.strApt = append(data.strApt, "-", apt);
@@ -113,6 +119,10 @@ public class SCCharlestonCountyAParser extends FieldProgramParser {
       } else if (p.check("C:")) {
         channel = stripFieldStart(p.get(15), "_");
         if (!p.check("U:")) break;
+        unit = p.get();
+      } else if (p.check("IC:_Incident ")) {
+        channel = p.get(5);
+        if (!p.check("UN:")) break;
         unit = p.get();
       } else break;
 
