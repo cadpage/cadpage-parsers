@@ -12,14 +12,14 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
  */
 public class CASanDiegoCountyAParser extends FieldProgramParser {
 
-  private static final Pattern RUN_REPORT_PTN = Pattern.compile("INFO:.*\\\\DISP:.*");
-
   public CASanDiegoCountyAParser() {
     super("SAN DIEGO COUNTY", "CA",
           "( ALRM:PRI! MSTR_INC#:ID! TYP:CALL! ADDR:ADDR! LOC:PLACE! APT-SP:APT! TB:MAP% MAP:MAP/D% XST:X% TG:CH% TIMEDSP:TIME% UNITS:UNIT% INFO/N+ RPNAME:NAME% TEXT:INFO/N+ " +
-          "| NAT:CALL! ADR:ADDR! ADDR2+ APT:APT ( TAC:CH! | CHNL:CH ) UNITS:UNIT MAP:MAP% XST:X% ( X/Z SRC ID | SRC ID ) END " +
+          "| NAT:CALL! ( LOC:ADDR! APT:APT! CH:CH! UNIT:UNIT! " +
+                      "| ADR:ADDR! ADDR2 APT:APT ( TAC:CH! | CHNL:CH ) UNITS:UNIT MAP:MAP% XST:X% ( X/Z SRC ID | SRC ID ) " +
+                      ") END " +
+          "| NOTIFICATION:CALL! ALARM:PRI! LOC:PL_ADDR! ON:CH! AT:DATETIME! " +
           "| INC#:ID! ADR:ADDR! ADDR2+ APT:APT! PLACE! TAC:CH! LOC:PLACE! " +
-          "| ADVISE ALRM:PRI! TYP:CALL! ADDR:ADDR! LOC:PLACE! APT-SP:APT% XST:X% TIMEDSP:TIME% UNITS:UNIT% " +
           "| ALM:PRI? MSTR_INC#:ID? TYP:CALL! ADR:ADDR! LOC:PLACE! XST:X? SP:APT% TB:MAP% MAP:MAP% TG:CH% TIMEDSP:TIME? UNITS:UNIT INFO+ LOC_CMNTS:INFO+ )");
   }
 
@@ -33,6 +33,8 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
     return MAP_FLG_SUPPR_LA;
   }
 
+  private static final Pattern RUN_REPORT_PTN = Pattern.compile("INFO:(.*)\\\\(DISP:.*)");
+  private static final Pattern DELIM = Pattern.compile(" *\\\\+ *");
   private static final Pattern TRAIL_ID_PTN = Pattern.compile("(.*?) +(\\d{4}-\\d{6,8})");
 
   @Override
@@ -58,10 +60,12 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
       return false;
     } while (false);
 
-    if (RUN_REPORT_PTN.matcher(body).matches()) {
-      setFieldList("INFO");
+    Matcher match = RUN_REPORT_PTN.matcher(body);
+    if (match.matches()) {
+      setFieldList("ADDR APT INFO");
       data.msgType = MsgType.RUN_REPORT;
-      data.strSupp = body;
+      parseAddress(match.group(1), data);
+      data.strSupp = DELIM.matcher(match.group(2).trim()).replaceAll("\n");
       return true;
     }
 
@@ -69,14 +73,15 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
       if (body.contains("/ADR:")) {
         return parseFields(body.split("/"), data);
       } else {
-        Matcher match = TRAIL_ID_PTN.matcher(body);
-        if (!match.matches()) return false;
-        body = match.group(1);
-        data.strCallId = match.group(2);
+        match = TRAIL_ID_PTN.matcher(body);
+        if (match.matches()) {
+          body = match.group(1);
+          data.strCallId = match.group(2);
+        }
         return parseMsg(body, data);
       }
     }
-    return parseFields(body.split("\\\\"), data);
+    return parseFields(DELIM.split(body), data);
   }
 
   @Override
@@ -86,8 +91,8 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("ADVISE")) return new MyAdvisePageField();
     if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("PL_ADDR")) return new MyPlaceAddressField();
     if (name.equals("ADDR2")) return new MyAddress2Field();
     if (name.equals("APT")) return new MyAptField();
     if (name.equals("MAP")) return new MyMapField();
@@ -95,32 +100,31 @@ public class CASanDiegoCountyAParser extends FieldProgramParser {
     if (name.equals("UNIT")) return new MyUnitField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("ID")) return new IdField("\\d{4}-\\d{6,8}", true);
+    if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d \\d\\d:\\d\\d", true);
     return super.getField(name);
-  }
-
-  private class MyAdvisePageField extends CallField {
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-
-    @Override
-    public boolean checkParse(String field, Data data) {
-      if (!field.equals("***ADVISORY PAGE***")) return false;
-      data.strCall = "ADVISORY";
-      return true;
-    }
-
-    @Override
-    public void parse(String field, Data data) {
-      if (!checkParse(field, data)) abort();
-    }
   }
 
   private class MyCallField extends CallField {
     @Override
     public void parse(String field, Data data) {
       data.strCall = append(data.strCall, " - ", field);
+    }
+  }
+
+  private class MyPlaceAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.length() > 20) {
+        String place = field.substring(0,20).trim();
+        field = field.substring(20).trim();
+        if (!place.equals(field)) data.strPlace = place;
+      }
+      super.parse(field, data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "PLACE " + super.getFieldNames();
     }
   }
 
