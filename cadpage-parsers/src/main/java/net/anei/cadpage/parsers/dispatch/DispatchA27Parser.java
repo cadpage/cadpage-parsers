@@ -119,21 +119,30 @@ public class DispatchA27Parser extends FieldProgramParser {
   private static final Pattern PTN_FULL_ADDR =
       Pattern.compile("(.*?)(?:, *(\\d{5}|0|))?(?:, *((?:[-+]?\\d+\\.\\d{4,}|0), *(?:[-+]?\\d+\\.\\d{4,}|0)))?(?: +(\\d{4}-\\d{6}|\\d{7}))?");
   private static final Pattern ADDR_APT_PTN = Pattern.compile("(.*?), *([A-Z]?\\d{1,4}[A-Z]?|[A-Z])", Pattern.CASE_INSENSITIVE);
+  private static final Pattern TRAIL_GPS_PTN = Pattern.compile("(.*?) *\\(([-+]?\\d{2,3}\\.\\d{4,}, *[-+]?\\d{2,3}\\.\\d{4,})\\)");
+
   protected class BaseAddressCityField extends AddressCityStateField {
 
     @Override
     public void parse(String field, Data data) {
       String zip = null;
       field = field.replace(" -, ", ", -");
-      Matcher m = PTN_FULL_ADDR.matcher(field);   // This will match address, city, and zip
-      if(m.matches()) {                           // If we have a match
-        field = m.group(1).trim();                // Remove the zipcode
-        zip = m.group(2);
-        setGPSLoc(getOptGroup(m.group(3)), data);
-        data.strCallId = getOptGroup(m.group(4));
+      Matcher match = PTN_FULL_ADDR.matcher(field);   // This will match address, city, and zip
+      if(match.matches()) {                           // If we have a match
+        field = match.group(1).trim();                // Remove the zipcode
+        zip = match.group(2);
+        setGPSLoc(getOptGroup(match.group(3)), data);
+        data.strCallId = getOptGroup(match.group(4));
       }
 
       field = stripFieldEnd(field, ",");
+
+      match = TRAIL_GPS_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1);
+        setGPSLoc(match.group(2), data);
+      }
+
       if (field.endsWith(")")) {
         int pt = field.indexOf('(');
         if (pt < 0) abort();
@@ -148,10 +157,10 @@ public class DispatchA27Parser extends FieldProgramParser {
 
       field = field.replace('@',  '&').replace(" at ,", " at ");
       String apt = "";
-      m = ADDR_APT_PTN.matcher(field);
-      if (m.matches()) {
-        field = m.group(1).trim();
-        apt = m.group(2);
+      match = ADDR_APT_PTN.matcher(field);
+      if (match.matches()) {
+        field = match.group(1).trim();
+        apt = match.group(2);
       }
       super.parse(field, data);
 

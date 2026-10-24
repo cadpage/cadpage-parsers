@@ -1,74 +1,55 @@
 package net.anei.cadpage.parsers.VT;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchA32Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
 
-public class VTOrangeCountyBParser extends DispatchA32Parser {
+public class VTOrangeCountyBParser extends DispatchA27Parser {
 
   public VTOrangeCountyBParser() {
-    super(CITY_LIST, "ORANGE COUNTY", "VT");
+    super("ORANGE COUNTY", "VT");
   }
 
   @Override
   public String getFilter() {
-    return "hanoverdispatch@gmail.com";
+    return "notification@nhpd.cloud";
   }
 
   @Override
-  protected boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("_")) return false;
-    if (! super.parseMsg("Page", body, data)) return false;
-    if (NH_CITY_SET.contains(data.strCity)) data.strState = "NH";
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
+  private static final Pattern LEAD_ID_PTN = Pattern.compile("(\\d{4}-\\d{6}) \\(P#:(\\d\\d-\\d{6})\\)\n");
+  private static final Pattern TRAIL_MAP_PTN = Pattern.compile("\nFire Zone: *(.*) EMS Zone: *(.*)$");
+
+  @Override
+  public boolean parseMsg(String subject, String body, Data data) {
+    int pt = subject.indexOf('|');
+    if (pt < 0) return false;
+    if (!subject.substring(pt+1).equals("CSI Active911 - CFS Notification")) return false;
+    subject = subject.substring(0,pt).trim();
+
+    Matcher match = LEAD_ID_PTN.matcher(body.substring(0,pt));
+    if (!match.lookingAt()) return false;
+    String callId = match.group(1)+'/'+match.group(2);
+    body = "Notification from CIS Active911:\n\n" + body.substring(match.end()).trim();
+
+    match = TRAIL_MAP_PTN.matcher(body);
+    if (match.find()) {
+      data.strMap = append(match.group(1),  "/",  match.group(2));
+      body = body.substring(0, match.start()).trim();
+    }
+
+    if (!super.parseMsg(subject, body, data)) return false;
+    data.strCallId = callId;
     return true;
   }
 
   @Override
   public String getProgram() {
-    return super.getProgram().replace("CITY", "CITY ST");
+    return "ID " + super.getProgram() + " MAP";
   }
-
-  private static final String[] CITY_LIST = new String[] {
-
-      // Towns
-      "BRADFORD",
-      "BRAINTREE",
-      "BROOKFIELD",
-      "CHELSEA",
-      "CORINTH",
-      "FAIRLEE",
-      "NEWBURY",
-      "ORANGE",
-      "RANDOLPH",
-      "STRAFFORD",
-      "THETFORD",
-      "TOPSHAM",
-      "TUNBRIDGE",
-      "VERSHIRE",
-      "WASHINGTON",
-      "WEST FAIRLEE",
-      "WILLIAMSTOWN",
-
-      // Villages
-      "NEWBURY",
-      "WELLS RIVER",
-
-      // Census-designated places
-      "BRADFORD",
-      "CHELSEA",
-      "FAIRLEE",
-      "RANDOLPH",
-      "WILLIAMSTOWN",
-
-      // Unincorporated community
-      "POST MILLS",
-
-      // Grant County, NH
-      "ORFORD"
-  };
-
-  private static final Set<String> NH_CITY_SET = new HashSet<>(Arrays.asList("ORFORD"));
 }
