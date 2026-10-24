@@ -9,7 +9,11 @@ import net.anei.cadpage.parsers.MsgInfo.Data;
 public class TXBurnetCountyBParser extends FieldProgramParser {
 
   public TXBurnetCountyBParser() {
-    super(CITY_CODES, "BURNET COUNTY", "TX",
+    this("BURNET COUNTY", "TX");
+  }
+
+  public TXBurnetCountyBParser(String defCity, String defState) {
+    super(CITY_CODES, defCity, defState,
           "Msg_ID:SKIP! ( SRC/Z! INFO/G! END " +
                        "| INFO/G! END " +
                        "| SRC MAP? CALL STATUS? ADDRCITY UNIT! MAP? INFO/N+? ID X/Z? DATETIME END " +
@@ -19,6 +23,11 @@ public class TXBurnetCountyBParser extends FieldProgramParser {
   @Override
   public String getFilter() {
     return "support@toimagine.com,@marblefallstx.gov";
+  }
+
+  @Override
+  public String getAliasCode() {
+    return "TXBurnetCountyB";
   }
 
   @Override
@@ -84,6 +93,13 @@ public class TXBurnetCountyBParser extends FieldProgramParser {
     }
   }
 
+  private static final Pattern RR_PTN = Pattern.compile("\\bRR\\b", Pattern.CASE_INSENSITIVE);
+
+  @Override
+  public String adjustMapAddress(String addr) {
+    return RR_PTN.matcher(addr).replaceAll("RANCH RD");
+  }
+
   private static final Properties CITY_CODES = buildCodeTable(new String[] {
       "AD",   "ADDISON",
       "ADM",  "ANDERSON MILL",
@@ -119,6 +135,7 @@ public class TXBurnetCountyBParser extends FieldProgramParser {
       "DH",   "DOUBLE HORN",
       "DNG",  "DING DONG",
       "DR",   "DEL RIO",
+      "DRI",  "DRIPPING SPRINGS",
       "DV",   "DEL VALLE",
       "EL",   "ELGIN",
       "EP",   "EAGLE PASS",
@@ -189,7 +206,8 @@ public class TXBurnetCountyBParser extends FieldProgramParser {
       "NVL",  "NOLANVILLE",
       "OA",   "OAKALLA",
       "RM",   "ROUND MOUNTAIN",
-      "SP",   "SPICEWOOD"
+      "SP",   "SPICEWOOD",
+      "SPR",  "SPRING BRANCH"
 
   });
 

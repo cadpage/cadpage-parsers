@@ -3,7 +3,7 @@ package net.anei.cadpage.parsers.TX;
 import net.anei.cadpage.parsers.GroupBestParser;
 
 /**
- * Atoscosa County, TX
+ * Bosque County, TX
  */
 public class TXBosqueCountyParser extends GroupBestParser {
 
