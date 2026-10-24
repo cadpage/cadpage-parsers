@@ -9,38 +9,39 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 
 
 public class NCJacksonCountyParser extends DispatchSouthernParser {
-  
+
   private static final Pattern GEN_ALERT_ADDRESS_PTN = Pattern.compile("(?:(?:NORTHERN|SOUTHERN|EASTERN|WESTERN) )?JACKSON CO(?:UNTY)?(?: WEATHER)?|UNIT +\\d+|\\d+ +BASE|.* FIRE DEPT|.* FD|1");
-  
-  
+
+
   public NCJacksonCountyParser() {
     super(CITY_LIST, "JACKSON COUNTY", "NC", DSFLAG_OPT_DISPATCH_ID | DSFLAG_LEAD_PLACE | DSFLAG_TRAIL_PLACE | DSFLAG_FOLLOW_CROSS);
     setupMultiWordStreets(MWORD_STREET_LIST);
     addRoadSuffixTerms("PLZ");
   }
-  
+
   @Override
   public String getFilter() {
     return "Bill@mydomain.com,232@jacksonrescue.org";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_CR_CREEK;
   }
-  
+
 
   @Override
   protected boolean parseMsg(String body, Data data) {
+    body = body.replace(" X INT ", " X ");
     if (! super.parseMsg(body, data)) return false;
-    
+
     if (data.strPlace.length() > 0 && isValidAddress(data.strPlace)) {
       data.strAddress = append(data.strAddress, " & ", data.strPlace);
       data.strPlace = "";
     }
-    
+
     if (data.strApt.equals("0")) data.strApt = "";
-    
+
     // Weather alerts show up as dispatched calls rather than general alerts
     if (data.strSupp.startsWith("WEATHER ") || GEN_ALERT_ADDRESS_PTN.matcher(data.strAddress).matches()) {
       data.msgType = MsgType.GEN_ALERT;
@@ -49,13 +50,13 @@ public class NCJacksonCountyParser extends DispatchSouthernParser {
     }
     return true;
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressField();
     return super.getField(name);
   }
-  
+
   private class MyAddressField extends BaseAddressField {
     @Override
     public void parse(String field, Data data) {
@@ -63,71 +64,114 @@ public class NCJacksonCountyParser extends DispatchSouthernParser {
       super.parse(field, data);
     }
   }
-  
+
   @Override
   protected int getExtraParseAddressFlags() {
     return FLAG_CROSS_FOLLOWS;
   }
 
   private static final Pattern PINE_CONE_PTN = Pattern.compile("\\bPINE +CONE\\b", Pattern.CASE_INSENSITIVE);
-  
+
   @Override
   public String adjustMapAddress(String addr) {
     addr = PINE_CONE_PTN.matcher(addr).replaceAll("PINECONE");
     return super.adjustMapAddress(addr);
   }
-  
+
   private static final String[] MWORD_STREET_LIST = new String[]{
     "ADDIE CEMETERY",
     "ALBURY POINT",
     "ALLEN HENSON",
     "ALLENS BRANCH",
     "ANDREWS PARK",
+    "APPLE BLOSSOM",
+    "ARROWHEAD COTTAGE",
+    "ASHE LOOP",
     "ASHLEY CAGLE",
     "BACK NINE",
     "BALD ROCK",
     "BALSAM DEPOT",
     "BALSAM LOOP",
+    "BALSAM VIEW",
     "BARKERS CREEK",
+    "BB LONG",
+    "BEAR LAKE",
+    "BEAR RIDGE",
+    "BEAVER BRIDGE",
     "BEE KNOB CEMETERY",
+    "BEECH TREE",
+    "BEETLE JUICE",
     "BENDED KNEE",
     "BERRY HILL",
+    "BIG CLOUD",
+    "BIG GRANITE",
     "BIG MOUNTAIN",
+    "BIG ORANGE",
+    "BIG RIDGE",
     "BIG SHEEPCLIFF",
     "BIG WOODS",
     "BILLY COVE",
+    "BIRD BUILDING",
     "BLACK OAK",
     "BLACK ROCK RANCH",
     "BLANTON BRANCH",
+    "BLUE BERRY",
     "BLUE OVAL",
     "BLUE RIDGE",
+    "BOB HALL",
+    "BOLD CREEK",
+    "BOOSHWAY MOUNTAIN",
     "BRADLEY BRANCH",
     "BREEZY MOUNTAIN",
     "BRIGHT MOUNTAIN",
+    "BROOK TROUT",
     "BROOKS BRANCH",
+    "BROWN HOLLOW",
     "BRUSHY FORK",
     "BUFF CREEK",
     "BULL PEN",
+    "BULLFROG COVE",
     "BULLS GAP",
+    "BUMGARNER CEMETERY",
+    "BURNING BUSH",
+    "BUTLER BRANCH",
     "BUZZARDS ROOST",
     "CABIN FLATS",
+    "CABINS IN THE SMOKIES",
+    "CAGLE BRANCH",
+    "CALVARY CHURCH",
     "CAMP CR",
     "CAMP CREEK",
     "CANARY SPRINGS",
     "CANE CREEK",
+    "CAROLINA MOUNTAIN",
+    "CASHIERS LAKE",
+    "CASHIERS SCHOOL",
+    "CASTLE RIDGE",
+    "CAT BIRD",
+    "CATS DEN",
+    "CAVE SPRINGS",
     "CEDAR CREEK",
     "CHAD CRAWFORD",
     "CHAPEL VIEW",
     "CHARLEYS CREEK",
     "CHATTOOGA RIDGE",
     "CHATTOOGA WOOD",
+    "CHERRY COVE",
     "CHIMNEY TOP",
     "CHIPPER CURVE",
+    "CHRISTMAS TREE",
+    "CLUB LODGES",
+    "COOPER FARM",
     "COPE CREEK",
+    "CORK SCREW",
     "COUNTRY CLUB",
     "COURTHOUSE TERRACE",
+    "COURTSIDE COTTAGE",
     "COWAN VALLEY",
+    "COX FARM",
     "CRAWFORD CEMETERY",
+    "CRESCENT MOON",
     "CROSS CREEK",
     "CROWN POINT",
     "CRYSTAL SPRING",
@@ -136,62 +180,124 @@ public class NCJacksonCountyParser extends DispatchSouthernParser {
     "CURLY WILLOW",
     "CUTTING EDGE",
     "DARK RIDGE",
+    "DAY LILY",
     "DEER RUN",
     "DICKS CREEK",
+    "DIXS GAP",
+    "DOUBLE BRIDGE",
     "DOUBLE H",
     "DREAM VALLEY",
     "DUMMY LINE",
     "EAGLE RIDGE",
+    "EARLY DEITZ",
+    "EAST FORK",
     "EAST SYLVA",
     "EAST VALLEY",
     "EAST VIEW",
+    "EDWARD FOWLER",
+    "EIGHT POINT",
+    "ENCHANTED FOREST",
+    "END OF",
+    "ENGLISH SETTER",
+    "FAIR FRIEND",
     "FAIRWAY FOREST",
+    "FENLEY FOREST",
     "FISHER CREEK",
+    "FLAMING ARROW",
     "FLAT BOTTOM",
+    "FLAT CREEK VALLEY",
+    "FLAT CREEK",
     "FLAT ROCK",
+    "FLY FISHING",
+    "FOREST HILLS",
     "FOREST ROSE",
+    "FORT WILDERNESS",
     "FOUND FOREST",
+    "FOWLER CREEK",
+    "FOX KNOB",
     "FRANK ALLEN",
     "FRASER FIR",
     "GARDEN VIEW",
+    "GARLAND BUCHANAN",
+    "GINHOUSE CREEK",
     "GLAD TIDINGS",
+    "GLEN MEADOW",
+    "GLENVILLE SCHOOL",
+    "GOOD SHEPHERD",
+    "GOVERNORS ISLAND",
     "GRAND OAKS",
+    "GRANITE CLIFF",
+    "GRANNY ROCK",
+    "GRAYS RIDGE",
+    "GREAT FALLS",
+    "GREENACRES FARM",
     "GREENS CREEK",
     "GRINDSTAFF COVE",
     "GRINDSTONE KNOB",
+    "HALLIE MANOR",
+    "HAMPTON GLEN",
     "HANGING ROCK",
     "HAPPY RIDGE",
+    "HARLEY COLE",
+    "HAVEN RIDGE",
+    "HAWKS SHADOW",
     "HAZEL HOLLOW",
     "HEADY MOUNTAIN",
+    "HEARIN PLACE",
+    "HEATON FOREST",
+    "HERRON BRANCH",
     "HIDDEN VALLEY",
     "HIGH CLIMBER",
+    "HIGH GROVE",
     "HIGH MOUNTAIN",
+    "HIGH PINNACLE",
+    "HIGH QUALLA FARM",
     "HIGH RIDGE",
     "HIGHLANDS COVE",
     "HIGHLANDS WILSON",
+    "HOG COVE",
     "HOLLY FOREST",
     "HOLLY HILLS",
     "HONEY BEE",
+    "HOOPER CHASTAIN",
+    "HORSE KISS",
     "HOUND DOG",
+    "HUNGRY BEAR",
     "HURRICANE CREEK",
+    "INDIAN FLATS",
+    "INDIAN HILLS",
     "INT KINGS CREEK",
     "INT STORYBOOK",
     "IRON HORSE",
     "JIM SELLERS",
+    "JIMMY MORRIS",
     "JINGLE BELL",
+    "JOE BRANCH",
     "JOE PATCH",
     "JOE PYE",
+    "JOHN ALLMAN",
+    "JOHNNY KNOB",
     "JOHNS CREEK",
     "JOLLY HILLS",
     "KETTLE CREEK",
+    "KILLIAN BUILDING",
+    "KIM MILLER",
+    "KNOB HILL",
     "LAKE RIDGE",
     "LAKE SIDE",
+    "LAKESIDE WOODS",
+    "LAKEVIEW GARDENS",
     "LAUREL KNOB",
     "LEAF GAZER",
+    "LERADO FARM",
     "LEVI MATHIS",
     "LICK LOG",
+    "LITTLE COVE",
+    "LITTLE FARM",
+    "LITTLE ROCK",
     "LITTLE SAVANNAH",
     "LLOYD HOOPER",
+    "LOCUST CREEK",
     "LOFTY MOUNTAIN",
     "LOGAN CREEK",
     "LONE CHIMNEY",
@@ -199,25 +305,39 @@ public class NCJacksonCountyParser extends DispatchSouthernParser {
     "LONELY VIOLET",
     "LONESOME DOVE",
     "LONESOME VALLEY",
+    "LONG BRANCH CHURCH",
     "LONG POND",
+    "LONG SHADOW",
     "LONG SPLICE",
+    "LOST COVE",
+    "LUCKY DOG",
     "LYLE WILSON",
     "MACS VIEW",
+    "MADISON BUILDING",
+    "MAGIC ROCK",
+    "MATER FARM",
     "MILL CREEK",
     "MILLS BRANCH",
+    "MINERAL SPRINGS",
+    "MIRACLE MOUNTAIN",
     "MIRROR LAKE",
     "MONTE VISTA",
     "MONTEITH GAP",
     "MOODY BRIDGE",
+    "MOSES CREEK",
     "MOUNT EIRE",
     "MOUNT HARBOR CLUB",
     "MOUNT MITCHELL",
     "MOUNT PLEASANT CHURCH",
+    "MOUNTAIN BROOK",
     "MOUNTAIN HERITAGE",
+    "MOUNTAIN OAKS",
     "MOUNTAIN TRACE",
     "NAPA RIDGE",
     "NATIONS CREEK",
+    "NEAL BRYSON",
     "NEDDIE MOUNTAIN",
+    "NEDDIE MTN",
     "NICHOLSON COVE",
     "NICOL ARMS",
     "NODDING WREN",
@@ -225,37 +345,86 @@ public class NCJacksonCountyParser extends DispatchSouthernParser {
     "NORTH FORK",
     "NORTH RIVER",
     "NORTH STAR",
+    "OAK FOREST",
+    "OCONEE BELLE",
     "OLIVET CHURCH",
+    "ONION PATCH",
+    "OTTER RIDGE",
+    "OUR HOME",
+    "OWEN MOUNTAIN",
     "OWEN MTN",
+    "OWENS GAP",
+    "PAINTED TRILLIUM",
     "PARRIS BRANCH",
+    "PAUL COOPER",
     "PAW PAW",
     "PEBBLE CREEK",
     "PEE WEE BRANCH",
+    "PICNIC GROUNDS",
+    "PIERCE ELDERS",
     "PINE CONE",
     "PINE CREEK",
     "PINEY MOUNTAIN",
     "PINEY MTN",
+    "PINEY RIDGE",
     "PLEASANT GROVE CHURCH",
+    "PLEASANT HILL",
+    "PLOTT BALSAM",
+    "POND VIEW",
+    "POOR BOY",
     "POSEY BLANTON",
     "POTTS COMMUNITY",
     "PRESSLEY CREEK",
+    "QUIN HOLCOMBE",
+    "RACQUET CLUB",
+    "RAINY MOUNTAIN",
+    "RALPH TATHAM",
+    "RANZY CRAWFORD",
+    "RAVEN CREST",
     "RED BRIDGE",
+    "RED HORSE",
     "RED RED",
+    "RED ROOF",
+    "RESERVOIR RIDGE",
     "RIO BRAVO",
+    "RIPPLING BROOK",
+    "RIVER PARK",
+    "ROBINSON CREEK",
+    "ROCK BRIDGE",
+    "ROCK LEDGE",
     "ROCK QUARRY",
+    "ROLLING GREEN",
+    "ROLLING HILLS",
     "ROUGH BARK",
+    "RUFF BUTTE",
     "RUFUS ROBINSON",
     "RUSHING BROOK",
+    "RYE MOUNTAIN",
+    "SAPPHIRE POST OFFICE",
     "SAPPHIRE VALLEY",
     "SCOTTS CREEK",
+    "SEARCY MOUNTAIN",
+    "SECRET MEADOW",
+    "SETTING SUN",
+    "SEVEN SPRINGS",
+    "SHEEPROCK COVE",
     "SHERWOOD FOREST",
+    "SHIRLEY PRESSLEY",
+    "SHOAL CREEK CHURCH",
+    "SHOAL CREEK",
     "SHOOK COVE",
     "SHOOTING STAR",
     "SHORTLEAF PINE",
+    "SINGLE TREE",
     "SKY MOUNTAIN",
+    "SLAB TOWN",
+    "SLEY HOLLER",
+    "SLIM DILLARD",
     "SLO GAIT",
     "SMOKY MOUNTAIN",
     "SNUG HAVEN",
+    "SOLS CREEK CHURCH",
+    "SOUTH PAINTER",
     "SOUTH RIVER",
     "SPARK CHASER",
     "SPEEDWELL BAPTIST CHURCH",
@@ -263,44 +432,82 @@ public class NCJacksonCountyParser extends DispatchSouthernParser {
     "SPLIT RAIL",
     "SPRING VALLEY",
     "SQUIRREL HUNTIN",
+    "STANDING WATER",
+    "STONE BRIDGE",
     "STONE CLIFFS",
+    "STONE FLY",
     "STOVE PIPE",
     "SUGAR LOAF",
     "SUMMER HILL",
+    "SUMMER SKY",
+    "SUNNY BROOK FARM",
     "SUNSET FARM",
+    "SUTTON BRANCH",
     "TALL OAKS",
     "TANNASSEE CREEK",
     "TATHAMS CREEK",
+    "TAYLOR CREEK",
     "TEIGUE COVE",
+    "TERRACE VILLAGE",
+    "THOMAS VALLEY",
     "THREE PONDS",
+    "THROWING STONES",
     "TIGER PAW",
     "TILLEY CREEK",
     "TIMBER RIDGE",
+    "TOCAMI CLUB",
     "TOLL HOUSE",
     "TOY COVE",
+    "TRAPPER CREEK",
     "TRAYS ISLAND",
     "TRILLIUM RIDGE",
     "TROUT CREEK",
     "TUNNEL MOUNTAIN",
+    "TURKEY KNOB",
+    "TURNING LEAF",
     "TURTLE CREEK",
+    "TURTLE ROCK",
     "TUTTLE MINK",
+    "TWIN LAKES",
+    "UNION HILL",
     "VALLEY MIST",
+    "VICTORY CHURCH",
+    "VILLAGE WALK",
     "VISTA FALLS",
     "WAKE ROBIN",
     "WALTER ASHE",
+    "WARM MOUNTAIN",
+    "WATSON BRANCH",
+    "WCU NORTON",
+    "WELDON HALL",
+    "WEST COVE",
     "WEST GATE",
     "WHISPER RIVER",
     "WHISTLE STOP",
+    "WHITE CHURCH",
+    "WHITE DUCK",
+    "WHITE OAK",
+    "WHITE OWL",
+    "WHITE SQUIRREL",
     "WHITESIDE COVE",
+    "WHITESIDE MOUNTAIN",
     "WHITEWATER FALLS",
+    "WILD GAME",
     "WILD HORSE",
+    "WILKES CRESENT",
+    "WILMONT CEMETERY",
+    "WINDING GAP",
     "WINDY GAP",
     "WOLF LAKE",
     "WOLF MOUNTAIN",
+    "WOODROW DEITZ",
+    "WOODS MOUNTAIN",
     "WOODY HAMPTON",
+    "WORLEY FARM",
     "YELLOW BIRD BRANCH",
     "YELLOW MOUNTAIN",
-    "YELLOW MTN"
+    "YELLOW MTN",
+
   };
 
 
@@ -331,13 +538,13 @@ public class NCJacksonCountyParser extends DispatchSouthernParser {
     "WHITTIER",
     "WILLETS",
     "WILMOT",
-    
+
     // Haywood County
     "MAGGIE VALLEY",
-    
+
     // Transylvania County
     "SAPPHIRE"
-    
+
   };
 
 }
