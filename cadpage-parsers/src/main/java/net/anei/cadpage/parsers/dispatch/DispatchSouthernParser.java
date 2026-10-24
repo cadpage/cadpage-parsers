@@ -418,6 +418,9 @@ public class DispatchSouthernParser extends FieldProgramParser {
   private static final Pattern RUN_REPORT_DELIM_PTN = Pattern.compile("(?<=\\d\\d:\\d\\d:\\d\\d) ");
   private static final Pattern RUN_REPORT_PTN2 = Pattern.compile("(?:[A-Z]+:)?CFS: *(\\S+?)[;, ](?:([^;]+)[;, ])?(?: [;, ])? *Unit: *([^,;]+?)[;, ] *(Status:.*?)[;,]?(?: Note: *(.*))?");
   private static final Pattern RUN_REPORT_PTN3 = Pattern.compile("CFS Closed:;(\\d{4}-\\d{6});(\\d\\d:\\d\\d:\\d\\d);(.*)");
+  private static final Pattern RUN_REPORT_PTN4 = Pattern.compile("CFS: *(\\d+) (?:OCA:\\S+ )?(.*?),([A-Za-z0-9]+\\([A-Z]+\\).*)");
+  private static final Pattern RR4_PLACE_CALL_PTN = Pattern.compile("([^a-z]+) +(.+)");
+  private static final Pattern RR4_INFO_TIME_PTN = Pattern.compile("([A-Za-z0-9]*)\\(([A-Z]+)\\)(\\d\\d:\\d\\d:\\d\\d)");
   private static final Pattern LEAD_PTN = Pattern.compile("^[\\w\\.@]+:");
   private static final Pattern NAKED_TIME_PTN = Pattern.compile("([ ,;]) *(\\d\\d:\\d\\d:\\d\\d)(?:\\1|$)");
   private static final Pattern OCA_TRAIL_PTN = Pattern.compile("\\bOCA: *([-A-Z0-9]+)$");
@@ -465,6 +468,55 @@ public class DispatchSouthernParser extends FieldProgramParser {
       data.msgType = MsgType.RUN_REPORT;
       data.strCallId = match.group(1);
       data.strSupp = match.group(2) + ' ' + match.group(3).replace(';', '\n');
+      return true;
+    }
+
+    match = RUN_REPORT_PTN4.matcher(body);
+    if (match.matches()) {
+      setFieldList("ID ADDR APT CITY PLACE CALL INFO");
+      data.msgType = MsgType.RUN_REPORT;
+      data.strCallId = match.group(1);
+      String stuff = match.group(2).trim();
+      String info = match.group(3);
+
+      int pt = stuff.indexOf(',');
+      if (pt >= 0) {
+        parseAddress(stuff.substring(0,pt).trim(), data);
+        stuff = stuff.substring(pt+1).trim();
+        parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, stuff, data);
+      }  else {
+        parseAddress(StartType.START_ADDR, 0, stuff, data);
+      }
+      stuff = getLeft();
+
+      match = RR4_PLACE_CALL_PTN.matcher(stuff);
+      if (match.matches()) {
+        data.strPlace = match.group(1).trim();
+        data.strCall = match.group(2).trim();
+      } else {
+        data.strCall = stuff;
+      }
+      StringBuilder sb = new StringBuilder();
+      for (String part : info.split(" +")) {
+        if (!sb.isEmpty()) sb.append('\n');
+        match = RR4_INFO_TIME_PTN.matcher(part);
+        if (match.matches()) {
+          String unit = match.group(1);
+          String type = match.group(2);
+          String time = match.group(3);
+          if (!unit.isEmpty()) {
+            sb.append(unit);
+            sb.append('\n');
+          }
+          sb.append("  ");
+          sb.append(time);
+          sb.append(" - ");
+          sb.append(type);
+        } else {
+          sb.append(part);
+        }
+      }
+      data.strSupp = sb.toString();
       return true;
     }
 

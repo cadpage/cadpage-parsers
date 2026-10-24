@@ -2,6 +2,7 @@
 
 package net.anei.cadpage.parsers.NC;
 
+import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 
 /**
@@ -23,6 +24,16 @@ public class NCChathamCountyAParser extends DispatchSouthernParser {
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
+  }
+
+  @Override
+  protected boolean parseMsg(String body, Data data) {
+    body = body.replace("`", "");
+    if (!super.parseMsg(body, data)) return false;
+    data.strCity = stripFieldEnd(data.strCity, "NC");
+    if (data.strCity.equalsIgnoreCase("RAMSUER")
+        || data.strCity.equalsIgnoreCase("RAMSUERR")) data.strCity = "RAMSEUR";
+    return true;
   }
 
   private static final String[] CITY_LIST = new String[]{
@@ -64,14 +75,18 @@ public class NCChathamCountyAParser extends DispatchSouthernParser {
     "MATTHEWS",
 
     // Moore County
+    "CARTHAGE",
     "ROBBINS",
 
     // Orange County
+    "ORANGE CO",
     "CARRBORO",
 
     // Randolph County
     "LIBERTY",
     "RAMSEUR",
+    "RAMSUER",    // Misspelled
+    "RAMSUERRNC", // Badly misspelled
     "SEAGROVE",
     "STALEY",
 
@@ -80,6 +95,7 @@ public class NCChathamCountyAParser extends DispatchSouthernParser {
     "FUQUAY",
     "FUQUAY VARINA",
     "FUQUAY-VARINA",
+    "HOLLY SPRINGS",
     "NEW HILL"
   };
 }
