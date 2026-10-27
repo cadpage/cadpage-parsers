@@ -142,8 +142,10 @@ public class ZCASKPECCParser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern NOT_ADDR_PTN = Pattern.compile("\\d (?:VEH|CAR).*|MUTUAL AID.*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern NOT_ADDR_PTN = Pattern.compile("\\d (?:VEH|CAR).*|MUTUAL AID.*|.*,.*", Pattern.CASE_INSENSITIVE);
   private static final Pattern ADDR_PTN = Pattern.compile(".*\\d.*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern ADDR_PLACE_PTN = Pattern.compile("(.*?)(?: +- +| *, *)(.*)");
+
   private class MyAddressField extends AddressField {
     @Override
     public boolean canFail() {
@@ -167,37 +169,60 @@ public class ZCASKPECCParser extends FieldProgramParser {
     }
 
     private String splitPlaceAddress(String field, Data data, boolean force) {
-      // See if this contains a place field
-      int pt = field.indexOf(" - ");
+
+      field = stripFieldEnd(field, ",");
+
+      int pt = field.lastIndexOf(',');
       if (pt >= 0) {
-        String fld1 = field.substring(0,pt).trim();
-        String fld2 = field.substring(pt+3).trim();
-        if (isValidAddress(fld1)) {
-          data.strPlace = append(data.strPlace, " - ", fld2);
-          return fld1;
-        } else if (isValidAddress(fld2)) {
-          data.strPlace = append(data.strPlace, " - ", fld1);
-          return fld2;
+        String city = field.substring(pt+1).trim();
+        if (isCity(city)) {
+          data.strCity = city;
+          field = field.substring(0,pt).trim();
+        }
+      }
+
+      // See if this contains a place field
+      Matcher match = ADDR_PLACE_PTN.matcher(field);
+      if (match.matches()) {
+        String fld1 = match.group(1);
+        String fld2 = match.group(2);
+        int st1 = checkValidAddress(fld1);
+        int st2 = checkValidAddress(fld2);
+        if (st1 > 0 || st2 > 0) {
+          if (st1 >= st2) {
+            data.strPlace = append(data.strPlace, " - ", fld2);
+            return fld1;
+          } else {
+            data.strPlace = append(data.strPlace, " - ", fld1);
+            return fld2;
+          }
         } else if (!force) {
           return null;
         }
       } else {
-        if (!force && !isValidAddress(field)) field = null;
+        if (!force && !isValidAddress(field)) return null;
       }
       return field;
     }
 
     private boolean isValidAddress(String field) {
+      return checkValidAddress(field) > 0;
+    }
+
+    private int checkValidAddress(String field) {
       // Very!!! expansive definition of what constitutes an address
       // Anything with a number counts, except for multi car colision reports
-      if (NOT_ADDR_PTN.matcher(field).matches()) return false;
-      if (! ADDR_PTN.matcher(field).matches() && ! parseAddress(StartType.START_ADDR, FLAG_NO_CITY, field).isValid()) return false;
-      return !field.toUpperCase().endsWith("ALARM");
+      if (NOT_ADDR_PTN.matcher(field).matches()) return 0;
+      if (field.toUpperCase().endsWith("ALARM")) return 0;
+      int status = parseAddress(StartType.START_ADDR, FLAG_NO_CITY, field).getStatus();
+      if (status > STATUS_MARGINAL) return status + 100;
+      if (ADDR_PTN.matcher(field).matches()) return 1;
+      return 0;
     }
 
     @Override
     public String getFieldNames() {
-      return super.getFieldNames() + " PLACE";
+      return super.getFieldNames() + " PLACE CITY";
     }
   }
 
@@ -240,6 +265,7 @@ public class ZCASKPECCParser extends FieldProgramParser {
 
   private static final String[] CITY_LIST = new String[] {
       "AIR RONGE",
+      "AIRRONGE",
       "ARCHERWILL",
       "ASQUITH",
       "ASSINIBOIA",
@@ -263,6 +289,7 @@ public class ZCASKPECCParser extends FieldProgramParser {
       "KITSAKIE IR",
       "KRONAU",
       "LA RONGE",
+      "LARONGE",
       "LAJORD",
       "LAURA",
       "MEADOW LAKE",

@@ -44,12 +44,18 @@ public class ALBlountCountyAParser extends DispatchA71Parser {
         data.strSupp = data.strSupp.substring(match.end(1)).trim();
       }
     }
+
+    int pt = data.strCity.indexOf('-');
+    if (pt >= 0) {
+      data.strMap = data.strCity.substring(pt+1).trim();
+      data.strCity = data.strCity.substring(0,pt).trim();
+    }
     return true;
   }
 
   @Override
   public String getProgram() {
-    return super.getProgram().replace("INFO", "X? INFO");
+    return super.getProgram().replace("CITY", "CITY MAP").replace("INFO", "X? INFO");
   }
 
 
