@@ -33,7 +33,13 @@ public class ARBaxterCountyParser extends DispatchSouthernParser {
 
       // Other unincorporated communities
       "BUFORD",
-      "CLARKRIDGE"
+      "CLARKRIDGE",
+
+      // Fulton County
+      "GEPP",
+
+      // Marion County
+      "MARION COUNTY"
 
   };
 
