@@ -64,7 +64,12 @@ public class ARWashingtonCountyBParser extends MsgParser {
       if (apt == null) return false;
       data.strApt = append(data.strApt, "-", apt);
     } else {
-      if (!fp.check(" Ops Channel") && !fp.check("  Ops Channel")) return false;
+      String apt = fp.getOptional(10,  " Ops Channel");
+      if (apt != null) {
+        data.strApt = append(data.strApt, "-", apt);
+      } else {
+        if (!fp.check(" Ops Channel") && !fp.check("  Ops Channel")) return false;
+      }
     }
     data.strChannel = fp.get(30);
 
@@ -86,6 +91,7 @@ public class ARWashingtonCountyBParser extends MsgParser {
 
     if (!fp.check("City:")) return false;
     data.strCity = fp.get(35);
+    fp.checkBlanks(2);
 
     if (!fp.check("Units:")) {
       data.strUnit = fp.get();
