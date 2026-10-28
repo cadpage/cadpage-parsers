@@ -655,7 +655,7 @@ public class Active911ParserTable {
       "US/IA/CityofMaquoketa",            "IAJacksonCounty",
       "US/IA/CityofOttumwa",              "IAWapelloCounty",
       "US/IA/DallasCounty",               "IADallasCounty",
-      "US/IA/GrangerFD",                  "IADallasCountyB",
+//      "US/IA/GrangerFD",                  "IADallasCountyC",
       "US/IA/HancockCounty",              "IAHancockCounty",
       "US/IA/IdaCounty",                  "IAIdaCounty",
       "US/IA/JohnsonCounty",              "IAJohnsonCounty",
