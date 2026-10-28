@@ -31,10 +31,11 @@ public class VAAmherstCountyParser extends FieldProgramParser {
     return super.getField(name);
   }
 
-  private static final Pattern CALL_ID_PTN = Pattern.compile("(.*): *(CAD\\d{4}-\\d{6}|\\d+)");
+  private static final Pattern CALL_ID_PTN = Pattern.compile("(.*): *(CAD\\d{4}-\\d{6}|\\d+|)");
   private class MySourceIdField extends Field {
     @Override
     public void parse(String field, Data data) {
+      if (field.isEmpty()) return;
       Matcher match = CALL_ID_PTN.matcher(field);
       if (!match.matches()) abort();
       data.strSource = match.group(1).trim();
