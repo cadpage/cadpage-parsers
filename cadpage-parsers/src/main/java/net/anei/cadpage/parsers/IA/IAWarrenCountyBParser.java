@@ -13,8 +13,8 @@ public class IAWarrenCountyBParser extends FieldProgramParser {
 
   IAWarrenCountyBParser(String defCity, String defState) {
     super(defCity, defState,
-          "Jurisdiction:SRC? Inci.#:ID! Time:DATETIME! Inci.Type:CALL! Address:ADDR! Bldg:APT! Unit/Apt:APT! City:CITY! xStreet:X! Loc.Name:PLACE! Area:MAP! " +
-              "Lat/Long:GPS/d! Map_Zone:MAP/L! ( Resp._Chnl:CH! | Cmd_Chnl:CH! ) Tac_Chnl:CH/L! Units:UNIT! Comments:INFO! END");
+          "Jurisdiction:SRC? Inci.#:ID! Time:DATETIME! Inci.Type:CALL! Address:ADDR! Bldg:APT! Unit/Apt:APT! City:CITY! xStreet:X! Loc.Name:PLACE! Area:MAP? " +
+              "Lat/Long:GPS/d! Map_Zone:MAP/L! ( Resp._Chnl:CH! | Cmd_Chnl:CH! | ) Tac_Chnl:CH/L! Units:UNIT! Comments:INFO! END");
   }
 
   @Override
