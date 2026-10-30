@@ -1,8 +1,8 @@
 package net.anei.cadpage.parsers.MI;
 
-import net.anei.cadpage.parsers.dispatch.DispatchH03Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchH06Parser;
 
-public class MIWayneCountyAParser extends DispatchH03Parser {
+public class MIWayneCountyAParser extends DispatchH06Parser {
 
   public MIWayneCountyAParser() {
     this("WAYNE COUNTY", "MI");
@@ -14,7 +14,11 @@ public class MIWayneCountyAParser extends DispatchH03Parser {
 
   @Override
   public String getFilter( ) {
-    return "MSP@michigan.gov";
+    return "noreply-TylerCAD@Notifications.michigan.gov";
   }
 
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
 }
