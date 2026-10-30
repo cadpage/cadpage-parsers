@@ -2461,6 +2461,7 @@ public class Active911ParserTable {
       "US/PA/ClearfieldCounty",           "PAClearfieldCounty",
       "US/PA/CoatesvilleVAFD",            "PAChesterCountyP",
       "US/PA/ColumbiaCounty",             "PAColumbiaCounty",
+      "US/PA/ColumbiaCountyRelianceFC",   "PAColumbiaCounty",
       "US/PA/CountyWideFireEMS",          "PAYorkCountyD",
       "US/PA/CrawfordCounty",             "PACrawfordCounty",
       "US/PA/CumberlandCoFCFES",          "PACumberlandCounty",
