@@ -15,7 +15,7 @@ public class LALafourcheParishParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "ledsportal@lpso.net";
+    return "ledsportal@lpso.net,@eprsys.com";
   }
 
   @Override
