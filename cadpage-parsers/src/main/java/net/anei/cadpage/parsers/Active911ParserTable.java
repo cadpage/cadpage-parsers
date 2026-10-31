@@ -1780,7 +1780,7 @@ public class Active911ParserTable {
       "US/NC/DeepGapFD",                  "NCWataugaCounty",
       "US/NC/DPS",                        "NCWakeCountyF",
       "US/NC/DunnPD",                     "NCHarnettCountyD",
-      "US/NC/DuplinCounty",               "NCDuplinCounty",
+      "US/NC/DuplinCounty",               "NCDuplinCounty,NCPendersonCountyB",
       "US/NC/DurhamCounty",               "NCDurhamCountyA",
       "US/NC/DurhamCountySD",             "NCDurhamCountyA",
       "US/NC/EasternFirePhoto",           "NCJohnstonCounty",
