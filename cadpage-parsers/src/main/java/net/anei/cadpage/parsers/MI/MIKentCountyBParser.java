@@ -10,7 +10,7 @@ public class MIKentCountyBParser extends DispatchC01Parser {
 
   @Override
   public String getFilter() {
-    return "KCCCAlert@kent911.org";
+    return "KCCCAlert@kent911.org,@eprsys.com";
   }
 
   @Override

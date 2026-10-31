@@ -17,7 +17,7 @@ public class MIKentCountyAParser extends DispatchH03Parser {
 
   @Override
   public String getFilter() {
-    return "@Kent911.org,ssiler@caledoniatownship.org";
+    return "@Kent911.org,ssiler@caledoniatownship.org,@eprsys.com";
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("(.*) (?:Med|Fire) Alert");

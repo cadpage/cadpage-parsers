@@ -14,7 +14,7 @@ public class MIMasonCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "csproreports@gmail.com,ossicad@gmail.com";
+    return "csproreports@gmail.com,ossicad@gmail.com,@eprsys.com";
   }
 
   @Override

@@ -10,7 +10,7 @@ public class TXWiseCountyBParser extends DispatchA27Parser {
 
   @Override
   public String getFilter() {
-    return "cis@sheriff.co.wise.tx.us";
+    return "cis@sheriff.co.wise.tx.us,@eprsys.com";
   }
 
   @Override

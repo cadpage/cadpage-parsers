@@ -15,7 +15,7 @@ public class WAKlickitatCountyParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "@alert.active911.com,noreply@klickitatcounty.org";
+    return "@alert.active911.com,noreply@klickitatcounty.org,@eprsys.com";
   }
 
   @Override

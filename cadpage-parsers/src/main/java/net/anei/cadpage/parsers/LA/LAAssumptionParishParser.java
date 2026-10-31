@@ -15,7 +15,7 @@ public class LAAssumptionParishParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "no-reply@csprosuite.centralsquarecloudgov.com,leds@assumptionsheriff.com";
+    return "no-reply@csprosuite.centralsquarecloudgov.com,leds@assumptionsheriff.com,@eprsys.com";
   }
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("(\\d+) - *(.*)");

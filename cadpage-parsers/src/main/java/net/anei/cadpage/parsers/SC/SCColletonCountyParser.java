@@ -14,7 +14,7 @@ public class SCColletonCountyParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "zuercher@colletoncounty.org";
+    return "zuercher@colletoncounty.org,@eprsys.com";
   }
 
   @Override
