@@ -7,6 +7,11 @@ public class VABotetourtCountyBParser extends DispatchA71Parser {
   public VABotetourtCountyBParser() {
     super("BOTETOURT COUNTY", "VA");
   }
+  
+  @Override
+  public String getFilter() {
+    return "botetourtfireandems@gmail.com";
+  }
 
   @Override
   public int getMapFlags() {
