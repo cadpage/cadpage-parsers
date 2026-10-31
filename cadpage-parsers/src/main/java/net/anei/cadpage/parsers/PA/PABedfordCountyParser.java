@@ -8,8 +8,10 @@ Bedford County, PA
 
 
 public class PABedfordCountyParser extends GroupBestParser {
-  
+
   public PABedfordCountyParser() {
-    super(new PABedfordCountyAParser(), new PABedfordCountyBParser());
+    super(new PABedfordCountyAParser(),
+          new PABedfordCountyBParser(),
+          new PABedfordCountyCParser());
   }
 }
