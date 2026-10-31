@@ -19,7 +19,7 @@ public class KSMiamiCountyAParser extends SmartAddressParser {
 
   @Override
   public String getFilter() {
-    return "noreply@sheriffmiamicountyks.gov";
+    return "noreply@sheriffmiamicountyks.gov,@eprsys.com";
   }
 
   private static final Pattern MASTER = Pattern.compile("Incident in progress (.*) (\\d{4}-\\d{6})");

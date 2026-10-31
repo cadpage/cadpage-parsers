@@ -18,12 +18,12 @@ public class ALTalladegaCountyAParser extends FieldProgramParser {
     setupProtectedNames("1/4");
     removeWords("COVE");
   }
-  
+
   @Override
   public String getFilter() {
-    return "Talladega_County_9-1-1@TalladegaCo911.com,Talladega_County_9-1-1@talladega911.org,dispatchtext@talladega911.org";
+    return "Talladega_County_9-1-1@TalladegaCo911.com,Talladega_County_9-1-1@talladega911.org,dispatchtext@talladega911.org,@eprsys.com";
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
     body = stripFieldStart(body, "Talladega_County_9-1-1:");
@@ -34,7 +34,7 @@ public class ALTalladegaCountyAParser extends FieldProgramParser {
   public String getProgram() {
     return super.getProgram() + " X PLACE";
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ADDR")) return new MyAddressCityField();
@@ -52,15 +52,15 @@ public class ALTalladegaCountyAParser extends FieldProgramParser {
       if (data.strCity.equals("CHILDERBURG")) data.strCity = "CHILDERSBURG";
     }
   }
-  
+
   @Override
   public boolean isNotExtraApt(String field) {
     if (NOT_EXTRA_APT_PTN.matcher(field).matches()) return true;
     return super.isNotExtraApt(field);
   }
-  
+
   private static final Pattern NOT_EXTRA_APT_PTN = Pattern.compile("(?:[/0-9]+ MILE|AND|AREA|BETWEEN|BY|GOING|JUST|OFF RAMP|ON RAMP|ONTO|OR|PASSED|TOWARD)\\b.*");
-  
+
   private static final Properties MISSPELLED_CITY_TABLE = buildCodeTable(new String[]{
       "EASTBOGA",       "EASTABOGA",
       "CHILDERBURG",    "CHILDERSBURG",
@@ -69,9 +69,9 @@ public class ALTalladegaCountyAParser extends FieldProgramParser {
       "WEGULFKA",       "WEOGUFKA",
       "WINTERBRO",      "WINTERBORO"
   });
-  
+
   private static final String[] CITY_LIST = {
-      
+
       // Cities
       "CHILDERSBURG",
       "LINCOLN",
@@ -109,18 +109,18 @@ public class ALTalladegaCountyAParser extends FieldProgramParser {
 
       // Ghost town
       "GANTTS QUARRY",
-      
+
       // Coosa County
       "COOSA CO",
       "COOSA COUNTY",
       "GOODWATER",
       "WEOGUFKA",
-      
+
       // Calhoun County
       "CALHOUN CO",
       "CALHOUN COUNTY",
       "ANNISTON",
-      
+
       // Clay County
       "CLAY CO",
       "CLAY COUNTY",
@@ -129,7 +129,7 @@ public class ALTalladegaCountyAParser extends FieldProgramParser {
       "MARENGO CO",
       "MARENGO COUNTY",
       "PROVIDENCE",
-    
+
       // Tallapoosa County
       "TALLAPOOSA CO",
       "TALLAPOOSA COUNTY",
