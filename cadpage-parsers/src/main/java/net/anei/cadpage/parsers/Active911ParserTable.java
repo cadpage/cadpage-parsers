@@ -1997,7 +1997,7 @@ public class Active911ParserTable {
       "US/NJ/PalmyraAmbulance",           "NJBurlingtonCountyH",
       "US/NJ/PalmyraFire",                "NJBurlingtonCountyH",
       "US/NJ/RFAS",                       "NJEssexCountyB",
-      "US/NJ/Robbinsville",               "NJBurlingtonCountyH",
+      "US/NJ/Robbinsville",               "NJBurlingtonCountyH,NJMercerCountyA",
       "US/NJ/RowanUniversity",            "NJGloucesterCountyA",
       "US/NJ/Rutgers",                    "NJMiddlesexCountyE,NJMiddlesexCountyG",
       "US/NJ/RWJBHealthEMS",              "NJMiddlesexCountyF",
