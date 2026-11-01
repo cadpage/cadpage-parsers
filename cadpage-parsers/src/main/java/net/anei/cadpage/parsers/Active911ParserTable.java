@@ -3060,6 +3060,7 @@ public class Active911ParserTable {
       "US/VA/AccomackCounty",             "VAAccomackCounty",
       "US/VA/AlbermarleCounty",           "VAAlbemarleCounty",
       "US/VA/Alexandria",                 "VAAlexandria",
+      "US/VA/AlleghanyCounty",            "VAAlleghanyCounty",
       "US/VA/AMCOM",                      "GeneralAlert",
       "US/VA/AmeliaCounty",               "VAAmeliaCountyB",
       "US/VA/AmherstCounty",              "VAAmherstCounty",

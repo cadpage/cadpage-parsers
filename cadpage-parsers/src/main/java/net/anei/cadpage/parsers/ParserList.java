@@ -1966,6 +1966,7 @@ public class ParserList {
               ,"VAAccomackCounty"               ,"Accomack County, VA"
               ,"VAAlbemarleCounty"              ,"Albemarle County, VA"
               ,"VAAlexandria"                   ,"Alexandria, VA"
+              ,"VAAlleghanyCounty"              ,"Alleghany County, VA"
               ,"VAAmeliaCounty"                 ,"Amelia County, VA"
               ,"VAAmherstCounty"                ,"Amherst County, VA"
               ,"VAAppomattoxCounty"             ,"Appomattox County, VA"
