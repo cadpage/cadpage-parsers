@@ -7,6 +7,7 @@ public class IAWarrenCountyParser extends GroupBestParser {
   public IAWarrenCountyParser() {
    super(new IAWarrenCountyAParser(),
          new IAWarrenCountyBParser(),
+         new IAWarrenCountyCParser(),
          new IAWarrenCountyDParser());
   }
 }

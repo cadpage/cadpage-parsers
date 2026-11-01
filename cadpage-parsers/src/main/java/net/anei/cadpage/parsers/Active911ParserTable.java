@@ -672,7 +672,7 @@ public class Active911ParserTable {
       "US/IA/UrbandaleFD",                "IAWarrenCountyB",
       "US/IA/WarrenCounty",               "IAWarrenCountyA,IAWarrenCountyB,IAWarrenCountyD",
       "US/IA/WaukeeFD",                   "IADallasCountyA",
-      "US/IA/Westcom",                    "IAWarrenCountyB",
+      "US/IA/Westcom",                    "IAWarrenCountyB,IAWarrenCountyC",
       "US/IA/WestDesMoinesFD",            "IAPolkCountyB",
       "US/IA/WinnebagoCounty",            "IAWinnebagoCounty",
       "US/IA/WoodburyCounty",             "IAWoodburyCounty",
