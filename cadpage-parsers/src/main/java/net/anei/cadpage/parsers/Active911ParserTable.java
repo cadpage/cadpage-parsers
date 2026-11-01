@@ -2299,6 +2299,7 @@ public class Active911ParserTable {
       "US/OH/TheBeachWaterpark",          "OHWarrenCountyD",
       "US/OH/Tiffin",                     "OHSenecaCounty",
       "US/OH/TriTwp",                     "OHDelawareCountyD",
+      "US/OH/TrumbullCo911",              "OHTrumbullCountyA",
       "US/OH/TrumbullCounty",             "OHTrumbullCounty",
       "US/OH/TrumbullCoWarrenTwpPD",      "OHTrumbullCountyB",
       "US/OH/UnionCounty",                "OHUnionCounty,OHMadisonCounty,OHCrawfordCounty",
