@@ -15,8 +15,10 @@ public class NCAlexanderCountyParser extends DispatchOSSIParser {
 
   public NCAlexanderCountyParser() {
     super(CITY_CODES, "ALEXANDER COUNTY", "NC",
-          "FYI? ( CALL2/Z ADDR/Z CITY X+? ID? CODE? INFO+ " +
-               "| SRC? ADDR ( CALL CODE? | CALL/Z! ( END | CODE | X ) | PLACE CALL! CODE? ) X+? INFO+ )");
+          "FYI? ( UNIT ENROUTE ADDR CITY CALL " +
+               "| CALL2/Z ADDR/Z CITY X+? ID? CODE? " +
+               "| SRC? ADDR ( CALL CODE? | CALL/Z! ( END | CODE | X ) | PLACE CALL! CODE? ) X+? " +
+               ") INFO/N+");
     addRoadSuffixTerms("LP", "PARK", "PVT");
     removeWords("AVENUE", "BEND", "COVE");
     setupProtectedNames("B AND S");

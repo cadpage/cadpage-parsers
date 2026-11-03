@@ -11,7 +11,7 @@ public class ALAutaugaCountyParser extends FieldProgramParser {
 
   public ALAutaugaCountyParser() {
     super(CITY_CODES, "AUTAUGA COUNTY", "AL",
-          "( ID | SKIP ) CALL ( SRC UNIT ADDRCITYST! | ADDRCITY SRC UNIT! ) INFO/N+");
+          "( ID | SKIP ) CALL ( SRC UNIT ADDR1? ADDRCITYST! | ADDRCITY SRC UNIT! ) INFO/N+");
   }
 
   @Override
@@ -28,6 +28,7 @@ public class ALAutaugaCountyParser extends FieldProgramParser {
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("\\d{5,}", true);
+    if (name.equals("ADDR1")) return new AddressField("\\d{1,5}", true);
     if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("SRC")) return new SourceField("\\d{3,4}", true);
@@ -39,6 +40,8 @@ public class ALAutaugaCountyParser extends FieldProgramParser {
   private class MyAddressCityStateField extends AddressCityStateField {
     @Override
     public void parse(String field, Data data) {
+      field = append(data.strAddress, " ", field);
+      data.strAddress = "";
       super.parse(stripFieldEnd(field, ","), data);
     }
   }
