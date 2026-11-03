@@ -2671,6 +2671,7 @@ public class Active911ParserTable {
       "US/SC/PrismaHealth",               "SCOconeeCountyB",
       "US/SC/RichlandCounty",             "SCRichlandCountyA",
       "US/SC/SaludaCounty",               "SCSaludaCounty",
+      "US/SC/SanteeFD",                   "SCOrangeburgCounty",
       "US/SC/SenacaPD",                   "SCOconeeCountyC",
       "US/SC/SouthGreenvilleFD",          "SCGreenvilleCountyE",
       "US/SC/SpartanburgCounty",          "SCSpartanburgCounty",
