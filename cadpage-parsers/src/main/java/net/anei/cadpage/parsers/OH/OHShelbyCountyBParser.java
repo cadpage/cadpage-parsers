@@ -9,12 +9,14 @@ public class OHShelbyCountyBParser extends FieldProgramParser {
 
   public OHShelbyCountyBParser() {
     super("SHELBY COUNTY", "OH",
-          "CALL CALL/L+? ( ID INFO/L+? GPS | GPS ) ADDR1? ADDRCITYST INFO/L+? ( ID DATETIME/d! | DATETIME/d! ) END");
+          "CALL CALL/L+? ( ( ID INFO/L+? GPS | GPS ) ADDR1? ADDRCITYST INFO/L+? ( ID DATETIME/d! | DATETIME/d! ) " +
+                        "| ( ADDR1 ADDRCITYST | ADDRCITYST ) INFO/L+? DATETIME/d ID SRC UNIT X X! INFO/L+? GPS1 GPS2 " +
+                        ") END");
   }
 
   @Override
   public String getFilter() {
-    return "no-reply@zuercherportal.com";
+    return "noreply@shelbycountysheriff.com";
   }
 
   @Override
@@ -22,30 +24,55 @@ public class OHShelbyCountyBParser extends FieldProgramParser {
     return MAP_FLG_PREFER_GPS;
   }
 
-  private static Pattern DATE_PTN = Pattern.compile("\\b(\\d\\d)/(\\d\\d)/(\\d\\d)\\b");
+  private static Pattern DATE_PTN = Pattern.compile("/(\\d\\d)/(\\d\\d)/(\\d\\d) ");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
-    if (!subject.isEmpty()) body = subject + '/' + body;
-
     body = body.replace("maps.google.com/", "maps.google.com");
-    body = DATE_PTN.matcher(body).replaceFirst("$1-$2-$3");
+    body = DATE_PTN.matcher(body).replaceFirst("/$1-$2-$3 ");
     return parseFields(body.split("/"), data);
   }
 
+  private static final Pattern GPS_PTN = Pattern.compile("[-+]?\\d\\d.\\d{6,}");
+
   @Override
   public Field getField(String name) {
+    if (name.equals("CALL")) return new MyCallField();
     if (name.equals("ID")) return new IdField("CFS\\d{3,}", true);
     if (name.equals("ADDR1")) return new MyAddress1Field();
     if (name.equals("ADDRCITYST")) return new MyAddressCityStateField();
     if (name.equals("GPS")) return new GPSField("maps\\.google\\.com\\?q=(.*)", true);
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d", true);
+    if (name.equals("GPS1")) return new GPSField(1, GPS_PTN, true);
+    if (name.equals("GPS2")) return new GPSField(2, GPS_PTN, true);
     return super.getField(name);
   }
 
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("None")) return;
+      super.parse(field, data);
+    }
+  }
+
   private class MyAddress1Field extends AddressField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.equals("None")) return false;
+      if (field.contains(",")) return false;
+      if (checkAddress(field) !=  STATUS_STREET_NAME) return false;
+      parse(field, data);
+      return true;
+    }
+
     @Override
     public void parse(String field, Data data) {
       data.strAddress = field;
