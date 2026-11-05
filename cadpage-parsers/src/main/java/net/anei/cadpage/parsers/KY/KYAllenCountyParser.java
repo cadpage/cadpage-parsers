@@ -1,35 +1,23 @@
 package net.anei.cadpage.parsers.KY;
 
-import net.anei.cadpage.parsers.dispatch.DispatchA74Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchA27Parser;
 
 /**
  * Allen County, KY
  */
-public class KYAllenCountyParser extends DispatchA74Parser {
+public class KYAllenCountyParser extends DispatchA27Parser {
 
   public KYAllenCountyParser() {
-    super(CITY_LIST, "ALLEN COUNTY", "KY");
+    super("ALLEN COUNTY", "KY");
   }
 
   @Override
   public String getFilter() {
-    return "dispatch@AllenKYE911.info";
+    return "dispatch@scottsvillepolice.org";
   }
 
   @Override
   public int getMapFlags() {
     return MAP_FLG_PREFER_GPS;
   }
-
-  private static final String[] CITY_LIST = new String[]{
-      "ADOLPHUS",
-      "AMOS",
-      "HALIFAX",
-      "HALFWAY",
-      "HOLLAND",
-      "MEADOR",
-      "NEW ROE",
-      "PETROLEUM",
-      "SCOTTSVILLE"
-  };
 }
