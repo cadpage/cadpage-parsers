@@ -1,16 +1,15 @@
 package net.anei.cadpage.parsers.MI;
 
-import net.anei.cadpage.parsers.dispatch.DispatchH03Parser;
+import net.anei.cadpage.parsers.dispatch.DispatchC17Parser;
 
-public class MISchoolcraftCountyParser extends DispatchH03Parser {
+public class MISchoolcraftCountyParser extends DispatchC17Parser {
 
   public MISchoolcraftCountyParser() {
     super("SCHOOLCRAFT COUNTY", "MI");
   }
 
   @Override
-  public String getFilter() {
-    return "MSP@michigan.gov";
+  public int getMapFlags() {
+    return  MAP_FLG_PREFER_GPS;
   }
-
 }
