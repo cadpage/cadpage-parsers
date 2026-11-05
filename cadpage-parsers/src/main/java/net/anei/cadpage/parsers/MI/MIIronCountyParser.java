@@ -2,6 +2,7 @@ package net.anei.cadpage.parsers.MI;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,9 +17,12 @@ public class MIIronCountyParser extends DispatchOSSIParser {
   }
 
   public MIIronCountyParser(String defCity, String defState) {
-    super(defCity, defState,
+    super(CITY_CODES, defCity, defState,
           "( CANCEL ADDR! INFO+ " +
-          "| FYI? CALL MASH+? UNIT! CITY? INFO+ )");
+          "| FYI? CALL ( ( ADDR/Z CITY | PLACE ADDR/Z CITY ) GPS1 GPS2! " +
+                      "| MASH+? UNIT! CITY2? " +
+                      ") INFO+ " +
+          ")");
   }
 
   @Override
@@ -51,7 +55,7 @@ public class MIIronCountyParser extends DispatchOSSIParser {
   @Override
   public Field getField(String name) {
     if (name.equals("MASH")) return new MyMashField();
-    if (name.equals("CITY")) return new CityField("[ A-Z]+", true);
+    if (name.equals("CITY2")) return new MyCity2Field();
     if (name.equals("UNIT")) return new UnitField("(?!FS\\d+)(?:[A-Z]?\\d+[A-Z]+|[A-Z]+\\d+|\\d{4}|[A-Z]{2}FD)", true);
     return super.getField(name);
   }
@@ -129,4 +133,25 @@ public class MIIronCountyParser extends DispatchOSSIParser {
       return "PLACE ADDR X APT";
     }
   }
+
+  // There is a city code table used by the regular CITY class
+  //  that we want to totally ignore for this one.
+  private class MyCity2Field extends CityField {
+
+    public MyCity2Field() {
+      super("[ A-Z]+", true);
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      data.strCity = field;
+      return true;
+    }
+  }
+
+  private static final Properties CITY_CODES = buildCodeTable(new String[] {
+      "GOBE", "BESSEMER",
+      "GOWA", "WATERSMEET TWP"
+
+  });
 }

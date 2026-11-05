@@ -7,6 +7,7 @@ public class MIWayneCountyParser extends GroupBestParser {
   public MIWayneCountyParser() {
     super(new MIWayneCountyAParser(),
           new MIWayneCountyBParser(),
-          new MIWayneCountyCParser());
+          new MIWayneCountyCParser(),
+          new MIWayneCountyDParser());
   }
 }
