@@ -10,7 +10,8 @@ public class ARBentonCountyAParser extends FieldProgramParser {
 
   public ARBentonCountyAParser() {
     super("BENTON COUNTY", "AR",
-          "Fire_Box:BOX! Location:ADDRCITYST! Latitude:GPS1! Longitude:GPS2! Cross_streets:X! CFS_#:ID! Details:INFO! Units:UNIT! END");
+          "( SELECT/1 Fire_Box:BOX! | CALL ) Location:ADDRCITYST! Latitude:GPS1! Longitude:GPS2! Cross_streets:X! CFS_#:ID! " +
+                "Details:INFO! ( SELECT/1 Units:UNIT! END | INFO/N+? NONE UNIT NONE END )");
   }
 
   @Override
@@ -25,9 +26,15 @@ public class ARBentonCountyAParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-    data.strCall = subject;
-    body = body.replace(" CFS # ", " CFS #:");
-    return super.parseMsg(body, data);
+    body = body.replace("CFS # ", "CFS #:");
+    if (subject.startsWith("CFS - Unit Assigned - ")) {
+      setSelectValue("2");
+      return super.parseFields(body.split("\n"), data);
+    } else {
+      setSelectValue("1");
+      data.strCall = subject;
+      return super.parseMsg(body, data);
+    }
   }
 
   @Override
@@ -42,6 +49,7 @@ public class ARBentonCountyAParser extends FieldProgramParser {
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("INFO")) return new MyInfoField();
     if (name.equals("UNIT")) return new MyUnitField();
+    if (name.equals("NONE"))  return new SkipField("None", true);
     return super.getField(name);
   }
 
@@ -74,7 +82,9 @@ public class ARBentonCountyAParser extends FieldProgramParser {
   private class MyInfoField extends InfoField {
     @Override
     public void parse(String field, Data data) {
-      data.strSupp = INFO_BRK_PTN.matcher(field).replaceAll("\n").trim();
+      if (field.equals("None")) return;
+      field = INFO_BRK_PTN.matcher(field).replaceAll("\n").trim();
+      data.strSupp = append(data.strSupp, "\n", field);
     }
   }
 

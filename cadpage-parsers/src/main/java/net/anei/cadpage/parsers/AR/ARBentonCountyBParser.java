@@ -1,5 +1,6 @@
 package net.anei.cadpage.parsers.AR;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.anei.cadpage.parsers.FieldProgramParser;
@@ -23,11 +24,17 @@ public class ARBentonCountyBParser extends FieldProgramParser {
     return MsgInfo.MAP_FLG_SUPPR_AND_ADJ;
   }
 
-  private static Pattern INFO_BRK_PTN = Pattern.compile("\\s*\\n\\s*");
+  private static final Pattern LEAD_ID_PTN = Pattern.compile("(\\d{4}-\\d+ \\(\\d+\\))\n\n");
+  private static final Pattern INFO_BRK_PTN = Pattern.compile("\\s*\\n\\s*");
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
     if (!subject.equals("Dispatch")) return false;
+    Matcher match = LEAD_ID_PTN.matcher(body);
+    if (match.find()) {
+      data.strCallId = match.group(1);
+      body = body.substring(match.end());
+    }
     if (!body.startsWith("***")) return false;
     body = body.substring(3).trim();
     if (body.endsWith("\n ***END OF TRANSMISSION***")) {
@@ -47,7 +54,7 @@ public class ARBentonCountyBParser extends FieldProgramParser {
 
   @Override
   public String getProgram() {
-    return super.getProgram() + " INFO";
+    return "ID " + super.getProgram() + " INFO";
   }
 
   @Override
