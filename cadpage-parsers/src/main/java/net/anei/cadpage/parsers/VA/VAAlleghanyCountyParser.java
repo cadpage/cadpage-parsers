@@ -7,9 +7,9 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 import net.anei.cadpage.parsers.MsgInfo.MsgType;
 
-public class VAAlleganyCountyParser extends FieldProgramParser {
+public class VAAlleghanyCountyParser extends FieldProgramParser {
 
-  public VAAlleganyCountyParser() {
+  public VAAlleghanyCountyParser() {
     super("ALLEGANY COUNTY", "VA",
           "UNIT_ID CALL ADDRCITYST! XST1:X! XST2:X! NOTES:INFO! END");
   }
