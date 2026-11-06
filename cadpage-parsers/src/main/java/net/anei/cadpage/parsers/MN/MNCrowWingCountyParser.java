@@ -5,6 +5,8 @@ import net.anei.cadpage.parsers.GroupBestParser;
 public class MNCrowWingCountyParser extends GroupBestParser {
 
   public MNCrowWingCountyParser() {
-    super(new MNCrowWingCountyAParser(), new MNCrowWingCountyBParser());
+    super(new MNCrowWingCountyAParser(),
+          new MNCrowWingCountyBParser(),
+          new MNCrowWingCountyCParser());
   }
 }
