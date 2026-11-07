@@ -22,7 +22,7 @@ public class VAGreensvilleCountyAParser extends DispatchOSSIParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("CANCEL")) return new BaseCancelField(".* PAGE|DRIVER NEEDED|.*HEALTH ADVISORY ALERT");
+    if (name.equals("CANCEL")) return new BaseCancelField(".* PAGE|CPR IN PROGRESS|DRIVER NEEDED|.*HEALTH ADVISORY ALERT");
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
     if (name.equals("SRC")) return new SourceField("[A-Z]{3,4}", true);
     if (name.equals("ID")) return new IdField("\\d*", true);
