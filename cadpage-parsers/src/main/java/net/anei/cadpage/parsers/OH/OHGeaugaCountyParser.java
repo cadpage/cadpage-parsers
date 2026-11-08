@@ -11,6 +11,7 @@ public class OHGeaugaCountyParser extends GroupBestParser {
   public OHGeaugaCountyParser() {
     super(new OHGeaugaCountyAParser(),
           new OHGeaugaCountyBParser(),
-          new OHGeaugaCountyCParser());
+          new OHGeaugaCountyCParser(),
+          new OHGeaugaCountyDParser());
   }
 }
