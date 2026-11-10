@@ -8,31 +8,34 @@ import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class MOPolkCountyParser extends FieldProgramParser {
-  
+
   public MOPolkCountyParser() {
-    super(CITY_CODES, "POLK COUNTY", "MO", 
-          "( UNDER_CONTROL ADDR CITY! INFO/N+ " +
-          "| CALL PLACE ADDR CITY DATETIME! END )");
+    super(CITY_CODES, "POLK COUNTY", "MO",
+          "( UNDER_CONTROL ADDR CITY! " +
+          "| CALL PLACE ADDR CITY DATETIME! " +
+          ") INFO/N+ END");
+
   }
-  
+
   @Override
   public String getFilter() {
     return "911paging@polkco911.com";
   }
-  
+
   @Override
   public boolean parseMsg(String body, Data data) {
     return parseFields(body.split(";"), data);
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("UNDER_CONTROL")) return new CallField("UNDER CONTROL", true);
     if (name.equals("CALL")) return new MyCallField();
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d{4} \\d\\d:\\d\\d:\\d\\d", true);
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
-  
+
   private static final Pattern CALL_CODE_PTN = Pattern.compile("(.*?) +(\\d{1,2}-[A-Z]-\\d{1,2})");
   private class MyCallField extends CallField {
     @Override
@@ -44,13 +47,23 @@ public class MOPolkCountyParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-    
+
     @Override
     public String getFieldNames() {
       return "CALL CODE";
     }
   }
-  
+
+  private static final Pattern INFO_JUNK_PTN = Pattern.compile(" *\\[\\d\\d?/\\d\\d/\\d\\d \\d\\d:\\d\\d:\\d\\d [A-Z]+\\]$");
+
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      field = INFO_JUNK_PTN.matcher(field).replaceFirst("");
+      data.strSupp = append(data.strSupp, "\n", field);
+    }
+  }
+
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
       "ALDR", "ALDRICH",
       "BOLI", "BOLIVAR",
@@ -70,6 +83,6 @@ public class MOPolkCountyParser extends FieldProgramParser {
       "URBA", "URBANA",
       "WALN", "WALNUTGROVE",
       "WILL", "WILLARD"
-      
+
   });
 }
