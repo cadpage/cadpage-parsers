@@ -3,48 +3,50 @@ package net.anei.cadpage.parsers;
 import net.anei.cadpage.parsers.MsgInfo.Data;
 
 public class Cadpage2Parser extends CadpageParserBase {
-  
+
   private String delim;
   private boolean active911;
-  
+
   public Cadpage2Parser() {
     this(CountryCode.US);
   }
-  
+
   public Cadpage2Parser(CountryCode country) {
     this("", "", country);
   }
-  
+
   public Cadpage2Parser(String defCity, String defState) {
     this(defCity, defState, CountryCode.US);
   }
-  
+
   Cadpage2Parser(String defCity, String defState, CountryCode country) {
     this("\n", defCity, defState, country);
   }
-  
+
   Cadpage2Parser(String delim, String defCity, String defState,  CountryCode country) {
     this(delim, defCity, defState, country, false);
   }
 
-  
+
   Cadpage2Parser(String delim, String defCity, String defState, CountryCode country, boolean active911) {
     super(defCity, defState, country);
     this.delim = delim;
     this.active911 = active911;
   }
-  
+
   @Override
   public String getLocName() {
-    return "Standard Cadpage Format B";
+    String result = super.getLocName();
+    if (result.isEmpty()) result = "Standard Cadpage Format B";
+    return result;
   }
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
     // Only valid if positive ID established
     if (!isPositiveId()) return false;
-    
+
     // Otherwise, process fields broken by newlines and ignore
     // anything that doesn't start with a valid keyword
     // Except for lines following an INFO: keyword, which we
@@ -58,7 +60,7 @@ public class Cadpage2Parser extends CadpageParserBase {
         String key = line.substring(0,pt).trim();
         String value = line.substring(pt+1).trim();
         Field field = getMapField(key);
-        
+
         // Active911 format treats unknown (to them) keywords as info strings
         // The net result is that info strings may be encountered after known
         // keywords found after an INFO field.  So once the info flag is set

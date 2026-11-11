@@ -8,6 +8,7 @@ public class MDSaintMarysCountyParser extends GroupBestParser {
   public MDSaintMarysCountyParser() {
     super(new MDSaintMarysCountyAParser(),
           new MDSaintMarysCountyBParser(),
-          new MDSaintMarysCountyCParser());
+          new MDSaintMarysCountyCParser(),
+          new MDSaintMarysCountyDParser());
   }
 }
