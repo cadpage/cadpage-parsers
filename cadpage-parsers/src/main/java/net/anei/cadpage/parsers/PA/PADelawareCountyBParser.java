@@ -35,7 +35,7 @@ public class PADelawareCountyBParser extends FieldProgramParser {
 
   @Override
   public String getFilter() {
-    return "@delcotextrelay.com,caddbserver@delco911alerts.com,@c-msg.net";
+    return "@delcotextrelay.com,caddbserver@delco911alerts.com,@c-msg.net,alerts@phillyfirefeed.com";
   }
 
   private static final Pattern DELIM2 = Pattern.compile("\n|\\s+(?=Dispatched:|Time Reported:)");
