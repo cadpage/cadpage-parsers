@@ -5,7 +5,7 @@ import net.anei.cadpage.parsers.dispatch.DispatchA88Parser;
 public class ALBlountCountyCParser extends DispatchA88Parser {
 
   public ALBlountCountyCParser() {
-    super(ALBlountCountyParser.CITY_LIST, "BLOUNT COUNTY", "AL");
+    super(ALBlountCountyParser.CITY_LIST, "BLOUNT COUNTY", "AL", A88_SUPPR_INT_CITY);
   }
 
   @Override

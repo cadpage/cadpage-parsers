@@ -8,9 +8,21 @@ import net.anei.cadpage.parsers.SmartAddressParser;
 
 public class DispatchA88Parser extends SmartAddressParser {
 
+  /**
+   * Flag indicating  city field should be ignored for intersection addresses
+   */
+  public static final int A88_SUPPR_INT_CITY = 1;
+
   public DispatchA88Parser(String[] cityList, String defCity, String defState) {
+    this(cityList, defCity, defState, 0);
+  }
+
+  boolean supprIntCity;
+
+  public DispatchA88Parser(String[] cityList, String defCity, String defState, int flags) {
     super(cityList, defCity, defState);
     setFieldList("ID PLACE ADDR CITY APT CALL URL");
+    supprIntCity = (flags & A88_SUPPR_INT_CITY) != 0;
   }
 
   private static final Pattern URL_PTN = Pattern.compile("\n(https?://.*?)\n");
@@ -38,40 +50,47 @@ public class DispatchA88Parser extends SmartAddressParser {
     String city = match.group(4);
 
     if (addr.endsWith(" INT")) {
-      parseAddress(place, data);
-      return true;
-    }
-    data.strPlace = place;
-    if (city != null) {
-      parseAddress(addr, data);
-      if (city.isEmpty()) return true;
-      parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, city.trim(), data);
-      if (!data.strCity.isEmpty()) {
-        data.strCall = getLeft();
-        return true;
-      } else {
-        match = CITY_APT_PTN.matcher(city);
-        if (match.matches()) {
-          city = match.group(1);
-          if (isCity(city)) {
-            data.strCity = city;
-            data.strApt = append(data.strApt, "-", match.group(2));
-            data.strCall = match.group(3);
-            return true;
-          }
-        }
-        return false;
-      }
+      parseAddress(place.replace("\\", "&"), data);
+      if (supprIntCity || city == null) return true;
+      return parseCity(city, data);
     } else {
-      parseAddress(StartType.START_ADDR, addr, data);
-      data.strCall = getLeft();
-      if (data.strCall.isEmpty()) return false;
-      match = MM_PTN.matcher(data.strCall);
-      if (match.matches()) {
-        data.strAddress = append(data.strAddress,  " ", match.group(1));
-        data.strCall = match.group(2);
+      data.strPlace = place;
+      if (city != null) {
+        parseAddress(addr, data);
+        if (city.isEmpty()) return true;
+        return parseCity(city, data);
+      } else {
+        parseAddress(StartType.START_ADDR, addr, data);
+        data.strCall = getLeft();
+        if (data.strCall.isEmpty()) return false;
+        match = MM_PTN.matcher(data.strCall);
+        if (match.matches()) {
+          data.strAddress = append(data.strAddress,  " ", match.group(1));
+          data.strCall = match.group(2);
+        }
+        return true;
       }
+    }
+  }
+
+  private boolean parseCity(String city, Data data) {
+    if (city.isEmpty()) return true;
+    parseAddress(StartType.START_ADDR, FLAG_ONLY_CITY, city.trim(), data);
+    if (!data.strCity.isEmpty()) {
+      data.strCall = getLeft();
       return true;
+    } else {
+      Matcher match = CITY_APT_PTN.matcher(city);
+      if (match.matches()) {
+        city = match.group(1);
+        if (isCity(city)) {
+          data.strCity = city;
+          data.strApt = append(data.strApt, "-", match.group(2));
+          data.strCall = match.group(3);
+          return true;
+        }
+      }
+      return false;
     }
   }
 }
