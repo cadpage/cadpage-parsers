@@ -23,7 +23,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
   public NCOnslowCountyParser() {
     super(CITY_CODES, "ONSLOW COUNTY", "NC",
            "FYI? ( UNIT_CH ADDR! CITY? DIST? INFO/N+ " +
-                "| ID? ADDR APT? ( PLACE CITY | CITY | ) APT? DIST? EMPTY+? ( CALL | PLACE CALL! | CALL ) INFO/N+? SRC EMPTY? UNIT END " +
+                "| ID? ADDR! APT? ( PLACE CITY | CITY | ) APT? DIST? EMPTY+? ( CALL! | PLACE CALL! | CALL! ) INFO/N+? SRC EMPTY? UNIT GPS1 GPS2 END " +
                 ")");
   }
 
@@ -53,6 +53,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
   protected boolean parseMsg(String body, Data data) {
     int pt = body.indexOf("\n\n");
     if (pt >= 0) body = body.substring(0, pt).trim();
+    if (!body.startsWith("CAD:")) body = "CAD:" + body;
     body = MSPACE_PTN.matcher(body).replaceAll(" ");
     body = stripFieldStart(body,  "/ no subject /");
     selectValue = (body.contains("[") ? "CALL" : null);
@@ -184,7 +185,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
     }
   }
 
-  private static final Pattern APT_PTN = Pattern.compile("(?:LO?T|APT|UNIT|SUITE) *(.*)|\\d+|H-?\\d{1,2}|[A-D]");
+  private static final Pattern APT_PTN = Pattern.compile("(?:LO?T|APT|UNIT|SUITE) *(.*)|\\d+[A-Z]?|H-?\\d{1,2}|[A-D]");
   private class MyAptField extends AptField {
     @Override
     public boolean canFail() {
