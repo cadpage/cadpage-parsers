@@ -25,6 +25,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
           ") EMPTY? END");
     setupParseAddressFlags(FLAG_ALLOW_DUAL_DIRECTIONS);
     setupSpecialStreets("BROADWAY", "BROADWAY CIR");
+    addRoadSuffixTerms("PT");
   }
 
   @Override
@@ -39,7 +40,7 @@ public class COArapahoeCountyParser extends FieldProgramParser {
 
   @Override
   public int getMapFlags() {
-    return MAP_FLG_PREFER_GPS;
+    return MAP_FLG_PREFER_GPS | MAP_FLG_SUPPR_LA;
   }
 
   private static final Pattern PREFIX = Pattern.compile("(UNIVERSAL PRECAUTIONS(?:, SOB)?) *");
