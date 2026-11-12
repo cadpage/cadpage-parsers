@@ -9,8 +9,9 @@ public class DispatchC16Parser extends FieldProgramParser {
 
   public DispatchC16Parser(String defCity, String defState) {
     super(defCity, defState,
-          "Address:ADDRCITYST! Address_Name:PLACE! Location_Details:PLACE? CFS_Number:ID! Incident_Type:CALL/SDS! Caller:NAME! Dispatcher:SKIP! " +
-              "Call_Time:DATETIME! Call_Location:SKIP! Responding_Units:UNIT! Call_Notes:INFO! Message:INFO/N! CFS_Latitude:GPS1! CFS_Longitude:GPS2! END");
+          "Address:ADDRCITYST! Address_Name:PLACE! Location_Details:PLACE? CFS_Number:ID! Incident_Type:CALL/SDS! Caller:NAME! Dispatcher:SKIP? " +
+              "Call_Time:DATETIME! Call_Location:SKIP! Responding_Units:UNIT? Call_Notes:INFO! Message:INFO/N! CFS_Latitude:GPS1! CFS_Longitude:GPS2! " +
+              "Location_Alerts_(if_applicable):ALERT? END");
   }
 
   @Override
@@ -22,7 +23,12 @@ public class DispatchC16Parser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     data.strCall = subject;
     body = stripFieldEnd(body, " Please Respond Immediately.");
-    return parseMsg(body, data);
+    String[] flds = body.split("; ");
+    if (flds.length >= 5) {
+      return parseFields(flds, data);
+    } else {
+      return parseMsg(body, data);
+    }
   }
 
   @Override
@@ -38,6 +44,7 @@ public class DispatchC16Parser extends FieldProgramParser {
     if (name.equals("DATETIME")) return new DateTimeField("\\d\\d/\\d\\d/\\d\\d +\\d\\d:\\d\\d", true);
     if (name.equals("UNIT")) return new BaseUnitField();
     if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("ALERT")) return new MyAlertField();
     return super.getField(name);
   }
 
@@ -81,6 +88,14 @@ public class DispatchC16Parser extends FieldProgramParser {
       if (field.equals("None")) return;
       field = INFO_BRK_PTN.matcher(field).replaceAll("\n").trim();
       super.parse(field, data);;
+    }
+  }
+
+  private class MyAlertField extends AlertField {
+    @Override
+    public void parse(String field, Data data) {
+      if (field.equals("* *")) return;
+//      super.parse(field, data);
     }
   }
 }
