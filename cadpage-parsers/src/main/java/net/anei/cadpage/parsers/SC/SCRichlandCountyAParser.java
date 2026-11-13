@@ -13,25 +13,24 @@ public class SCRichlandCountyAParser extends FieldProgramParser {
 
   public SCRichlandCountyAParser() {
     super("RICHLAND COUNTY", "SC",
-          "Address:ADDR! City:CITY? Problem:CALL! ( Agency:SRC Resp._Area:MAP | Facility:PLACE MapGrid:MAP ) Radio_Assignment:CH");
+          "( Master_ID:ID! Address:ADDR! Apartment:APT! Problem:CALL! Resp._Area:MAP! Unit:UNIT! Comments:INFO! CITY:CITY ST:ST_INFO/N INFO/N "+
+          "| Address:ADDR! ( City:CITY! Problem:CALL_UNIT50! Facility:PLACE! MapGrid:MAP! Radio_Assignment:CH! " +
+                          "| Problem:CALL! ( Facility:PLACE! Vehicle(s)_Assiged:UNIT! | ) " +
+                          ") " +
+          ") END");
     setupGpsLookupTable(GPS_LOOKUP_TABLE);
   }
 
   @Override
   public String getFilter() {
-    return "2002000004,@alert.active911.com";
+    return "2002000004,active911@crce911.us";
   }
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
 
-    if (subject.equals("911 Page") && body.startsWith("Comment:")) {
-      data.strCall = "GENERAL ALERT";
-      data.strPlace = body.substring(9).trim();
-      return true;
-    }
-
-    body = body.replace(" MapGrid ", " MapGrid:");
+    if (!subject.isEmpty() && !subject.equals("CRC911 Active911 Page")) return false;
+    body = body.replace("MapGrid:", " MapGrid:");
     if (!super.parseMsg(body, data)) return false;
 
     // Fix mistyped address
@@ -42,25 +41,48 @@ public class SCRichlandCountyAParser extends FieldProgramParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("ST_INFO")) return new MyStateInfoField();
+    if (name.equals("CALL_UNIT50")) return new MyCallUnit50Field();
+    if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
 
-  private static final Pattern CALL_UNIT_PTN = Pattern.compile("(.*) ([A-Z]+\\d+(?:,[A-Z0-9,]+)?)");
-  private class MyCallField extends CallField {
+  private class MyCallUnit50Field extends Field {
     @Override
     public void parse(String field, Data data) {
-      Matcher match = CALL_UNIT_PTN.matcher(field);
-      if (match.matches()) {
-        field = match.group(1).trim();
-        data.strUnit = match.group(2);
-      }
-      super.parse(field, data);
+      if (field.length() < 51 || field.charAt(51) == ' ') abort();
+      data.strCall = field.substring(0,50).trim();
+      data.strUnit = field.substring(50);
     }
 
     @Override
     public String getFieldNames() {
       return "CALL UNIT";
+    }
+  }
+
+  private static final Pattern STATE_INFO_PTN = Pattern.compile("([A-Z]{2})\\b,?(.*)");
+  private class MyStateInfoField extends MyInfoField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = STATE_INFO_PTN.matcher(field);
+      if (!match.matches()) abort();
+      data.strState = match.group(1);
+      super.parse(match.group(2).trim(), data);
+    }
+
+    @Override
+    public String getFieldNames() {
+      return "ST INFO";
+    }
+  }
+
+  private static final Pattern INFO_BRK_PTN = Pattern.compile("\\s*,(?=\\[\\d\\d?\\])");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      field = INFO_BRK_PTN.matcher(field).replaceAll("\n").trim();
+      super.parse(field, data);
     }
   }
 
