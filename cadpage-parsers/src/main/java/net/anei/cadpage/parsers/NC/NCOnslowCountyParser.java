@@ -23,13 +23,19 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
   public NCOnslowCountyParser() {
     super(CITY_CODES, "ONSLOW COUNTY", "NC",
            "FYI? ( UNIT_CH ADDR! CITY? DIST? INFO/N+ " +
-                "| ID? ADDR! APT? ( PLACE CITY | CITY | ) APT? DIST? EMPTY+? ( CALL! | PLACE CALL! | CALL! ) INFO/N+? SRC EMPTY? UNIT GPS1 GPS2 END " +
+                "| CANCEL ADDR! CITY? DIST? INFO/N+ " +
+                "| ID? ADDR! APT? ( PLACE CITY | PLACE CITY | CITY | ) EMPTY+? APT? DIST? URL? EMPTY+? ( CALL! | PLACE CALL! | PLACE PLACE CALL! | CALL! ) INFO/N+? SRC EMPTY? UNIT GPS1 GPS2 END " +
                 ")");
   }
 
   @Override
   public String getFilter() {
     return "CAD@onslowcountync.gov";
+  }
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
   }
 
   @Override
@@ -88,9 +94,11 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
 
   @Override
   protected Field getField(String name) {
-    if (name.equals("UNIT_CH"))  return new MyUnitChannelField();
+    if (name.equals("CANCEL")) return new BaseCancelField("WORKING FIRE");
+    if (name.equals("UNIT_CH")) return new MyUnitChannelField();
     if (name.equals("CALL")) return new MyCallField();
-    if (name.equals("DIST")) return new PlaceField("DIST:.*", true);
+    if (name.equals("DIST")) return new PlaceField("M?DIST:.*|.* ft", true);
+    if (name.equals("URL")) return new InfoUrlField("https?://.*", true);
     if (name.equals("ID")) return new IdField("\\d+", true);
     if (name.equals("PLACE")) return new MyPlaceField();
     if (name.equals("SRC")) return new MySourceField();
@@ -185,7 +193,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
     }
   }
 
-  private static final Pattern APT_PTN = Pattern.compile("(?:LO?T|APT|UNIT|SUITE) *(.*)|\\d+[A-Z]?|H-?\\d{1,2}|[A-D]");
+  private static final Pattern APT_PTN = Pattern.compile("(?:LO?T|APT|UNIT|ROOM|SUITE) *(.*)|\\d+ ?[A-Z]?|H-?\\d{1,2}|[A-Z]|BUI?LDING .*|LOBBY|MAIN LOBBY");
   private class MyAptField extends AptField {
     @Override
     public boolean canFail() {
@@ -292,6 +300,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "CHEST PAIN",
       "CHOKING",
       "CITIZEN ASSIST/SERVICE CALL",
+      "CONFINED SPACE/STRUCTURE COL",
       "CONVULSIONS/SEIZURES",
       "DEATH/INJURY",
       "DIABETIC PROBLEMS",
@@ -307,6 +316,8 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "EXPLOSION",
       "EXTRICATION/ENTRAPPED",
       "FALL",
+      "FDL",
+      "FIRE TRANSFER TO CITY",
       "FUEL SPILL",
       "GAS LEAK / GAS ODOR",
       "GRASS FIRE",
@@ -316,10 +327,13 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "HEMORRHAGE",
       "INACCESSIBLE INCIDENT",
       "INCIDENT/SERVICES",
+      "IPHONE CRASH DETECTION",
       "LANDING ZONE",
       "LIGHTENING STRIKE",
       "LIGHTNING STRIKE",
+      "LOST PERSON",
       "MARINE FIRE",
+      "MDL",
       "MENTAL DISORDER (BEHAVIORAL)",
       "MISCELLANEOUS",
       "MOTOR VEHICLE COLLISION",
@@ -330,6 +344,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "PANDEMIC/EPIDEMIC/OUTBREAK",
       "PREGNANCY",
       "PSYCHIATRIC/ABNORMAL BEHAV",
+      "REHAB",
       "SICK PERSON",
       "SINKING VEH/VEH IN FLOODWATER",
       "SMOKE INVESTIGATION",
@@ -342,6 +357,7 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "SUSPICIOUS/WANTED (PERSON VEH)",
       "TRAFFIC",
       "TRAFFIC / TRANSPORTATION",
+      "TRAFFIC TRANSPORTATION ACCIDT",
       "TRAFFIC/ TRANSPORTATION CRASH",
       "TRAFFIC ACCIDENT",
       "TRAFFIC STOP",
@@ -357,7 +373,8 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "VEHICLE FIRE",
       "WALK-UP",
       "WATER RESCUE",
-      "WATERCRAFT IN DISTRESS"
+      "WATERCRAFT IN DISTRESS",
+      "WORKING FIRE"
   }));
 
   private static final Properties CITY_CODES = buildCodeTable(new String[]{
@@ -391,6 +408,12 @@ public class NCOnslowCountyParser extends DispatchOSSIParser {
       "SWAN", "SWANSBORO",
 
       // Carteret County
-      "CEDAR POINT",    "CEDAR POINT"
+      "CEDAR POINT",    "CEDAR POINT",
+      "STEALLA",        "STELLA",     // Misspelled
+      "STELLA",         "STELLA",
+
+      // Pender County
+      "SURF CITY",      "SURF CITY",
+      "WALLACE",        "WALLACE"
   });
 }
