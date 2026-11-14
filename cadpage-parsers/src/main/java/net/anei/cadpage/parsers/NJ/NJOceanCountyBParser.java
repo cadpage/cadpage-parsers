@@ -15,7 +15,7 @@ public class NJOceanCountyBParser extends DispatchA19Parser {
 
   @Override
   public String getFilter() {
-    return "@trpolice.org,@alert.active911.com,ripnrun@lakewoodpolicenj.com,FlexRapidNotification@dccnotify.com,Fire_records@co.ocean.nj.us,@manchestertwp.com,@email.getrave.com";
+    return "@email.getrave.com";
   }
 
   private static final Pattern MBLANK_PTN = Pattern.compile(" {2,}");
