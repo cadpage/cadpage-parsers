@@ -134,13 +134,13 @@ public class MDAnneArundelCountyEMS2Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern MAP_CH_PTN = Pattern.compile("Grid +(\\S*) +Map +AreaArea +(\\S*) +CHANNEL\\b *(.*)");
+  private static final Pattern MAP_CH_PTN = Pattern.compile("Grid +(\\S*) +Map +(.*?) AreaArea +(\\S*) +CHANNEL\\b *(.*)");
   private class MyMapChannel2Field extends Field {
     @Override
     public void parse(String field, Data data) {
       Matcher match = MAP_CH_PTN.matcher(field);
       if (!match.matches()) abort();
-      data.strMap = append(match.group(1), "/", match.group(2));
+      data.strMap = append(append(match.group(1), "/", match.group(2).trim()), "/", match.group(3));
       data.strChannel = match.group(3);
     }
 
