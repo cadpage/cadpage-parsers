@@ -7,7 +7,7 @@ public class NCStanlyCountyDParser extends FieldProgramParser {
 
   public NCStanlyCountyDParser() {
     super("STANLY COUNTY", "NC",
-          "ID CALL PLACE ADDR X UNIT CH! END");
+          "ID CALL PLACE? ADDR X? UNIT CH! END");
   }
 
   @Override
