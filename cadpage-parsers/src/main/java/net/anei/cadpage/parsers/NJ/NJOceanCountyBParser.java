@@ -32,7 +32,10 @@ public class NJOceanCountyBParser extends DispatchA19Parser {
       if (pt < 0) return false;
       body = body.substring(pt+2).trim();
     }
-    return super.parseMsg(subject, body, data);
+    if (!super.parseMsg(subject, body, data)) return false;
+    int pt = data.strCity.indexOf('(');
+    if (pt >= 0) data.strCity = data.strCity.substring(0,pt).trim();
+    return true;
   }
 
   private static final Properties CITY_CODES = buildCodeTable(new String[] {

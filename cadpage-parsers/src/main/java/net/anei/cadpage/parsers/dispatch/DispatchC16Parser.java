@@ -23,9 +23,9 @@ public class DispatchC16Parser extends FieldProgramParser {
   protected boolean parseMsg(String subject, String body, Data data) {
     data.strCall = subject;
     body = stripFieldEnd(body, " Please Respond Immediately.");
-    String[] flds = body.split("; ");
-    if (flds.length >= 5) {
-      return parseFields(flds, data);
+    int pt = body.indexOf("; ");
+    if (pt >= 0 && body.substring(pt+2).startsWith("Address Name:")) {
+      return parseFields(body.split("; "), data);
     } else {
       return parseMsg(body, data);
     }
