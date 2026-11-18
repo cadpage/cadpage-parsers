@@ -13,7 +13,7 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
           "DASH? ( MARK DATETIME! Call_Type:CALL! Location:ADDRCITY/S6! Cross_St:X! Common_Name:PLACE! " +
                       "Additional_Location_Information:PLACE/SDS! Quadrant:MAP! Narrative:INFO! " +
                 "| ( DATETIME! | TIME ) ( Fire:CALL! EMS:CALL/SLS? | EMS:CALL! FIRE:CALL/SLS! | FIRE:CALL ( EMS:CALL2/SLS | CALL2/SLS! ) | Call_Type:CALL! | CALL! ) NOC:INFO? " +
-                      "( Location:ADDRCITY/S6! ( Cross_Street:X! | X ) BOX_ASSGN? Common_Name:PLACE! Additional_Info:INFO/N " +
+                      "( Location:ADDRCITY/S6! ( Cross_Street:X! | X? ) BOX_ASSGN? Common_Name:PLACE! Additional_Info:INFO/N " +
                       "| CALL ADDRCITY/ZS6 XS:X! PLACE " +
                       "| ADDRCITY/S6! X PLACE " +
                       ") ( Box:BOX! | BOX? ) EMS:CALL/SDS? Fire:CALL/SDS? " +
@@ -67,7 +67,7 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
     if (name.equals("ADDRCITY")) return new MyAddressCityField();
     if (name.equals("X")) return new MyCrossField();
     if (name.equals("BOX")) return new BoxField(BOX_PTN, true);
-    if (name.equals("BOX_ASSGN")) return new BoxField("Box Assignment *(.*)", true);
+    if (name.equals("BOX_ASSGN")) return new BoxField("Box Assignment:? *(.*)", true);
     if (name.equals("INFO")) return new MyInfoField();
     return super.getField(name);
   }
@@ -109,6 +109,18 @@ public class NYPutnamCountyBParser extends FieldProgramParser {
   }
 
   private class MyCrossField extends CrossField {
+    @Override
+    public boolean canFail() {
+      return true;
+    }
+
+    @Override
+    public boolean checkParse(String field, Data data) {
+      if (field.startsWith("Box Assignment")) return false;
+      parse(field, data);
+      return true;
+    }
+
     @Override
     public void parse(String field, Data data) {
       if (field.equals("No Cross Streets Found")) return;
