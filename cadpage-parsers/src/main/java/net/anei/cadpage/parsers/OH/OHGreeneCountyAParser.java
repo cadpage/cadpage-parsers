@@ -73,9 +73,9 @@ public class OHGreeneCountyAParser extends FieldProgramParser {
       if (match.find()) {
         data.strApt = append(data.strApt, "-", g3);
         if (data.strCity.length() == 0) data.strCity = g4.substring(0, match.start());
-        data.strCross = g4.substring(match.end());
+        data.strCross = g4.substring(match.end()).replace(" -- ", " / ");
       } else {
-        data.strCross = g3;
+        data.strCross = g3.replace(" -- ", " / ");
         data.strPlace = g4;
       }
       if (data.strCross.equals("No Cross Streets Found")) data.strCross = "";
