@@ -1272,6 +1272,7 @@ public class Active911ParserTable {
       "US/MD/MDSP",                       "MDStatePolice",
       "US/MD/MontgomeryCounty",           "MDMontgomeryCountyC",
       "US/MD/MSPA",                       "MDAnneArundelCountyEMS2,MDCarolineCountyB,MDCharlesCountyA,MDCharlesCountyB,MDDorchesterCounty,MDGarrettCounty,MDOceanCity,MDTalbotCounty,MDWorcesterCountyA,VAAccomackCounty",
+      "US/MD/MVFD2",                      "MDSaintMarysCountyD",
       "US/MD/PrinceGeorgesCounty",        "MDPrinceGeorgesCounty,MDMontgomeryCountyC,MDAnneArundelCountyEMS2",
       "US/MD/PrinceGeorgesCountyGlennDale","MDPrinceGeorgesCountyG",
       "US/MD/PrintManager",               "MDAnneArundelCountyEMS2",
