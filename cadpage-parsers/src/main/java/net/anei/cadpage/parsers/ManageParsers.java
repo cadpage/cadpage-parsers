@@ -270,7 +270,8 @@ public class ManageParsers {
         "TXHildagoCountyC",   "General",                 // 09/18/2026
         "MIBarryCountyA",     "General",                 // 09/28/2026
         "NCForsythCountyA",   "General",                 // 10/15/2026
-        "ALJeffersonCountyH", "ALJeffersonCountyJ"      // 10/30/2026
+        "ALJeffersonCountyH", "ALJeffersonCountyJ",      // 10/30/2026
+        "OHLorainCountyD",    "OHLorainCountyB"         // 11/19/2026
 
   });
 

@@ -1,93 +1,93 @@
 package net.anei.cadpage.parsers.OH;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import net.anei.cadpage.parsers.FieldProgramParser;
 import net.anei.cadpage.parsers.MsgInfo.Data;
-import net.anei.cadpage.parsers.dispatch.DispatchInfoSysParser;
 
+public class OHLorainCountyBParser extends FieldProgramParser {
 
-
-public class OHLorainCountyBParser extends DispatchInfoSysParser {
-  
   public OHLorainCountyBParser() {
-    super(CITY_LIST, "LORAIN COUNTY", "OH");
-    addExtendedDirections();
+    super("LORAIN COUNTY", "OH",
+          "CALL:CALL! PLACE:PLACE! ADDR:ADDR/S6! CITY:CITY! ( LATITUDE:GPS1! LONGITUDE:GPS2 | ) ID:ID! UNIT:UNIT! INFO:INFO! INFO/N+ XSTREET:X WS:SKIP END");
   }
-  
+
   @Override
   public String getFilter() {
-    return "info@sundance-sys.com,sunsrv@sundance-sys.com";
+    return "sunsrv@sundance-sys.com";
   }
-  
+
+  @Override
+  public int getMapFlags() {
+    return MAP_FLG_PREFER_GPS;
+  }
+
   @Override
   public boolean parseMsg(String subject, String body, Data data) {
-    if (!subject.equals("From: MapUser")) return false;
-    if (!super.parseMsg(body, data)) return false;
-    data.strCall = stripFieldStart(data.strCall, data.strCode+'-');
+    if (!super.parseFields(body.split("\n"), data)) return false;
     return true;
   }
 
-  private static final String[] CITY_LIST = new String[]{
+  @Override
+  public Field getField(String name) {
+    if (name.equals("CALL")) return new MyCallField();
+    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("INFO")) return new MyInfoField();
+    if (name.equals("X")) return new MyCrossField();
+    return super.getField(name);
+  }
 
-    // Cities    
-    "AMHERST",
-    "AVON",
-    "AVON LAKE",
-    "ELYRIA",
-    "LORAIN",
-    "N RIDGEVILLE",
-    "OBERLIN",
-    "SHEFFIELD LAKE",
-    "VERMILION",
+  private Pattern CODE_CALL_PTN = Pattern.compile("([A-Za-z0-9]+)-(.*)");
+  private class MyCallField extends CallField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = CODE_CALL_PTN.matcher(field);
+      if (match.matches()) {
+        data.strCode = match.group(1);
+        field =  match.group(2).trim();
+        match = CODE_CALL_PTN.matcher(field);
+        if (match.matches()) {
+          String code = match.group(1);
+          field = match.group(2).trim();
+          if (!code.equals(data.strCode)) data.strCode = data.strCode + '-' + code;
+        }
+      }
+      super.parse(field, data);
+    }
 
-    // Villages
-    "GRAFTON",
-    "KIPTON",
-    "LAGRANGE",
-    "ROCHESTER",
-    "SHEFFIELD",
-    "SOUTH AMHERST",
-    "WELLINGTON",
+    @Override
+    public String getFieldNames() {
+      return "CODE CALL";
+    }
+  }
 
-    // Townships
-    "AMHERST",
-    "BRIGHTON",
-    "BROWNHELM",
-    "CAMDEN",
-    "CARLISLE",
-    "COLUMBIA",
-    "EATON",
-    "ELYRIA",
-    "GRAFTON",
-    "HENRIETTA",
-    "HUNTINGTON",
-    "LAGRANGE",
-    "NEW RUSSIA",
-    "PENFIELD",
-    "PITTSFIELD",
-    "ROCHESTER",
-    "SHEFFIELD",
-    "WELLINGTON",
+  private class MyAddressField extends AddressField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "0 ");
+      field =  stripFieldEnd(field, ",");
+      super.parse(field, data);
+    }
+  }
 
-    // Census-designated place
-    "EATON ESTATES",
+  private static final Pattern INFO_HDR_PTN = Pattern.compile("\\[\\d\\d?:\\d\\d:\\d\\d\\] *");
+  private class MyInfoField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      Matcher match = INFO_HDR_PTN.matcher(field);
+      if (match.lookingAt()) field = field.substring(match.end());
+      if (field.startsWith("FireNo")) return;
+      super.parse(field, data);
+    }
+  }
 
-    // Other communities
-    "BELDEN",
-    "BRENTWOOD LAKE",
-    "BRIGHTON",
-    "BROWNHELM",
-    "BROWNHELM STATION",
-    "COLUMBIA HILLS CORNERS",
-    "HENRIETTA",
-    "HUNTINGTON",
-    "NORTH EATON",
-    "PENFIELD",
-    "PITTSFIELD",
-    
-    // Cayahoga County
-    "BAY VILLAGE",
-    "FAIRVIEW PARK",
-    "NORTH OLMSTED",
-    "ROCKY RIVER",
-    "WESTLAKE"
-  };
+  private class MyCrossField extends CrossField {
+    @Override
+    public void parse(String field, Data data) {
+      field = stripFieldStart(field, "/");
+      field = stripFieldEnd(field, "/");
+      super.parse(field, data);
+    }
+  }
 }
