@@ -39,6 +39,7 @@ public class NCCabarrusCountyParser extends GroupBestParser {
       "CPD",  "CONCORD",
       "DAV",  "DAVIDSON",
       "GE",   "GEORGEVILLE",
+      "FAI",  "FAIRVIEW",
       "GLD",  "GOLD HILL",
       "GOLD", "GOLD HILL",
       "HAR",  "HARRISBURG",
