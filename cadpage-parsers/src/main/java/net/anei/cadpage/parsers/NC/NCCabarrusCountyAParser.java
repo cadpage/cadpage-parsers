@@ -16,7 +16,7 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
     super(NCCabarrusCountyParser.CITY_CODES, "CABARRUS COUNTY", "NC",
         "( CANCEL ADDR CITY " +
         "| FYI? ( ADDR/Z CITY ID CALL " +
-               "| CALL ADDR CITY? X_PLACE+? ( ID | CITY SRC? UNIT? ID? | SRC UNIT? ID? | UNIT SRC? ID? ) " +
+               "| CALL ADDR UNITX? CITY? X_PLACE+? ( ID | CITY SRC? UNIT? ID? | SRC UNIT? ID? | UNIT SRC? ID? ) " +
                ") " +
         ") INFO+");
     setupCityValues(NCCabarrusCountyParser.CITY_CODES);
@@ -40,9 +40,6 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
 
   @Override
   protected boolean parseMsg(String subject, String body, Data data) {
-
-    // Toss anything with a subject
-    if (!subject.isEmpty()) return false;
 
     // Throw out any version B calls
     if (body.contains("|")) return false;
@@ -102,36 +99,14 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
 
   @Override
   public Field getField(String name) {
-    if (name.equals("CANCEL")) return new BaseCancelField("DUPLICATE PAGE");
-//    if (name.equals("MAP")) return new MapField("[A-Z]\\d{3}", true);
-//    if (name.equals("ADDR")) return new MyAddressField();
+    if (name.equals("CANCEL")) return new BaseCancelField("CONTROL TIME|DUPLICATE PAGE");
     if (name.equals("CITY")) return new MyCityField();
     if (name.equals("X_PLACE")) return new CrossPlaceField();
     if (name.equals("SRC")) return new SourceField("[A-Z]{2}", true);
-    if (name.equals("UNIT")) return new MyUnitField();
-//    if (name.equals("UNIT2")) return new UnitField("\\d{3}|CPD");
+    if (name.equals("UNIT")) return new MyUnitField(false);
+    if (name.equals("UNITX")) return new MyUnitField(true);
     if (name.equals("ID")) return new IdField("\\d{8,10}", true);
     return super.getField(name);
-  }
-
-  private class MyAddressField extends AddressField {
-    @Override
-    public boolean canFail() {
-      return true;
-    }
-
-    @Override
-    public boolean checkParse(String field, Data data) {
-
-      // There are two consequetive fields containing the address and call
-      // description that can be in either order.  The first one checks
-      // to see whether it or the following field looks like a better address
-      int status1 = checkAddress(field);
-      int status2 = checkAddress(getRelativeField(+1));
-      if (status1 <= status2) return false;
-      parse(field, data);
-      return true;
-    }
   }
 
   private class MyCityField extends CityField {
@@ -165,6 +140,13 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
   }
 
   private class MyUnitField extends UnitField {
+
+    private boolean reqTrailingCity;
+
+    public MyUnitField(boolean reqTrailingCity) {
+      this.reqTrailingCity = reqTrailingCity;
+    }
+
     @Override
     public boolean canFail() {
       return true;
@@ -172,6 +154,9 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
 
     @Override
     public boolean checkParse(String field, Data data) {
+
+      if (reqTrailingCity && !isCity(getRelativeField(+1))) return false;
+
       String[] terms = field.split(",");
       StringBuffer units = new StringBuffer();
       StringBuffer chan = new StringBuffer();
@@ -189,6 +174,7 @@ public class NCCabarrusCountyAParser extends DispatchOSSIParser {
         first = false;
       }
       if (units.isEmpty()) return false;
+
       data.strUnit = units.toString();
       if (!chan.isEmpty()) data.strChannel = chan.toString();
       return true;
