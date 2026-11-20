@@ -12,9 +12,9 @@ public class DispatchA82Parser extends FieldProgramParser {
   public DispatchA82Parser(String defCity, String defState) {
     super(defCity, defState,
           "( ID1 | ID2 | CALL/SDS ID2 | CALL/SDS CALL/SDS ID2 | CALL/SDS CALL/SDS CALL/SDS ID2 | ) " +
-          "( ADDRCITYST PLACE X MASH1+? EMPTY! UNITS:UNIT! EMPTY+? St_Rmk:MAP/C? INFO/N+? Grid_Map:MAP/L? Lat:GPS1? Lon:GPS2? EMPTY? INFO/ZN+? URL END " +
-          "| CALL/SDS! CALL/SDS+? ADDRCITYST! X MASH2? UNITS:UNIT? ST_RMK:MAP/C? INFO/N+ " +
-          ")");
+              "( ADDRCITYST PLACE X MASH1+? EMPTY! UNITS:UNIT! EMPTY+? St_Rmk:MAP/C? INFO/N+? Grid_Map:MAP/L? Lat:GPS1? Lon:GPS2? EMPTY? INFO/ZN+? URL END " +
+              "| CALL/SDS! CALL/SDS+? ADDRCITYST! X MASH2? UNITS:UNIT? ST_RMK:MAP/C? INFO/N+ " +
+              ")");
   }
 
   @Override
@@ -63,6 +63,7 @@ public class DispatchA82Parser extends FieldProgramParser {
 
     @Override
     public boolean checkParse(String field, Data data) {
+      if (field.startsWith("INCIDENT #")) return false;
       Matcher match = ID2_PTN.matcher(field);
       if (!match.matches()) return false;
       data.strCall = append(getOptGroup(match.group(1)), " - ", match.group(3));

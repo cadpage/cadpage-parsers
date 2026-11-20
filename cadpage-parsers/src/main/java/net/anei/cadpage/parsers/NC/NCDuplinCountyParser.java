@@ -11,32 +11,32 @@ import net.anei.cadpage.parsers.dispatch.DispatchSouthernParser;
 
 
 public class NCDuplinCountyParser extends DispatchSouthernParser {
-  
-  
+
+
   public NCDuplinCountyParser() {
     super(CITY_LIST, "DUPLIN COUNTY", "NC",
           DSFLG_OPT_DISP_ID|DSFLG_ADDR|DSFLG_OPT_X|DSFLG_OPT_CODE|DSFLG_OPT_ID|DSFLG_TIME);
     setupCallList(CALL_LIST);
     removeWords("DRIVE");
   }
-  
+
   @Override
   public String getFilter() {
     return "@duplincountync.com";
   }
-  
+
   @Override
   public int getMapFlags() {
     return MAP_FLG_REMOVE_EXT;
   }
-  
+
   private static final Pattern RUN_REPORT_PTN = Pattern.compile("[A-Z.]*:CFS: *(\\d+) +Unit: *(\\S+) +(.*)");
   private static final Pattern FIX_ADDR_DIR_PTN = Pattern.compile("\\b([NSEW])- *");
   private static final Pattern FIX_ADDR_PTN = Pattern.compile("[ &]*(?: - *|- +)(.*?[^ ])(?= *[&/]|$)");
-  
+
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
     Matcher match = RUN_REPORT_PTN.matcher(body);
     if (match.matches()) {
       data.msgType = MsgType.RUN_REPORT;
@@ -46,7 +46,7 @@ public class NCDuplinCountyParser extends DispatchSouthernParser {
       data.strCall = match.group(3);
       return true;
     }
-    
+
     if (!super.parseMsg(body, data)) return false;
     data.strCity = convertCodes(data.strCity.toUpperCase(), FIX_CITY_TABLE);
     data.strAddress = FIX_ADDR_DIR_PTN.matcher(data.strAddress).replaceAll("$1 ");
@@ -55,7 +55,7 @@ public class NCDuplinCountyParser extends DispatchSouthernParser {
     data.strCross = FIX_ADDR_PTN.matcher(data.strCross).replaceAll(" ($1)");
     return true;
   }
-  
+
   private static final CodeSet CALL_LIST = new CodeSet(
       "10-50",
       "911-HANG-UP",
@@ -148,9 +148,9 @@ public class NCDuplinCountyParser extends DispatchSouthernParser {
   );
 
   private static final String[] CITY_LIST = new String[]{
-    
+
     "DUPLIN",
-    
+
     // Cities
     "BEULAVILLE",
     "CALYPSO",
@@ -168,7 +168,7 @@ public class NCDuplinCountyParser extends DispatchSouthernParser {
     "TEACHEY",
     "WALLACE",
     "WARSAW",
-    
+
     // Townships
     "ALBERTSON",
     "CYPRESS CREEK",
@@ -187,37 +187,40 @@ public class NCDuplinCountyParser extends DispatchSouthernParser {
     "WALLACE",
     "WARSAW",
     "WOLFSCRAPE",
-    
+
     // Onslow County
+    "MAPLE HILL",
     "ONSLOW CO",
     "ONSLOW",
     "RICHLANDS",
-    
+
     // Lenoir County
     "LENOIR CO",
     "DEEP RUN",
     "PINK HILL",
-    
+
     // Pender County
     "PENDER CO",
     "PENDER",
     "WATHA",
     "WILLARD",
-    
+
     // Sampson County
     "SAMPSON CO",
     "CLINTON",
     "SAMPSON",
     "TURKEY",
-    
+
     // Wayne County
     "SEVEN SPRINGS"
   };
-  
+
   private static final Properties FIX_CITY_TABLE = buildCodeTable(new String[]{
       "KENNANSVILLE",   "KENANSVILLE",
       "KENASVILLE",     "KENANSVILLE",
-      "KENANSVL",       "KENANSVILLE"
+      "KENANSVL",       "KENANSVILLE",
+      "MAPEL HILL",     "MAPLE HILL",
+      "RICHALNDS",      "RICHLANDS"
   });
 
 }
