@@ -1786,6 +1786,7 @@ public class Active911ParserTable {
       "US/NC/DurhamCounty",               "NCDurhamCountyA",
       "US/NC/DurhamCountySD",             "NCDurhamCountyA",
       "US/NC/EasternFirePhoto",           "NCJohnstonCounty",
+      "US/NC/EbonyVFD",                   "NCWarrenCounty,VABrunswickCounty",
       "US/NC/EdgecombeCounty",            "NCEdgecombeCountyA,NCEdgecombeCountyC",
       "US/NC/ElizabethCity",              "NCPasquotankCounty",
       "US/NC/FayettevilleCumberland",     "NCCumberlandCounty",
