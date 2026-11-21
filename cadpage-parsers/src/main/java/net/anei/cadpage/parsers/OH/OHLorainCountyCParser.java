@@ -12,10 +12,10 @@ public class OHLorainCountyCParser extends FieldProgramParser {
 
   public OHLorainCountyCParser() {
     super("LORAIN COUNTY", "OH",
-          "( Call_Time:DATETIME! Call_Type:CALL! Address:ADDRCITY! Common_Name:PLACE! Closest_Intersection:X! " +
+          "( Call_Time:DATETIME! Call_Type:CALL! Address:ADDRCITY/S6! Common_Name:PLACE! Closest_Intersection:X! " +
             "Additional_Location_Info:INFO! Nature_of_Call:CALL/SDS! Assigned_Units:UNIT! Priority:PRI! Status:SKIP! " +
             "Quadrant:MAP! District:MAP/D! Beat:MAP/D! CFS_Number:SKIP! Primary_Incident:ID! Radio_Channel:CH! Narrative:INFO! " +
-          "| DATETIME CALL ADDRCITY! X PLACE/SDS " +
+          "| DATETIME EMPTY? CALL ADDRCITY/S6! X PLACE/SDS " +
           ") INFO/N+");
   }
 
@@ -67,6 +67,7 @@ public class OHLorainCountyCParser extends FieldProgramParser {
       }
       field = field.replace('@', '&');
       super.parse(field, data);
+      data.strApt = stripFieldEnd(data.strApt, ",");
     }
 
     @Override
@@ -82,5 +83,11 @@ public class OHLorainCountyCParser extends FieldProgramParser {
       field = field.replace(" -- ", " / ");
       super.parse(field, data);
     }
+  }
+
+  @Override
+  protected boolean isNotExtraApt(String apt) {
+    if (apt.startsWith("TO ")) return true;
+    return super.isNotExtraApt(apt);
   }
 }
