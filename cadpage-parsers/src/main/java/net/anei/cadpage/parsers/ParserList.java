@@ -414,6 +414,7 @@ public class ParserList {
               ,"GABanksCounty"                  ,"Banks County, GA"
               ,"GABarrowCounty"                 ,"Barrow County, GA"
               ,"GABerrienCounty"                ,"Berrien County, GA"
+              ,"GABibbCounty"                   ,"Bibb County, GA"
               ,"GABrantleyCounty"               ,"Brantley County, GA"
               ,"GABrooksCounty"                 ,"Brooks County, GA"
               ,"GABullochCounty"                ,"Bulloch County, GA"

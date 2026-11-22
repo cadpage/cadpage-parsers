@@ -12,17 +12,17 @@ import net.anei.cadpage.parsers.MsgInfo.MsgType;
  * Parser for ProQA Dispatch software
  */
 public class DispatchProQAParser extends FieldProgramParser {
-  
+
   private final Pattern delimPattern;
-  
+
   protected DispatchProQAParser(String defCity, String defState, String program) {
     this(defCity, defState, program, false);
   }
-  
+
   protected DispatchProQAParser(Properties cityCodes, String defCity, String defState, String program) {
     this(cityCodes, defCity, defState, program, false);
   }
-  
+
   protected DispatchProQAParser(String[] cityList, String defCity, String defState, String program) {
     this(cityList, defCity, defState, program, false);
   }
@@ -31,28 +31,28 @@ public class DispatchProQAParser extends FieldProgramParser {
     super(defCity, defState, fixProgram(program));
     delimPattern = Pattern.compile(singleSlashDelim ? "/" : "/+");
   }
-  
+
   protected DispatchProQAParser(Properties cityCodes, String defCity, String defState, String program, boolean singleSlashDelim) {
     super(cityCodes, defCity, defState, fixProgram(program));
     delimPattern = Pattern.compile(singleSlashDelim ? "/" : "/+");
   }
-  
+
   protected DispatchProQAParser(String[] cityList, String defCity, String defState, String program, boolean singleSlashDelim) {
     super(cityList, defCity, defState, fixProgram(program));
     delimPattern = Pattern.compile(singleSlashDelim ? "/" : "/+");
   }
-  
+
   private static final Pattern ID_PTN = Pattern.compile("\\bID!");
-  
+
   private static String fixProgram(String program) {
-    // There is always a required ID field.  If one wasn't included 
+    // There is always a required ID field.  If one wasn't included
     // add it as the first field
     if (!ID_PTN.matcher(program).find()) {
       program = "ID! " + program;
     }
     return program;
   }
-  
+
   private static final Pattern MARKER = Pattern.compile("(?:- part 1 of 1[\\s/]+)?(?:RC: *(?:\\d*(?:-[A-Z])?/)?)? *");
   private static final Pattern UNASSIGNED_MARKER = Pattern.compile("Job# *[^ ]* *\\(Run# (\\d+)\\) at [0-9:]+ was unassigned\\.");
   private static final Pattern RUN_REPORT_MARKER1 = Pattern.compile("(?:(?:Job# *)?\\d+(?:-[A-Z])?/ *)?Run# *(\\d+) */ *(?:(was Canceled: .*?)/)? *((?:CALL:)?\\d\\d:\\d\\d/ ?(?:DISP:)?\\d\\d:\\d\\d/ ?.*)");
@@ -63,7 +63,7 @@ public class DispatchProQAParser extends FieldProgramParser {
 
   @Override
   protected boolean parseMsg(String body, Data data) {
-    
+
     Matcher match = MARKER.matcher(body);
     if (!match.lookingAt()) return false;
     body = body.substring(match.end());
@@ -76,7 +76,7 @@ public class DispatchProQAParser extends FieldProgramParser {
       data.strSupp = "was unassigned";
       return true;
     }
-  
+
     match = RUN_REPORT_MARKER1.matcher(body);
     if (match.matches()) {
       setFieldList("ID INFO");
@@ -88,7 +88,7 @@ public class DispatchProQAParser extends FieldProgramParser {
       data.strSupp = info;
       return true;
     }
-    
+
     match = RUN_REPORT_MARKER2.matcher(body);
     if (match.matches()) {
       setFieldList("ID UNIT INFO");
@@ -98,7 +98,7 @@ public class DispatchProQAParser extends FieldProgramParser {
       data.strSupp = addTimeLabels(match.group(3).trim(), false);
       return true;
     }
-    
+
     match = RUN_REPORT_MARKER3.matcher(body);
     if (match.matches()) {
       setFieldList("ID INFO");
@@ -107,14 +107,14 @@ public class DispatchProQAParser extends FieldProgramParser {
       data.strSupp = match.group(2).replace('/', '\n');
       return true;
     }
-    
+
     if (GEN_ALERT_PTN1.matcher(body).matches()) {
       setFieldList("INFO");
       data.msgType = MsgType.GEN_ALERT;
       data.strSupp = body;
       return true;
     }
-        
+
     match = GEN_ALERT_PTN2.matcher(body);
     if (match.matches()) {
       setFieldList("ID INFO");
@@ -129,7 +129,7 @@ public class DispatchProQAParser extends FieldProgramParser {
     String[] lines = delimPattern.split(body, -1);
     return parseFields(lines, data);
   }
-  
+
   private static final Pattern LINE_BRK_PTN = Pattern.compile(" */ *");
   private static final Pattern TIME_LINE_PTN = Pattern.compile("\\d\\d:\\d\\d(?::\\d\\d)?");
   private static final String[] RUN_REPORT_LABELS = new String[]{
@@ -153,7 +153,7 @@ public class DispatchProQAParser extends FieldProgramParser {
       }
     }
     if (cancel) endLabelNdx--;
-    
+
     StringBuilder sb = new StringBuilder();
     for (int ndx = 0; ndx < lines.length; ndx++) {
       if (sb.length() > 0) sb.append('\n');
@@ -168,17 +168,60 @@ public class DispatchProQAParser extends FieldProgramParser {
       }
       sb.append(lines[ndx]);
     }
-    
+
     return sb.toString();
   }
-  
+
   @Override
   public Field getField(String name) {
     if (name.equals("ID")) return new IdField("(?:Run|Inc)# *(\\d+)", true);
+    if (name.equals("DEST_ADDR")) return new BaseDestAddressField();
+    if (name.equals("DEST_CITY")) return new BaseDestCityField();
+    if (name.equals("DEST_APT")) return new BaseDestAptField();
     if (name.equals("INFO")) return new BaseInfoField();
     return super.getField(name);
   }
-  
+
+  private int destInsertPt = -1;
+
+  private class BaseDestAddressField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      data.strSupp = append(data.strSupp, "\n", field);
+      destInsertPt = field.length();
+    }
+  }
+
+  private class BaseDestCityField extends InfoField {
+    @Override
+    public void parse(String field, Data data) {
+      insertDestField(field, ", ", data);
+    }
+  }
+
+  private class BaseDestAptField extends InfoField {
+
+    public BaseDestAptField() {
+      super("\\d+", true);
+    }
+
+    @Override
+    public void parse(String field, Data data) {
+      insertDestField(field, " #", data);
+    }
+  }
+
+  private void insertDestField(String field, String delim, Data data) {
+    StringBuilder sb = new StringBuilder(data.strSupp);
+    if (destInsertPt > 0) {
+      sb.insert(destInsertPt, delim);
+      destInsertPt += delim.length();
+    }
+    sb.insert(destInsertPt, field);
+    destInsertPt += field.length();
+    data.strSupp = sb.toString();
+  }
+
   private static final Pattern CROSS_PATTERN = Pattern.compile("(?:.*?X=|XST\\b *)(.*)");
   private static final Pattern UNKNOWN_PATTERN = Pattern.compile("(?i).*<unknown>.*");
   protected class BaseInfoField extends InfoField {
@@ -198,12 +241,12 @@ public class DispatchProQAParser extends FieldProgramParser {
       }
       super.parse(field, data);
     }
-  
+
     private void addCross(String field, Data data) {
       if (!field.contains("Unknown Street"))
         data.strCross = append(data.strCross, "/", field);
     }
-    
+
     @Override
     public String getFieldNames() {
       return append(super.getFieldNames(), " ", "X");
@@ -228,7 +271,7 @@ public class DispatchProQAParser extends FieldProgramParser {
       else if ((term = match.group(3)) != null) {
         if (data.strCode.length() == 0) data.strCode = term;
       }
-      
+
       data.strSupp = append(data.strSupp, "\n", field.substring(lastCol, match.start()).trim());
       lastCol = match.end();
     }
@@ -239,6 +282,6 @@ public class DispatchProQAParser extends FieldProgramParser {
     data.strSupp = append(data.strSupp, "\n", last);
   }
   private static final Pattern PROQA_TERM_PTN = Pattern.compile("\\bProblem: (.*?)\\.  Patient Info:|\\bCaller Statement: (.*?)\\.|\\b(?:ProQA d|Reconfigured d|D)ispatch (?:Code|code|Level): +(\\d[^ ;]+);?|\\bProQA (?:(?:Medical|Fire|Police) )?(?:Dispatch Message Sent|Key Questions have been completed|Questionnaire Completed);| New ProQA (?:(?:Medical|Fire|Police) )?Case Number has been assigned;|Dispatch (?:Code|Level): --: -\\d+|\\bE911 Info -.*|Chief Complaint Number: \\d+;|\\*\\* Case number \\d+ has been assigned for \\d+:CNTY \\*\\*|>+ by: [ A-Z]+ on terminal: .*|\\bResponder script:|\\bNew ProQA Case Number has been assigned: -\\d+");
-  private static final Pattern PROQA_TRUNC_PTN = Pattern.compile("(?:\\bNew )?ProQA[ A-Za-z]*$"); 
+  private static final Pattern PROQA_TRUNC_PTN = Pattern.compile("(?:\\bNew )?ProQA[ A-Za-z]*$");
 
 }

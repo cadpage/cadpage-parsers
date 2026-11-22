@@ -555,6 +555,7 @@ public class Active911ParserTable {
       "US/FL/TaylorCounty",               "FLTaylorCounty",
       "US/FL/WashingtonCountySheriff",    "FLWashingtonCounty",
       "US/GA/AmeriProHealth",             "GAFultonCounty",
+      "US/GA/AtriumHealthNavicentEMS",    "GABibbCounty",
       "US/GA/BanksCounty",                "GABanksCounty",
       "US/GA/BarrowCounty",               "GABarrowCounty",
       "US/GA/BerrienCounty",              "GABerrienCounty",
