@@ -773,6 +773,7 @@ public class ParserList {
               ,"KYGreenupCounty"                ,"Greenup County, KY"
               ,"KYHancockCounty"                ,"Hancock County, KY"
               ,"KYHardinCounty"                 ,"Hardin County, KY"
+              ,"KYHarlanCounty"                 ,"Harlan County, KY"
               ,"KYHarrisonCounty"               ,"Harrison County, KY"
               ,"KYHartCounty"                   ,"Hart County, KY"
               ,"KYHendersonCounty"              ,"Henderson County, KY"
