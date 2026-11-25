@@ -1290,6 +1290,7 @@ public class Active911ParserTable {
       "US/MD/Webhostinghub",              "MDPrinceGeorgesCountyF,MDCharlesCountyA",
       "US/MD/WicomicoCounty",             "MDWicomicoCountyA",
       "US/MD/WorcesterCounty",            "MDWorcesterCountyA,MDOceanCity",
+      "US/ME/BuckfieldFireRescue",        "MEOxfordCountyB",
       "US/MI/AddisonFD",                  "MILenaweeCountyC",
       "US/MI/AdrianFD",                   "MILenaweeCounty",
       "US/MI/AlconaCounty",               "MIAlconaCounty",

@@ -43,7 +43,7 @@ public class DispatchA19Parser extends FieldProgramParser {
 
   private static final Pattern SUBJECT_PTN = Pattern.compile("(?:DISPATCH)?INCIDENT # ([-,A-Z0-9]+)");
   private static final Pattern HASH_DELIM = Pattern.compile("(?<=[A-Z]) ?#(?= )");
-  private static final Pattern FIELD_BREAK = Pattern.compile(" (City|ACTIVE CALL|Desc|REPORTED|Type|Zone|(?<=\n ?Contact:.{10,70} )Phone):");
+  private static final Pattern FIELD_BREAK = Pattern.compile(" (City|ACTIVE CALL|Desc|REPORTED|Type|Zone|(?<=\n ?Contact:.{10,70}) Phone):");
   private static final Pattern FIELD_DELIM = Pattern.compile(" *\n+ *");
 
   @Override
@@ -250,7 +250,7 @@ public class DispatchA19Parser extends FieldProgramParser {
     }
   }
 
-  private static final Pattern LAT_LON_PTN = Pattern.compile("Lat= *(\\S*) +Lon= *(\\S*)");
+  private static final Pattern LAT_LON_PTN = Pattern.compile("Lat= *(\\S*) *Lon= *(\\S*)");
   private class BaseLatLonField extends GPSField {
 
     @Override
